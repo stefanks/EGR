@@ -1,0 +1,216 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage[margin=0in, landscape]{geometry}
+\usepackage[usenames,dvipsnames]{pstricks}
+\usepackage{epsfig}
+\usepackage{epstopdf}
+\usepackage{pst-grad}
+\usepackage{pst-plot}
+\usepackage{fancyhdr}
+\usepackage{amsthm}
+\pagestyle{fancy}
+\fancyhead{}
+\fancyfoot{} 
+\lhead{Stefan\\ \large Results }
+\rfoot{\thepage}
+
+\newtheorem{defn}{Definition}[section]
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{prop}{Proposition}
+
+
+\begin{document}
+
+\section{Feb 16th}
+
+I ran the SQN and SGD algorithms on speech and yoram problems. 
+Tested batch sizes $1,2,5,10,50$. The options for SGD are:
+\begin{verbatim}
+opts = 
+            stepsizeinit: 0.1250
+            stepsizepowk: 1
+            useAveraging: 0
+                maxiters: 287412
+\end{verbatim}
+The options for SQN are:
+\begin{verbatim}
+opts = 
+                       L: 200
+                       M: 5
+        useLimitedMemory: 1
+            stepsizeinit: 0.1250
+            stepsizepowk: 1
+        hessianBatchSize: 1000
+                maxiters: 47902
+        startQuasiNewton: 0
+            useAnchorAvg: 0
+\end{verbatim}
+\subsection{speech problem}
+\includegraphics[scale=1]{figures/speechfeb16.eps} 
+\subsection{yoram problem}
+\includegraphics[scale=1]{figures/yoramfeb16.eps} 
+
+\subsection{Increasing initial stepsize}
+Same parameters as in the beginning of the section, except stepsizeinit = 1.
+
+\includegraphics[scale=1]{figures/yoramfeb16_bis1Lis200.eps} 
+
+\subsection{Decreasing L}
+Now L is 20, bh is 100
+\begin{verbatim}
+                       L: 20
+                       M: 5
+        useLimitedMemory: 1
+            stepsizeinit: 0.1250
+            stepsizepowk: 1
+        hessianBatchSize: 100
+             outputLevel: 3
+              globalSeed: 1
+       gradientBatchSize: 50
+                maxiters: 182
+        cheapOutputEvery: 1
+    expensiveOutputEvery: 10
+        startQuasiNewton: 0
+            useAnchorAvg: 0
+\end{verbatim}
+For yoram problem:
+
+\includegraphics[scale=1]{figures/yoramfeb16_Lis20.eps} 
+
+\subsubsection{Running yoram for 20 passes over data}
+For sqn:
+\begin{verbatim}
+opts = 
+                       L: 20
+                       M: 5
+        useLimitedMemory: 1
+            stepsizeinit: 0.1250
+            stepsizepowk: 1
+        hessianBatchSize: 100
+             outputLevel: 3
+              globalSeed: 1
+       gradientBatchSize: 10
+                maxiters: 6667
+        cheapOutputEvery: 66
+    expensiveOutputEvery: 10
+        startQuasiNewton: 0
+            useAnchorAvg: 0
+\end{verbatim}
+\includegraphics[scale=1]{figures/yoramfeb16_20passes.eps}
+
+
+\subsection{trying larger initial stepsize}
+For sgd:
+\begin{verbatim}
+opts = 
+            stepsizeinit: 1
+            stepsizepowk: 1
+            useAveraging: 0
+             outputLevel: 3
+              globalSeed: 1
+               batchSize: 50
+                maxiters: 2000
+        cheapOutputEvery: 20
+    expensiveOutputEvery: 10
+\end{verbatim}
+For sqn:
+\begin{verbatim}
+                       L: 20
+                       M: 5
+        useLimitedMemory: 1
+            stepsizeinit: 1
+            stepsizepowk: 1
+        hessianBatchSize: 100
+       gradientBatchSize: 5
+                maxiters: 10000
+\end{verbatim}
+\includegraphics[scale=1]{figures/yoramfeb16_bis1.eps} 
+
+\subsection{RCV1}
+Options for GG:
+\begin{verbatim}
+            stepsizeinit: 1
+            stepsizepowk: 1
+            useAveraging: 0
+               batchSize: 1
+                maxiters: 1032494
+\end{verbatim}
+Options for SQN:
+\begin{verbatim}
+opts = 
+                       L: 200
+                       M: 5
+        useLimitedMemory: 1
+            stepsizeinit: 1
+            stepsizepowk: 1
+        hessianBatchSize: 1000
+       gradientBatchSize: 50
+                maxiters: 18773
+\end{verbatim}
+\includegraphics[scale=1]{figures/RCV1feb16.eps} 
+
+\newpage
+
+\section{Feb 17th}
+\subsection{yoram}
+I ran the yoram problems with amount of work equivalent to 40 passes over data in sgd. The options are:
+For gd:
+\begin{verbatim}
+    stepsizeinit: 1
+    stepsizepowk: 1
+    useAveraging: 0
+\end{verbatim}
+For sqn:
+\begin{verbatim}
+                    L: 200
+                    M: 5
+     useLimitedMemory: 1
+         stepsizeinit: 1
+         stepsizepowk: 1
+     hessianBatchSize: 1000
+\end{verbatim}
+\newpage
+
+\includegraphics[scale=0.95]{figures/Feb17-yoramiters.eps}\includegraphics[scale=0.95]{figures/Feb17-yoramadp.eps} 
+
+\includegraphics[scale=0.95]{figures/Feb17-yoramwork.eps} 
+
+\subsection{speech}
+I ran speech for work equivalent to 5 passes over data.
+sqn options:
+\begin{verbatim}
+                    L: 200
+                    M: 5
+     useLimitedMemory: 1
+         stepsizeinit: 1
+         stepsizepowk: 1
+     hessianBatchSize: 1000
+     startQuasiNewton: 0
+         useAnchorAvg: 0
+\end{verbatim}
+options for gd:
+\begin{verbatim}
+    stepsizeinit: 1
+    stepsizepowk: 1
+    useAveraging: 0
+\end{verbatim}
+\newpage
+
+\includegraphics[scale=0.95]{figures/Feb18-speechiters.eps} 
+\includegraphics[scale=0.95]{figures/Feb18-speechapd.eps} 
+
+
+\includegraphics[scale=0.95]{figures/Feb18-speechwork.eps} 
+
+\subsection{rcv1}
+\newpage
+
+\includegraphics[scale=0.95]{figures/Feb18-rcv1iters.eps} 
+\includegraphics[scale=0.95]{figures/Feb18-rcv1adp.eps} 
+
+
+\includegraphics[scale=0.95]{figures/Feb18-rcv1work.eps} 
+
+\end{document}

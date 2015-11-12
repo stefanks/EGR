@@ -1,0 +1,430 @@
+\documentclass[12pt]{article} 
+\usepackage[margin=1in]{geometry} 
+\usepackage{amsfonts,amsmath,amssymb,graphicx,color}
+\usepackage{mathtools}
+\usepackage{psfrag} 
+\usepackage{pdflscape} 
+\usepackage{soul} 
+\usepackage{algorithm} 
+\usepackage{algpseudocode} 
+\usepackage{hyperref} 
+\usepackage{multirow} 
+\usepackage{caption} 
+\usepackage{subcaption} 
+\usepackage{showlabels} 
+\usepackage[T1]{fontenc} 
+
+\newtheorem{thm}{Theorem}
+
+\newcommand{\defeq}{\stackrel{\rm def}{=}}
+\newcommand{\defeqq}{\vcentcolon=}
+\newcommand{\Var}{\mathrm{Var}}
+
+\title{An Evolving Gradient Resampling Method for Stochastic Optimization}
+
+\author{Richard H. Byrd 
+\thanks{Department of Computer Science, University of Colorado, Boulder, CO, USA. This author was supported by National Science Foundation grant DMS-1216554 and Department of Energy grant DE-SC0001774.} 
+\and Jorge Nocedal 
+\thanks{Department of Industrial Engineering and Management Sciences, Northwestern University, Evanston, IL, USA. This author was supported by National Science Foundation grant DMS-0810213, and by Department of Energy grant DE-FG02-87ER25047.} 
+\and Figen Oztoprak 
+\thanks{Istanbul Technical University. This author was supported by Department of Energy grant DE-SC0001774, and by a grant from Tubitak.} 
+\and Stefan Solntsev }
+
+\date{\today}
+
+\begin{document}
+
+\begin{align*}
+	\mathbb{E} c \|x^{k+1} - x^* \|^2  =& \mathbb{E} \left[ c \|x^k - \alpha g^k - x^* \|^2 \right] \\
+	=&  c\|x^k - x^* \|^2  +  c\mathbb{E} \left[ 2 (x^k - x^* )^T (- \alpha g^k) \right]  +  c\mathbb{E} \left[  \|\alpha g^k \|^2 \right] \\
+	=&  c\|x^k - x^* \|^2  + 2 c(x^k - x^* )^T (- \alpha  F'(x^k)) \\
+	&+ \alpha^2 c\mathbb{E} \left[  \|\frac{1}{s_k} \sum_{j \in S_k} \left[  \nabla f_j(\phi_j^{k}) \right]- \frac{ \beta_k }{s_k} \sum_{j \in S_k} \left[  \nabla f_j(\phi^{k-1}_j) - \frac{1}{m} \sum_{i = 1}^{m }  \nabla f_i (\phi_i^{k-1}) \right]  \|^2 \right] \\
+\end{align*}
+
+\subsubsection{What To Do With $c\|x^k - x^* \|^2$}
+Leave it alone, it's nice
+
+
+
+\subsubsection{What To Do With The Expecatation}
+
+\begin{align*}
+	& \mathbb{E} \left[  \|\frac{1}{s_k} \sum_{j \in S_k} \left[  \nabla f_j(\phi_j^{k}) \right]- \frac{ \beta_k }{s_k} \sum_{j \in S_k} \left[  \nabla f_j(\phi^{k-1}_j) - \frac{1}{m} \sum_{i = 1}^{m }  \nabla f_i (\phi_i^{k-1}) \right]  \|^2 \right] \\
+	\leq  & (1+\xi^{-1})\mathbb{E}   \|  - \frac{ \beta_k }{s_k} \sum_{j \in S_k}  \nabla f_j(\phi^{k-1}_j) + \frac{ 1}{s_k} \sum_{j \in S_k}  \nabla f_j(x^*)\|^2 \\
+&+ (1+\xi) \mathbb{E} \| \frac{1}{s_k} \sum_{j \in S_k}  \nabla f_j(\phi_j^{k}) - \frac{ 1 }{s_k} \sum_{j \in S_k}  \nabla f_j(x^*)\|^2  - \xi\|  \nabla F (x^k) \|^2  
+	\end{align*}
+	
+	Furthermore, by strong convexity of F, we have
+	\begin{equation}
+		 - ||\nabla F(x^k)||_2^2  \leq -2\mu (F(x^k) - F(x^*))
+	\end{equation}
+
+		\subsubsection{What To Do With $-2c \alpha  (x^k - x^* )^T ( F'(x^k))$ SAGA - LIKE}
+		\begin{align*}
+			\langle \nabla F(x^k), x^*- x^k \rangle &\leq \frac{L - \mu}{L}( F(x^*)-F(x^k)) - \frac{\mu}{2}\|x^* - x^k\|^2\\
+			&- \frac{1}{2 L }\mathbb{E} \| \frac{1}{s_k} \sum_{j \in S_k}   \nabla f_j(x^k) -\frac{1}{s_k} \sum_{j \in S_k}   \nabla f_j(x^*) \|^2 \\
+			-2c \alpha  (x^k - x^* )^T ( F'(x^k)) &\leq \frac{2c \alpha(L - \mu)}{L}( F(x^*)-F(x^k))  - c \alpha \mu \|x^* - x^k\|^2 \\
+			&-\frac{c \alpha}{L }\mathbb{E} \| \frac{1}{s_k} \sum_{j \in S_k}   \nabla f_j(x^k) -\frac{1}{s_k} \sum_{j \in S_k}   \nabla f_j(x^*) \|^2 \\
+		\end{align*}
+		
+	
+	\subsubsection{Combine all}
+
+	\begin{align*}
+		&\mathbb{E} c \|x^{k+1} - x^* \|^2  \\
+		\leq  & c\|x^k - x^* \|^2 \\
+		&  +\frac{2c \alpha(L - \mu)}{L}( F(x^*)-F(x^k))  \\
+		&- c \alpha \mu \|x^* - x^k\|^2\\
+		&- \frac{c \alpha}{L }\mathbb{E} \| \frac{1}{s_k} \sum_{j \in S_k}   \nabla f_j(x^k) -\frac{1}{s_k} \sum_{j \in S_k}   \nabla f_j(x^*) \|^2\\
+		&+(1+\xi^{-1})c \alpha^2\mathbb{E}   \|  - \frac{ \beta_k }{s_k} \sum_{j \in S_k}  \nabla f_j(\phi^{k-1}_j) + \frac{ 1}{s_k} \sum_{j \in S_k}  \nabla f_j(x^*)\|^2 \\
+	&+ (1+\xi)c \alpha^2 \mathbb{E} \| \frac{1}{s_k} \sum_{j \in S_k}  \nabla f_j(\phi_j^{k}) - \frac{ 1 }{s_k} \sum_{j \in S_k}  \nabla f_j(x^*)\|^2  \\
+	&- 2 \xi c \alpha^2 \mu (F(x^k) - F(x^*))\\
+	=  &( c-c \alpha \mu)\|x^k - x^* \|^2 \\
+		&+ ((1+\xi)c \alpha^2 - \frac{c \alpha }{L})\mathbb{E} \| \frac{1}{s_k} \sum_{j \in S_k}   \nabla f_j(x^k) -\frac{1}{s_k} \sum_{j \in S_k}   \nabla f_j(x^*) \|^2\\
+		&+(1+\xi^{-1})c \alpha^2\mathbb{E}   \|  - \frac{ \beta_k }{s_k} \sum_{j \in S_k}  \nabla f_j(\phi^{k-1}_j) + \frac{ 1}{s_k} \sum_{j \in S_k}  \nabla f_j(x^*)\|^2 \\
+	&+( \frac{2c \alpha(L - \mu)}{L}- 2 \xi c \alpha^2 \mu) (F(x^k) - F(x^*))
+		\end{align*}
+		
+		\subsubsection{Do Lyapunov Stuff}
+		
+			\begin{align*}
+				&\mathbb{E}\left[ T^{k+1} \right] - \left(1-\frac{1}{\kappa} \right) T^k \\
+				\leq  &( \frac{1}{\kappa}c-c \alpha \mu)\|x^k - x^* \|^2 \\
+		&+ ((1+\xi)c \alpha^2 - \frac{c \alpha }{L})\mathbb{E} \| \frac{1}{s_k} \sum_{j \in S_k}   \nabla f_j(x^k) -\frac{1}{s_k} \sum_{j \in S_k}   \nabla f_j(x^*) \|^2\\
+		&+(1+\xi^{-1})c \alpha^2\mathbb{E}   \|  - \frac{ \beta_k }{s_k} \sum_{j \in S_k}  \nabla f_j(\phi^{k-1}_j) + \frac{ 1}{s_k} \sum_{j \in S_k}  \nabla f_j(x^*)\|^2 \\
+	&+( -\frac{2c \alpha(L - \mu)}{L}- 2 \xi c \alpha^2 \mu) (F(x^k) - F(x^*))
+				\end{align*}
+		
+		If we follow SAGA proof, first two are fine, the third NEEDS a negative term, and the fourth might acquire a positive term along the way. 
+		
+		% So need a function $G$ that gives
+		% \begin{equation}
+		% 	\mathbb{E}\left[ G^{k+1} \right] - \left(1-\frac{1}{\kappa} \right) G^k  \leq  -d \mathbb{E}   \|  - \frac{ \beta_k }{s_k} \sum_{j \in S_k}  \nabla f_j(\phi^{k-1}_j) + \frac{ 1}{s_k} \sum_{j \in S_k}  \nabla f_j(x^*)\|^2
+		% \end{equation}
+		% for some $d>0$.
+		
+		\subsubsection{Attempt to bound $\mathbb{E}   \|  - \frac{ \beta_k }{s_k} \sum_{j \in S_k}  \nabla f_j(\phi^{k-1}_j) + \frac{ 1}{s_k} \sum_{j \in S_k}  \nabla f_j(x^*)\|^2 $}
+		 
+		Consider the choices $\beta_k=1$ and $\beta_k=0$.
+		
+		For $\beta_k=1$, we have 
+		\begin{equation}
+			\mathbb{E} \| \frac{1 }{s_k} \sum_{j \in S_k}  \nabla f_j(x^*) -\frac{1 }{s_k} \sum_{j \in S_k}  \nabla f_j(\phi^{k-1}_j)\|^2  \leq 2L(\frac{1}{m}\sum_{i =1}^{m}  f_i(\phi_i^{k-1})   - F(x^*)  -  \langle \frac{1 }{m} \sum_{i =1}^{m}   f'_i(x^*), \phi_i^{k-1} - x^*\rangle)
+		\end{equation}
+		
+		For $\beta_k=0$, we have 
+		\begin{equation}
+			\mathbb{E} \| \frac{1 }{s_k} \sum_{j \in S_k}  \nabla f_j(x^*) \|^2 \leq 2L(  F(x^*)  -\frac{1}{m}\sum_{i =1}^{m}  f_i(x_i^*))
+		\end{equation}
+		
+		\subsubsection{Assume $\beta_k=1$}
+		
+				\begin{align*}
+					&\mathbb{E}\left[ T^{k+1} \right] - \left(1-\frac{1}{\kappa} \right) T^k \\
+					\leq  &( \frac{1}{\kappa}c-c \alpha \mu)\|x^k - x^* \|^2 \\
+			&+ ((1+\xi)c \alpha^2 - \frac{c \alpha }{L})\mathbb{E} \| \frac{1}{s_k} \sum_{j \in S_k}   \nabla f_j(x^k) -\frac{1}{s_k} \sum_{j \in S_k}   \nabla f_j(x^*) \|^2\\
+			&+(1+\xi^{-1})c \alpha^2 2L(\frac{1}{m}\sum_{i =1}^{m}  f_i(\phi_i^{k-1})   - F(x^*)  -  \langle \frac{1 }{m} \sum_{i =1}^{m}   f'_i(x^*), \phi_i^{k-1} - x^*\rangle)\\
+		&+( -\frac{2c \alpha(L - \mu)}{L}- 2 \xi c \alpha^2 \mu) (F(x^k) - F(x^*))
+					\end{align*}
+		
+		
+		This is for $T = \|x^k-x^*\|^2$. This is clearly not enough, since the third term cannot be made negative! Cancel it out by adding
+		
+		\begin{equation}
+			 \frac{1}{m} \sum_{i =1}^{m} f_i(\phi_i^{k-1}) - F(x^*) - \frac{1}{m}  \sum_{i =1}^{m} \langle f'_i(x^*), \phi_i^{k-1} - x^*\rangle 
+		\end{equation}
+		To the Lyapunov function. 
+
+		For the first term,
+		\begin{align*}
+		\mathbb{E} \left[ \frac{1}{m} \sum_{i =1}^{m} f_i(\phi_i^{k}) \right] & =\frac{1}{m} \sum_{i =1}^{m} \mathbb{E} \left[ f_i(\phi_i^{k}) \right] \\
+		& = \frac{1}{m} \sum_{i =1}^{m} \left[ \frac{s_k}{m}  f_i(x^k) + \left(1 - \frac{s_k}{m} \right ) f_i(\phi_i^{k-1}) \right]\\
+		& = \frac{s_k}{m}  F(x^k) +\frac{1}{m}  \left(1 - \frac{s_k}{m} \right )\sum_{i =1}^{m} \left[  f_i(\phi_i^{k-1}) \right]\\
+		\end{align*}
+
+		For the second term, 
+		\begin{align*}
+		\mathbb{E} \left[  -  \frac{1}{m}  \sum_{i =1}^{m} \langle f'_i(x^*), \phi_i^{k} - x^*\rangle \right] &= -  \frac{1}{m}  \sum_{i =1}^{m} \mathbb{E} \left[  \langle f'_i(x^*), \phi_i^{k} - x^*\rangle \right] \\
+		&=  -\frac{1}{m}  \sum_{i =1}^{m} \left[  \frac{s_k}{m}  \langle f'_i(x^*), x^k - x^*\rangle  +  \left(1 - \frac{s_k}{m} \right )  \langle f'_i(x^*), \phi_i^{k-1} - x^*\rangle \right] \\
+		&=   -\frac{s_k}{m}  \langle F'(x^*), x^k - x^*\rangle  -\frac{1}{m}\left(1 - \frac{s_k}{m} \right )   \sum_{i =1}^{m} \left[   \langle f'_i(x^*), \phi_i^{k-1} - x^*\rangle \right] \\
+		\end{align*}
+		
+		
+		So, combining all, we have 
+				\begin{align*}
+					&\mathbb{E}\left[ T^{k+1} \right] - \left(1-\frac{1}{\kappa} \right) T^k \\
+					\leq  &( \frac{1}{\kappa}c-c \alpha \mu)\|x^k - x^* \|^2 \\
+			&+ ((1+\xi)c \alpha^2 - \frac{c \alpha }{L})\mathbb{E} \| \frac{1}{s_k} \sum_{j \in S_k}   \nabla f_j(x^k) -\frac{1}{s_k} \sum_{j \in S_k}   \nabla f_j(x^*) \|^2\\
+			&+(1+\xi^{-1})c \alpha^2 2L(\frac{1}{m}\sum_{i =1}^{m}  f_i(\phi_i^{k-1})   - F(x^*)  -  \langle \frac{1 }{m} \sum_{i =1}^{m}   f'_i(x^*), \phi_i^{k-1} - x^*\rangle)\\
+		&+( -\frac{2c \alpha(L - \mu)}{L}- 2 \xi c \alpha^2 \mu) (F(x^k) - F(x^*))\\
+		&+\frac{s_k}{m}  F(x^k) + \left(1 - \frac{s_k}{m} \right )\frac{1}{m} \sum_{i =1}^{m} \left[  f_i(\phi_i^{k-1}) \right] \\		
+		&-F(x^*)\\
+		& -\frac{s_k}{m}  \langle F'(x^*), x^k - x^*\rangle  -\left(1 - \frac{s_k}{m} \right ) \frac{1}{m}  \sum_{i =1}^{m} \left[   \langle f'_i(x^*), \phi_i^{k-1} - x^*\rangle \right] \\
+		&-  \left(1-\frac{1}{\kappa} \right)( \frac{1}{m} \sum_{i =1}^{m} f_i(\phi_i^{k-1}) - F(x^*) - \frac{1}{m}  \sum_{i =1}^{m} \langle f'_i(x^*), \phi_i^{k-1} - x^*\rangle )	\\
+		= &( \frac{1}{\kappa}c-c \alpha \mu)\|x^k - x^* \|^2 \\
+			&+ ((1+\xi)c \alpha^2 - \frac{c \alpha }{L})\mathbb{E} \| \frac{1}{s_k} \sum_{j \in S_k}   \nabla f_j(x^k) -\frac{1}{s_k} \sum_{j \in S_k}   \nabla f_j(x^*) \|^2\\
+			&+((1+\xi^{-1})c \alpha^2 2L+\frac{1}{\kappa}- \frac{s_k}{m})(\frac{1}{m}\sum_{i =1}^{m}  f_i(\phi_i^{k-1})   - F(x^*)  -  \langle \frac{1 }{m} \sum_{i =1}^{m}   f'_i(x^*), \phi_i^{k-1} - x^*\rangle)\\
+		&+(\frac{s_k}{m} -\frac{2c \alpha(L - \mu)}{L}- 2 \xi c \alpha^2 \mu) (F(x^k) - F(x^*))\\
+	\end{align*}
+		
+		We want $\frac{1}{\kappa}$ to be as BIG as possible. But the constraints are 
+		\begin{align*}
+			 \frac{1}{\kappa}- \alpha \mu &\leq 0 \\
+			(1+\xi)\alpha - \frac{1 }{L}  &\leq 0 \\
+			(1+\xi^{-1})c \alpha^2 2L+\frac{1}{\kappa}- \frac{s_k}{m}&\leq 0 \\
+		    \frac{s_k}{m} -\frac{2c \alpha(L - \mu)}{L}- 2 \xi c \alpha^2 \mu &\leq 0 \\
+		\end{align*}
+		
+		% Let $\alpha = \frac{2}{\frac{m}{s_k}\mu+L}$, $\frac{1}{\kappa} = \frac{2 \mu}{ \frac{m}{s_k}\mu+L}$.to make this as big as possible, set $s_k = m$.
+	%
+	% 	Furthermore, $\xi =\frac{\mu \frac{m}{s_k}-L}{2 L } $. The first two constraints are satisfied with equality. Plug in the values into the last two constraints,
+	% 	\begin{align*}
+	% 		(1+(\frac{\mu \frac{m}{s_k}-L}{2 L })^{-1})c ( \frac{2}{\frac{m}{s_k}\mu+L})^2 2L+\frac{2 \mu}{ \frac{m}{s_k}\mu+L}- \frac{s_k}{m}&\leq 0 \\
+	% 	    \frac{s_k}{m} -\frac{2c  \frac{2}{\frac{m}{s_k}\mu+L}(L - \mu)}{L}- 2 (\frac{\mu \frac{m}{s_k}-L}{2 L }) c( \frac{2}{\frac{m}{s_k}\mu+L})^2 \mu &\leq 0 \\
+	% 	\end{align*}
+	%
+	% 	Rewriting, we get
+	% 	\begin{align*}
+	% 			&c \leq \frac{ \frac{s_k}{m}-\frac{2 \mu}{ \frac{m}{s_k}\mu+L}}{(1+(\frac{\mu \frac{m}{s_k}-L}{2 L })^{-1})( \frac{2}{\frac{m}{s_k}\mu+L})^2 2L} \\
+	% 	   &\frac{ \frac{s_k}{m}}{(\frac{2  \frac{2}{\frac{m}{s_k}\mu+L}(L - \mu)}{L}+ 2 (\frac{\mu \frac{m}{s_k}-L}{2 L }) ( \frac{2}{\frac{m}{s_k}\mu+L})^2 \mu ) } \leq c\\
+	% 	\end{align*}
+		
+		
+		Let $\alpha = \frac{r}{(\frac{m}{s_k}\mu+L)}$, $\frac{1}{\kappa} = \frac{r \mu}{( \frac{m}{s_k}\mu+L)}$.to make this as big as possible, set $s_k = m$.
+		
+		Furthermore, $\xi =\frac{\mu \frac{m}{s_k}+(1-r)L}{r L } $. The first two constraints are satisfied with equality. Plug in the values into the last two constraints, 
+		
+			\begin{align*}
+			c\leq &\frac{\frac{s_k}{m}- \frac{r \mu}{( \frac{m}{s_k}\mu+L)}}{(1+\frac{rL}{ \mu \frac{m}{s_k}+(1-r)L } ) ( \frac{r}{\frac{m}{s_k}\mu+L})^2 2L} \\
+			=&\frac{( m \mu-L s_k (r-1) )(L s_k-m \mu (r-1))}{2 L m r^2 s_k}
+			\end{align*}
+	
+		\begin{align*}
+		c \geq &  \frac{\frac{s_k}{m}}{\frac{2 \frac{r}{(\frac{m}{s_k}\mu+L)}(L - \mu)}{L}+ 2 \frac{\mu \frac{m}{s_k}+(1-r)L}{r L } (\frac{r}{(\frac{m}{s_k}\mu+L)})^2 \mu }\\
+		 =& \frac{(L s_k + m \mu )^2}{2 m r(L s_k + (m - r s_k)\mu)}\\
+		\end{align*}
+		
+		
+		A special case considered in SAGA is $r=1/2$. Let us try that!
+		
+		We have that $\alpha = \frac{1/2}{\frac{m}{s_k}\mu+L}$, $\frac{1}{\kappa} = \frac{1/2 \mu}{ \frac{m}{s_k}\mu+L}=\frac{1}{2( \frac{m}{s_k}+L/\mu)}$
+		
+		Furthermore, $\xi =\frac{\mu \frac{m}{s_k}+1/2L}{1/2 L }  = \frac{2 \mu \frac{m}{s_k}+L}{ L }$. The constraints on $c$ are automatically satisfied in this case for any choice of $\mu$, $L$, $m$ and $s_k$. $c$ can take either extreme value. 
+		
+		
+		\newpage
+		
+		
+		Note that if we try to push with $r=1$, THE INEQUALITIES ARE INCONSISTENT 
+		
+		Let $\alpha = \frac{1}{\frac{m}{s_k}\mu+L}$, $\frac{1}{\kappa} = \frac{ \mu}{ \frac{m}{s_k}\mu+L}$
+		
+		Furthermore, $\xi =\frac{m}{s_k}\frac{\mu}{L } $.
+		
+		We must use r=1/2 :(
+		
+		
+		
+				%
+		% So, either first or third constraints are tight. Assume the first one is. Then,
+		% \begin{equation}
+		% 	 \frac{1}{\kappa}= \alpha \mu
+		% \end{equation}
+		% But we want the rate in terms of $\mu$, $L$, $s_k$, $m$, not in terms of $\alpha$. We want $\alpha$ to be as big as possible and satisfy these constraints
+		%
+		% So we get
+		% \begin{align*}
+		% 	(1+\xi)\alpha - \frac{1 }{L}  &\leq 0 \\
+		% 	(1+\xi^{-1})c \alpha^2 2L+\alpha \mu- \frac{s_k}{m}&\leq 0 \\
+		%     \frac{s_k}{m} -\frac{2c \alpha(L - \mu)}{L}- 2 \xi c \alpha^2 \mu &\leq 0 \\
+		% \end{align*}
+		%
+		% Assume the first constraint is tight this time. So $(1+\xi)\alpha - \frac{1 }{L}  =0$ or $\xi = \frac{1-\alpha L }{\alpha L} $ or $1+\xi^{-1} =\frac{1}{1-\alpha L}  $
+		% \begin{align*}
+		% 	(1+\xi^{-1})c \alpha^2 2L+\alpha \mu- \frac{s_k}{m}&\leq 0 \\
+		%     \frac{s_k}{m} -\frac{2c \alpha(L - \mu)}{L}- 2 \xi c \alpha^2 \mu &\leq 0 \\
+		% \end{align*}
+		%
+		%
+		
+		
+
+			\subsubsection{What To Do With $-2c \alpha  (x^k - x^* )^T ( F'(x^k))$}
+
+
+			Another approach, assuming $\mu$-strong convexity, and $L$-Lipschitz continuous gradients for each $\frac{1}{s_k} \sum_{j \in  s_k} f_j$!
+			\begin{align*}
+			(\frac{1}{s_k} \sum_{j \in  s_k}\nabla f_j(x^k)-\frac{1}{s_k} \sum_{j \in  s_k} \nabla f_j(x^*))^T (x^k-x^*) \geq& \frac{\mu L}{\mu+L}||x^k-x^*||_2^2 + \frac{1}{\mu+L} ||\frac{1}{s_k} \sum_{j \in  s_k} \nabla f_j(x^k)-\frac{1}{s_k} \sum_{j \in  s_k} \nabla f_j(x^*)||_2^2
+			\end{align*}
+
+			Summing over all possible permutations, and averaging, we get
+			\begin{align*}
+			\frac{s_k! (m-s_k)!}{m!} \cdots \\
+			 \nabla F(x^k)^T (x^k-x^*) \geq& \frac{\mu L}{\mu+L}||x^k-x^*||_2^2 + \frac{1}{\mu+L} \mathbb{E} \| \frac{1}{s_k} \sum_{j \in S_k}   \nabla f_j(x^k) -\frac{1}{s_k} \sum_{j \in S_k}   \nabla f_j(x^*) \|^2  \\
+			 -2c \alpha \nabla F(x^k)^T (x^k-x^*) \leq& \frac{-2c \alpha \mu L}{\mu+L}||x^k-x^*||_2^2 + \frac{-2c \alpha }{\mu+L}\mathbb{E} \| \frac{1}{s_k} \sum_{j \in S_k}   \nabla f_j(x^k) -\frac{1}{s_k} \sum_{j \in S_k}   \nabla f_j(x^*) \|^2 \\
+			\end{align*}
+	
+			\subsubsection{Combine all}
+
+			\begin{align*}
+				&\mathbb{E} c \|x^{k+1} - x^* \|^2  \\
+				\leq  & c\|x^k - x^* \|^2 \\
+				& -\frac{2c \alpha \mu L}{\mu+L}||x^k-x^*||_2^2 \\
+				&+ \frac{-2c \alpha }{\mu+L}\mathbb{E} \| \frac{1}{s_k} \sum_{j \in S_k}   \nabla f_j(x^k) -\frac{1}{s_k} \sum_{j \in S_k}   \nabla f_j(x^*) \|^2\\
+				&+(1+\xi^{-1})c \alpha^2\mathbb{E}   \|  - \frac{ \beta_k }{s_k} \sum_{j \in S_k}  \nabla f_j(\phi^{k-1}_j) + \frac{ 1}{s_k} \sum_{j \in S_k}  \nabla f_j(x^*)\|^2 \\
+			&+ (1+\xi)c \alpha^2 \mathbb{E} \| \frac{1}{s_k} \sum_{j \in S_k}  \nabla f_j(\phi_j^{k}) - \frac{ 1 }{s_k} \sum_{j \in S_k}  \nabla f_j(x^*)\|^2  \\
+			&- 2 \xi c \alpha^2 \mu (F(x^k) - F(x^*))\\
+			=  &( c-\frac{2c \alpha \mu L}{\mu+L})\|x^k - x^* \|^2 \\
+				&+ ((1+\xi)c \alpha^2 - \frac{2c \alpha }{\mu+L})\mathbb{E} \| \frac{1}{s_k} \sum_{j \in S_k}   \nabla f_j(x^k) -\frac{1}{s_k} \sum_{j \in S_k}   \nabla f_j(x^*) \|^2\\
+				&+(1+\xi^{-1})c \alpha^2\mathbb{E}   \|  - \frac{ \beta_k }{s_k} \sum_{j \in S_k}  \nabla f_j(\phi^{k-1}_j) + \frac{ 1}{s_k} \sum_{j \in S_k}  \nabla f_j(x^*)\|^2 \\
+			&- 2 \xi c \alpha^2 \mu (F(x^k) - F(x^*))
+				\end{align*}
+		
+				\subsubsection{Doing the Lyapunov stuff}
+		
+				\begin{align*}
+					&\mathbb{E}\left[ T^{k+1} \right] - \left(1-\frac{1}{\kappa} \right) T^k \\
+					\leq  &(\frac{1}{\kappa} c-\frac{2c \alpha \mu L}{\mu+L})||x^k-x^*||_2^2 \\
+				&+ ((1+\xi)c \alpha^2 - \frac{2c \alpha }{\mu+L})\mathbb{E} \| \frac{1}{s_k} \sum_{j \in S_k}   \nabla f_j(x^k) -\frac{1}{s_k} \sum_{j \in S_k}   \nabla f_j(x^*) \|^2\\
+				&+(1+\xi^{-1})c \alpha^2\mathbb{E}   \|  - \frac{ \beta_k }{s_k} \sum_{j \in S_k}  \nabla f_j(\phi^{k-1}_j) + \frac{ 1}{s_k} \sum_{j \in S_k}  \nabla f_j(x^*)\|^2 \\
+			&- 2 \xi c \alpha^2 \mu (F(x^k) - F(x^*))
+					\end{align*}
+			
+				Therefore, we need a Lyapunov function in which this stuff gets cancelled? 
+		
+		
+				For $\beta_k=1$, we have 
+				\begin{equation}
+					\mathbb{E} \| \frac{1 }{s_k} \sum_{j \in S_k}  \nabla f_j(x^*) -\frac{1 }{s_k} \sum_{j \in S_k}  \nabla f_j(\phi^{k-1}_j)\|^2  \leq 2L(\frac{1}{m}\sum_{i =1}^{m}  f_i(\phi_i^{k-1})   - F(x^*)  -  \langle \frac{1 }{m} \sum_{i =1}^{m}   f'_i(x^*), \phi_i^{k-1} - x^*\rangle)
+				\end{equation}
+		
+		
+					\begin{align*}
+						&\mathbb{E}\left[ T^{k+1} \right] - \left(1-\frac{1}{\kappa} \right) T^k \\
+						\leq  &(\frac{1}{\kappa} c-\frac{2c \alpha \mu L}{\mu+L})||x^k-x^*||_2^2 \\
+					&+ ((1+\xi)c \alpha^2 - \frac{2c \alpha }{\mu+L})\mathbb{E} \| \frac{1}{s_k} \sum_{j \in S_k}   \nabla f_j(x^k) -\frac{1}{s_k} \sum_{j \in S_k}   \nabla f_j(x^*) \|^2\\
+					&+(1+\xi^{-1})c \alpha^22L(\frac{1}{m}\sum_{i =1}^{m}  f_i(\phi_i^{k-1})   - F(x^*)  -  \langle \frac{1 }{m} \sum_{i =1}^{m}   f'_i(x^*), \phi_i^{k-1} - x^*\rangle) \\
+				&- 2 \xi c \alpha^2 \mu (F(x^k) - F(x^*))
+						\end{align*}
+		
+				This is for $T = \|x^k-x^*\|^2$. This is clearly not enough, since the third term cannot be made negative! Cancel it out by adding
+		
+				\begin{equation}
+					 \frac{1}{m} \sum_{i =1}^{m} f_i(\phi_i^{k-1}) - F(x^*) - \frac{1}{m}  \sum_{i =1}^{m} \langle f'_i(x^*), \phi_i^{k-1} - x^*\rangle 
+				\end{equation}
+				To the Lyapunov function. 
+
+				For the first term,
+				\begin{align*}
+				\mathbb{E} \left[ \frac{1}{m} \sum_{i =1}^{m} f_i(\phi_i^{k}) \right] & =\frac{1}{m} \sum_{i =1}^{m} \mathbb{E} \left[ f_i(\phi_i^{k}) \right] \\
+				& = \frac{1}{m} \sum_{i =1}^{m} \left[ \frac{s_k}{m}  f_i(x^k) + \left(1 - \frac{s_k}{m} \right ) f_i(\phi_i^{k-1}) \right]\\
+				& = \frac{s_k}{m}  F(x^k) + \left(1 - \frac{s_k}{m} \right )\frac{1}{m} \sum_{i =1}^{m} \left[  f_i(\phi_i^{k-1}) \right]\\
+				\end{align*}
+
+				For the second term, 
+				\begin{align*}
+				\mathbb{E} \left[  -  \frac{1}{m}  \sum_{i =1}^{m} \langle f'_i(x^*), \phi_i^{k} - x^*\rangle \right] &= -  \frac{1}{m}  \sum_{i =1}^{m} \mathbb{E} \left[  \langle f'_i(x^*), \phi_i^{k} - x^*\rangle \right] \\
+				&=  -\frac{1}{m}  \sum_{i =1}^{m} \left[  \frac{s_k}{m}  \langle f'_i(x^*), x^k - x^*\rangle  +  \left(1 - \frac{s_k}{m} \right )  \langle f'_i(x^*), \phi_i^{k-1} - x^*\rangle \right] \\
+				&=    -\left(1 - \frac{s_k}{m} \right ) \frac{1}{m}  \sum_{i =1}^{m} \left[   \langle f'_i(x^*), \phi_i^{k-1} - x^*\rangle \right] \\
+				\end{align*}
+		
+		
+				So, combining all, we have
+		
+		
+					\begin{align*}
+						&\mathbb{E}\left[ T^{k+1} \right] - \left(1-\frac{1}{\kappa} \right) T^k \\
+						\leq  &(\frac{1}{\kappa} c-\frac{2c \alpha \mu L}{\mu+L})||x^k-x^*||_2^2 \\
+					&+ ((1+\xi)c \alpha^2 - \frac{2c \alpha }{\mu+L})\mathbb{E} \| \frac{1}{s_k} \sum_{j \in S_k}   \nabla f_j(x^k) -\frac{1}{s_k} \sum_{j \in S_k}   \nabla f_j(x^*) \|^2\\
+					&+(1+\xi^{-1})c \alpha^22L(\frac{1}{m}\sum_{i =1}^{m}  f_i(\phi_i^{k-1})   - F(x^*)  -  \langle \frac{1 }{m} \sum_{i =1}^{m}   f'_i(x^*), \phi_i^{k-1} - x^*\rangle) \\
+				&- 2 \xi c \alpha^2 \mu (F(x^k) - F(x^*)) \\
+				& +\frac{s_k}{m}  F(x^k) + \left(1 - \frac{s_k}{m} \right )\frac{1}{m} \sum_{i =1}^{m} \left[  f_i(\phi_i^{k-1}) \right]\\
+				& - F(x^*) \\
+				&   -\left(1 - \frac{s_k}{m} \right ) \frac{1}{m}  \sum_{i =1}^{m} \left[   \langle f'_i(x^*), \phi_i^{k-1} - x^*\rangle \right] \\
+				&- \left(1-\frac{1}{\kappa} \right) (\frac{1}{m} \sum_{i =1}^{m} f_i(\phi_i^{k-1}) - F(x^*) - \frac{1}{m}  \sum_{i =1}^{m} \langle f'_i(x^*), \phi_i^{k-1} - x^*\rangle )\\
+				=&(\frac{1}{\kappa} c-\frac{2c \alpha \mu L}{\mu+L})||x^k-x^*||_2^2 \\
+					&+ ((1+\xi)c \alpha^2 - \frac{2c \alpha }{\mu+L})\mathbb{E} \| \frac{1}{s_k} \sum_{j \in S_k}   \nabla f_j(x^k) -\frac{1}{s_k} \sum_{j \in S_k}   \nabla f_j(x^*) \|^2\\
+					&+((1+\xi^{-1})c \alpha^22L+\frac{1}{\kappa}- \frac{s_k}{m} )(\frac{1}{m}\sum_{i =1}^{m}  f_i(\phi_i^{k-1})   - F(x^*)  -  \langle \frac{1 }{m} \sum_{i =1}^{m}   f'_i(x^*), \phi_i^{k-1} - x^*\rangle) \\
+				&+(\frac{s_k}{m}- 2 \xi c \alpha^2 \mu) (F(x^k) - F(x^*)) \\
+						\end{align*}
+		
+		
+				So we need constants that satisfy 
+				\begin{align*}
+					&\frac{1}{\kappa} -\frac{2 \alpha \mu L}{\mu+L} \leq 0\\
+						&(1+\xi) \alpha - \frac{2 }{\mu+L} \leq 0\\
+						&(1+\xi^{-1})c \alpha^22L+\frac{1}{\kappa}- \frac{s_k}{m}  \leq 0\\
+					& \frac{s_k}{m}- 2 \xi c \alpha^2 \mu\leq 0\\
+					\end{align*}
+					
+					\subsubsection{Solution!!!}
+					
+					\begin{align*}
+						\xi &= \frac{2L}{\mu} \\
+						\alpha &= \frac{2}{(\mu +L)(2\frac{L}{\mu}+1)}\\
+						c &= \frac{s_k}{m}\frac{(L+\mu)^2(2L+\mu)^2}{16 L \mu^2} \\
+						\kappa &= \max \{ \frac{(L+\mu)^2(2L+\mu)}{2L\mu^2}  ,  \frac{m}{s_k}\frac{4L}{2L-\mu} \}
+					\end{align*}
+					
+					\subsubsection{Try a non-strongly convex case!!!}
+					
+					We will try to push this analysis with $\mu=0$ and $\kappa = \infty$
+				%
+				% Let us use values $\xi = 1 + 2\frac{\mu m }{L s_k}$, $\alpha = \frac{1}{(\mu+L)(1+\frac{\mu m }{L s_k} )}$, $\frac{1}{\kappa} =\frac{2 \mu L}{(\mu+L)^2(1+\frac{\mu m }{L s_k} )}$. The first two inequalities are trivially satisfied. For the last two,
+				% \begin{align*}
+				% 		&(1+\frac{1}{1 + 2\frac{\mu m }{L s_k}})c ( \frac{1}{(\mu+L)(1+\frac{\mu m }{L s_k} )})^2 2L+\frac{2 \mu L}{(\mu+L)^2(1+\frac{\mu m }{L s_k} )}- \frac{s_k}{m}  \leq 0\\
+				% 	& \frac{s_k}{m}- 2 ( 1 + 2\frac{\mu m }{L s_k})c  ( \frac{1}{(\mu+L)(1+\frac{\mu m }{L s_k} )})^2 \mu\leq 0\\
+				% 	\end{align*}
+				% \begin{equation}
+				% 		\frac{ \frac{s_k}{m}}{2 ( 1 + 2\frac{\mu m }{L s_k}) ( \frac{1}{(\mu+L)(1+\frac{\mu m }{L s_k} )})^2 \mu}\leq c \leq\frac{ \frac{s_k}{m} -\frac{2 \mu L}{(\mu+L)^2(1+\frac{\mu m }{L s_k} )} }{(1+\frac{1}{1 + 2\frac{\mu m }{L s_k}}) ( \frac{1}{(\mu+L)(1+\frac{\mu m }{L s_k} )})^2 2L}
+				% \end{equation}
+				%
+				% So need to have
+				% \begin{equation}
+				% 		\frac{ \frac{s_k}{m}}{2 ( 1 + 2\frac{\mu m }{L s_k}) \mu}\leq\frac{ \frac{s_k}{m} -\frac{2 \mu L}{(\mu+L)^2(1+\frac{\mu m }{L s_k} )} }{(1+\frac{1}{1 + 2\frac{\mu m }{L s_k}})  2L}
+				% \end{equation}
+				%
+				%
+				% \begin{equation}
+				% 		((1+\frac{1}{1 + 2\frac{\mu m }{L s_k}})  L) (\frac{s_k}{m})\leq(( 1 + 2\frac{\mu m }{L s_k}) \mu)(\frac{s_k}{m} -\frac{2 \mu L}{(\mu+L)^2(1+\frac{\mu m }{L s_k} )})
+				% \end{equation}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		\newpage
+		
+		
+		\newpage
+		
+		
+		\subsubsection{What To Do With The Expecatation - attempt 2}
+
+		\begin{align*}
+			& \mathbb{E} \left[  \|\frac{1}{s_k} \sum_{j \in S_k} \left[  \nabla f_j(\phi_j^{k}) \right]- \frac{ \beta_k }{s_k} \sum_{j \in S_k} \left[  \nabla f_j(\phi^{k-1}_j) - \frac{1}{m} \sum_{i = 1}^{m }  \nabla f_i (\phi_i^{k-1}) \right]  \|^2 \right] \\
+	=&  \mathbb{E} \left[  \| \frac{1}{s_k} \sum_{j \in S_k} \left[  \nabla f_j(\phi_j^{k}) \right] \|^2  \right] \\
+	&-  \mathbb{E} \left[ 2(\frac{1}{s_k} \sum_{j \in S_k} \left[  \nabla f_j(\phi_j^{k}) \right])^T(\frac{ \beta_k }{s_k} \sum_{j \in S_k} \left[  \nabla f_j(\phi^{k-1}_j) - \frac{1}{m} \sum_{i = 1}^{m }  \nabla f_i (\phi_i^{k-1}) \right]  ) \right]\\
+	&+  \mathbb{E} \left[ \|\frac{ \beta_k }{s_k} \sum_{j \in S_k} \left[  \nabla f_j(\phi^{k-1}_j) - \frac{1}{m} \sum_{i = 1}^{m }  \nabla f_i (\phi_i^{k-1}) \right]  \|^2 \right] \\
+	=&  \mathbb{E} \left[  \| \frac{1}{s_k} \sum_{j \in S_k} \left[  \nabla f_j(\phi_j^{k}) \right] \|^2  \right] \\
+	&-  \mathbb{E} \left[ 2(\frac{1}{s_k} \sum_{j \in S_k} \left[  \nabla f_j(\phi_j^{k}) \right])^T(\frac{ \beta_k }{s_k} \sum_{j \in S_k} \left[  \nabla f_j(\phi^{k-1}_j) - \frac{1}{m} \sum_{i = 1}^{m }  \nabla f_i (\phi_i^{k-1}) \right]  ) \right]\\
+	&+  \mathbb{E} \left[ \|\frac{ \beta_k }{s_k} \sum_{j \in S_k}  \nabla f_j(\phi^{k-1}_j)  \|^2 \right] \\
+	&-  \|\frac{ \beta_k }{s_k} \sum_{j \in S_k} \frac{1}{m} \sum_{i = 1}^{m }  \nabla f_i (\phi_i^{k-1})   \|^2
+			\end{align*}
+			
+
+				\subsubsection{What To Do With The Expecatation - attempt 3}
+
+				\begin{align*}
+					& \mathbb{E} \left[  \|\frac{1}{s_k} \sum_{j \in S_k} \left[  \nabla f_j(\phi_j^{k}) \right]- \frac{ \beta_k }{s_k} \sum_{j \in S_k} \left[  \nabla f_j(\phi^{k-1}_j) - \frac{1}{m} \sum_{i = 1}^{m }  \nabla f_i (\phi_i^{k-1}) \right]  \|^2 \right] \\
+			=&   \mathbb{E} \left[  \|\frac{1}{s_k} \sum_{j \in S_k} \left[  \nabla f_j(\phi_j^{k}) \right]- \frac{ \beta_k }{s_k} \sum_{j \in S_k} \left[  \nabla f_j(\phi^{k-1}_j) - \frac{1}{m} \sum_{i = 1}^{m }  \nabla f_i (\phi_i^{k-1}) \right] - \frac{ 1 }{s_k} \sum_{j \in S_k}  \nabla f_j(x^*) + \frac{ 1 }{s_k} \sum_{j \in S_k}  \nabla f_j(x^*)\|^2   \right] \\
+			\leq&   (1+\xi^{-1})\mathbb{E} \left[  \|\frac{1}{s_k} \sum_{j \in S_k} \left[  \nabla f_j(\phi_j^{k}) \right] - \frac{ 1 }{s_k} \sum_{j \in S_k}  \nabla f_j(x^*)\|^2   \right] \\
+			&+ (1+\xi)\mathbb{E} \left[  \|\frac{ \beta_k }{s_k} \sum_{j \in S_k} \left[  \nabla f_j(\phi^{k-1}_j) - \frac{1}{m} \sum_{i = 1}^{m }  \nabla f_i (\phi_i^{k-1}) \right] + \frac{ 1 }{s_k} \sum_{j \in S_k}  \nabla f_j(x^*)\|^2   \right]\\
+			\leq&   (1+\xi^{-1})\mathbb{E} \left[  \|\frac{1}{s_k} \sum_{j \in S_k} \left[  \nabla f_j(\phi_j^{k}) \right] - \frac{ 1 }{s_k} \sum_{j \in S_k}  \nabla f_j(x^*)\|^2   \right] \\
+			&+ (1+\xi)\mathbb{E} \left[  \|\frac{ \beta_k }{s_k} \sum_{j \in S_k}  \nabla f_j(\phi^{k-1}_j)   + \frac{ 1 }{s_k} \sum_{j \in S_k}  \nabla f_j(x^*)\|^2   \right]
+					\end{align*}
+\end{document}

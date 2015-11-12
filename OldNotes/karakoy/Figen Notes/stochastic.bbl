@@ -1,0 +1,22 @@
+\begin{thebibliography}{1}
+
+\bibitem{bottoulecun:2004}
+L.~Bottou and Y.~Le Cun.
+\newblock On-line learning for very large datasets, 2004.
+
+\bibitem{Bottou:2007}
+L{\'e}on Bottou and Olivier Bousquet.
+\newblock The tradeoffs of large scale learning.
+\newblock In John~C. Platt, Daphne Koller, Yoram Singer, and Sam~T. Roweis,
+  editors, {\em NIPS}. Curran Associates, Inc., 2007.
+
+\bibitem{murata:1998}
+Noboru Murata.
+\newblock A statistical study of on-line learning, 1998.
+
+\bibitem{nemirovski:2009}
+A.~Nemirovski, A.~Juditsky, G.~Lan, and A.~Shapiro.
+\newblock Robust stochastic approximation approach to stochastic programming.
+\newblock {\em {SIAM} J. on Optimization}, 19(4):1574--1609, 2009.
+
+\end{thebibliography}

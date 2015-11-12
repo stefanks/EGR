@@ -1,0 +1,623 @@
+\documentclass[12pt]{article} 
+\usepackage{amsmath,amsfonts,amssymb} 
+\usepackage[usenames,dvipsnames]{xcolor} 
+\usepackage{hyperref} 
+\usepackage{fullpage} 
+\usepackage{empheq} 
+\usepackage{pgfplots} 
+\usepackage{float}
+\usepackage{color}
+\usepackage{multirow}
+\usepackage{algorithm} 
+\usepackage{algorithmic}
+
+
+
+\usetikzlibrary{external}
+\tikzexternalize[prefix=paperOnImpFigures/,figure list=true] 
+
+\begin{document}
+
+\newcommand{\tr}{\mbox{tr}} 
+\newtheorem{theorem}{Theorem}[section] 
+\newtheorem{lemma}[theorem]{Lemma} 
+\newtheorem{proposition}[theorem]{Proposition} 
+\newtheorem{corollary}[theorem]{Corollary}
+
+\pgfplotsset{compat=newest} 
+\pgfplotsset{plot coordinates/math parser=false} 
+
+\begin{titlepage}
+	
+	\hrule 
+	\begin{center}
+		\large \textsc{On the Implementation of Stochastic Quasi-Newton Methods}\\
+	\end{center}
+	\hrule \normalsize
+	
+	\bigskip 
+	\bigskip
+	
+	\centering\today
+	
+	\bigskip 
+	\bigskip
+	
+	\tableofcontents 
+\end{titlepage}
+
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Small Batch Sizes Experiment}
+\label{sec:aoverk}
+
+\subsection{Parameters}
+We compare the relative performance of sgd and sqn with small batch sizes. For both methods stepsize is $\frac{a}{k^p}$ 
+\begin{itemize}
+	\item b is the gradient batch size 
+	\item a is the initial stepsize 
+	\item p is the power of k 
+	%\item PR is if doing Polyak-Ruppert averaging 
+\end{itemize}
+
+For sqn: 
+\begin{itemize}
+	\item L is periodicity of updating the QN matrix 
+	\item M is the memory 
+	\item bH is the hessian batch size 
+\end{itemize}
+
+\subsection{Work Computations}
+We compute work in the following way:
+
+For the sqn methods:
+\begin{itemize}
+	\item $b$ work per each iteration
+	\item $bH$ work every $L$ iterations
+	\item $4M$ work every iteration after the first hessian update happens
+\end{itemize}
+
+For the sgd methods:
+\begin{itemize}
+	\item $b$ work per each iteration 
+\end{itemize}
+
+
+
+\newpage
+
+\subsection{Yoram's problem}
+
+This is run for amount of work equivalent to SGD making 43 passes over the data. 
+
+\begin{figure}[H]
+\input{paperOnImpFigures/fig1.tikz}
+\caption{Test Function Value}
+\end{figure}
+
+\begin{figure}[H]
+\input{paperOnImpFigures/fig1iters.tikz}
+\caption{Test Function Value}
+\end{figure}
+\begin{figure}[H]
+\input{paperOnImpFigures/fig1itersL.tikz}
+\caption{Test Function Value}
+\end{figure}
+Initially sgd methods achieve better test function values, but after many passes over the data, the sqn methods start improving upon the sgd methods, in terms of work needed to reach good generalization errors. This is true for all batch sizes. It is not clear if we found the best possible batch size for either method, since the highest we tried, 50, seemed to be the best. 
+\newpage
+
+\subsection{Speech problem}
+This is run for amount of work equivalent to SGD making five passes over the data.
+
+\begin{figure}[H]
+\input{paperOnImpFigures/fig7.tikz}
+\caption{Test Function Value}
+\end{figure}
+
+\begin{figure}[H]
+\input{paperOnImpFigures/fig7iters.tikz}
+\caption{Test Function Value}
+\end{figure}
+\begin{figure}[H]
+\input{paperOnImpFigures/fig7itersL.tikz}
+\caption{Test Function Value}
+\end{figure}
+Five passes over the data is enough to show a very clear advantage of sqn over the gradient descent type methods, for all stepsizes. Again, there is no indication that the best batch size was found for sgd: the highest one tested - 100 - is a winner. For sqn, 50 is the best. 
+
+\newpage
+
+\subsection{RCV1 problem}
+This is run for amount of work equivalent to SGD making two passes over the data.
+
+\begin{figure}[H]
+\input{paperOnImpFigures/fig11.tikz}
+\caption{Test Function Value}
+\end{figure}
+\begin{figure}[H]
+\input{paperOnImpFigures/fig11iters.tikz}
+\caption{Test Function Value}
+\end{figure}
+\begin{figure}[H]
+\input{paperOnImpFigures/fig11itersL.tikz}
+\caption{Test Function Value}
+\end{figure}
+The picture here is very similar to the speech one. Sqn methods outperform sgd for all batch sizes. Best batch size for sgd might be higher than 50, but for sqn 10 is the best. 
+
+\subsection{What came up on the Monday, March 17th google+ meeting}
+
+The plots above show the TEST function values. Sammy mostly showed training (optimization) function values. 
+\begin{itemize}
+	\item For Yoram problem: data is split 70\% training, 30\% test. It seems to be possible to compute Generalization Error using the fact that we know the distribution from which all datapoints are generated. This needs to be tested.
+	\item For speech and RCV1: data is split 75\% training, 25\% test
+\end{itemize}
+
+Randomizing data:
+\begin{itemize}
+	\item How I randomized the data: Every time a sample is needed, a completely random sample of indices is selected. Using the matlab function {\tt randsample}.
+	\item How Sammy did it. Shuffles the data, and when all points have already been accessed, reshuffles again. 
+\end{itemize}
+
+Richard B's suggestions:
+\begin{itemize}
+	\item Show work plots on a lograrithmic scale
+	\item Find out why or whether increasing $M$ does not have a substantial effect on perferomance. Does the stochastic nature of the algorithms make the memory less or more significant?
+	\item Need to be able to tell people what parameters to use. Specifically, how to balance $bH$ and $L$. Test the effect of keeping the ratio $\frac{bH}{L}$ constant, while changing the acutal values. This would keep the amount of work per iteration constant. 
+\end{itemize}
+
+Some additional comments:
+\begin{itemize}
+	\item Constant steplenght issue. In AdaGrad, the steplength is constant. It still works, because of a similar trick to Bertsekas - the eigenvalues of the hessian approximation uniformly increase with iteration count. The Natural Newton paper uses $a/k$. The Bach-Moulines method uses a constant stepsize - but it is an averaging method. They also compare with averaged SGD with a constant steplength and AdaGrad witha constant steplength. 
+	\item Gauss-Newton discussion. 
+\end{itemize}
+
+\section{Experiment with a Constant Steplength}
+
+We want to understand whether the same conclusions from using $\frac{\alpha}{k}$ as the steplength are the same as with $\alpha$. I suggest running the same exact experiments as in the previous section, and only change a single parameter: the steplength strategy. Then we can compare the relative performance of sqn vs sgd with this new steplength strategy, and see whether we reach the same conclusion from section~\ref{sec:aoverk}. The conclusion was that after a short initial phase, the sgd methods perform consistently worse than the Quasi-Newton schemes. 
+
+% 
+% \subsection{Yoram's problem}
+% 
+% This is run for amount of work equivalent to SGD making 43 passes over the data. 
+% 
+% \begin{figure}[H]
+% \input{paperOnImpFigures/yoram-const.tikz}
+% \caption{Test Function Value}
+% \end{figure}
+% 
+% \begin{figure}[H]
+% \input{paperOnImpFigures/yoram-constIter.tikz}
+% \caption{Test Function Value}
+% \end{figure}
+% \begin{figure}[H]
+% \input{paperOnImpFigures/yoram-constIterL.tikz}
+% \caption{Test Function Value}
+% \end{figure}
+% \newpage
+% 
+% \subsection{Speech problem}
+% This is run for amount of work equivalent to SGD making five passes over the data.
+% 
+% \begin{figure}[H]
+% \input{paperOnImpFigures/const-speech.tikz}
+% \caption{Test Function Value}
+% \end{figure}
+% 
+% \begin{figure}[H]
+% \input{paperOnImpFigures/const-speechiter.tikz}
+% \caption{Test Function Value}
+% \end{figure}
+% \begin{figure}[H]
+% \input{paperOnImpFigures/const-speechiterL.tikz}
+% \caption{Test Function Value}
+% \end{figure}
+% 
+% \newpage
+% 
+% \subsection{RCV1 problem}
+% This is run for amount of work equivalent to SGD making two passes over the data.
+% 
+% \begin{figure}[H]
+% \input{paperOnImpFigures/figrcv1const.tikz}
+% \caption{Test Function Value}
+% \end{figure}
+% \begin{figure}[H]
+% \input{paperOnImpFigures/figrcv1constIter.tikz}
+% \caption{Test Function Value}
+% \end{figure}
+% \begin{figure}[H]
+% \input{paperOnImpFigures/figrcv1constIterL.tikz}
+% \caption{Test Function Value}
+% \end{figure}
+% 
+% 
+% \newpage
+% \subsection{Result Table}
+% 
+% In the following table we show the generalization function values for the two problems with the different stepsize strategies. On the first line of each cell we display the function value achieved (after work amount equivalent to the figures in the previous sections). The second line shows $a$, which is the initial stepsize. The best function values for each line are bold. The best for each problem are in blue. 
+% 
+% \begin{tabular}{|c|c|cc|cc|}
+% \hline
+% 	&&\multicolumn{2}{ |c| }{$a/k$}  &  \multicolumn{2}{ |c| }{$a$} \\
+% 	&& gg & sqn & gg & sqn \\
+% \hline
+% \multirow{10}{*}{Yoram} & gradient batch=1 & 0.33112 & 0.27869 & \textbf{0.025098} & 0.041343\\
+% & $a=$ & 0.25 & 0.25 & 0.015625 & 0.00097656\\
+% & gradient batch=2 & 0.20157 & 0.14361 & 0.027666 & \textbf{0.023134}\\
+% & $a=$ & 1 & 0.5 & 0.03125 & 0.00097656\\
+% & gradient batch=5 & 0.16883 & 0.097397 & \textbf{0.027306} & 0.027766\\
+% & $a=$ & 1 & 0.5 & 0.125 & 0.0039062\\
+% & gradient batch=10 & 0.12336 & 0.030233 & 0.025444 & \textbf{0.020283}\\
+% & $a=$ & 4 & 1 & 0.125 & 0.00097656\\
+% & gradient batch=50 & 0.079928 & \textcolor{blue}{\textbf{0.012097}} & 0.026655 & 0.017143\\
+% & $a=$ & 8 & 2 & 1 & 0.0078125\\
+% \hline
+% \multirow{10}{*}{Speech} & gradient batch=1 & 3.2753 & 1.9977 & \textbf{1.8441} & 2.0632\\
+% & $a=$ & 0.5 & 1 & 0.00097656 & 0.0019531\\
+% & gradient batch=2 & 3.2523 & 1.9336 & \textbf{1.8422} & 2.0085\\
+% & $a=$ & 0.5 & 2 & 0.0019531 & 0.0039062\\
+% & gradient batch=5 & 2.9073 & 1.8567 & \textbf{1.8396} & 1.9291\\
+% & $a=$ & 1 & 4 & 0.0039062 & 0.0078125\\
+% & gradient batch=10 & 2.755 & \textbf{1.8367} & 1.844 & 1.8872\\
+% & $a=$ & 2 & 4 & 0.0078125 & 0.0078125\\
+% & gradient batch=50 & 2.1842 & \textcolor{blue}{\textbf{1.8332}} & 1.8442 & 1.8409\\
+% & $a=$ & 8 & 16 & 0.03125 & 0.0078125\\
+% \hline
+% \multirow{10}{*}{RCV1}& gradient batch=1 & 0.28619 & 0.15758 & \textbf{0.13224} & 0.16153\\
+% & $a=$ & 2 & 4 & 0.0039062 & 0.00024414\\
+% & gradient batch=2 & 0.27395 & 0.14859 & \textbf{0.13264} & 0.15313\\
+% & $a=$ & 2 & 4 & 0.015625 & 0.00097656\\
+% & gradient batch=5 & 0.25892 & 0.14129 & \textcolor{blue}{\textbf{0.13179}} & 0.14647\\
+% & $a=$ & 2 & 2 & 0.03125 & 0.0019531\\
+% & gradient batch=10 & 0.23635 & \textbf{0.13523} & 0.13527 & 0.14129\\
+% & $a=$ & 4 & 2 & 0.0625 & 0.0019531\\
+% & gradient batch=50 & 0.20431 & \textbf{0.1329} & 0.13428 & 0.1349\\
+% & $a=$ & 8 & 4 & 0.25 & 0.0039062\\
+% \hline
+% \end{tabular}
+
+
+\section{td-idf RCV1}
+
+Reuters dataset from \url{http://www.cs.huji.ac.il/~shais/Reuters.html}.
+td-idf features, continuous.
+806791 training points, 6253 variables, very sparse.
+Much less variables that our RCV1, since Shai decided to use a subset of the words. 
+
+The objective function has the form 
+\begin{equation}
+	f(w;x,y) = \frac{1}{N} \sum_i \log \left( 1 + e^{-y_i(x_i^T w)}\right),
+\end{equation}
+
+
+\section{San Diego Plan}
+
+Show that SQN works well where a Hessian matrix is suggested to improve performance. 
+
+
+
+\section{Exact Experiments}
+
+Here we test the effect of using different choices for the matrix $H_k$ in the following iteration.
+\begin{equation}
+x_{k+1}= x_k - \frac{\alpha}{k} H_k g_k.
+\end{equation}
+
+I propose to run experiments using the following two-step plan:
+\begin{itemize}
+	\item Run exact versions of the algorithms we plan to develop. By exact I mean no vague approximation of the matrix, and using exact inversion (backslash in matlab). This will provide the following:
+			\begin{itemize}
+				\item Feasibility - we will know how well/poorly the algorithms perform in an idealized setting
+				\item Stepsizes - thse experiments will provide the necessary steplengths to use in the approximate ones
+			\end{itemize}
+	\item Run experiments with Hessian/Covariance/Gauss-Newton approximations using stepsizes from above
+\end{itemize}
+
+\subsection{Problem Tested}
+These experiments must be run on the randomly generated problems for two reasons
+\begin{itemize}
+	\item Dimensionality - huge matrices take a long time to be constructed and inverted
+	\item Analytic expressions for the expectation function, since know what exact distribution is used to generate the data. Known optimal solution ( the generalization error minimizer). Might or might not be useful
+\end{itemize}
+
+To remind, here is how the random problems are generated:
+\begin{enumerate}
+	\item 50 variables, 10000 total datapoints, binary logistic regression, cross-entropy error function. 
+	\item A random mean 0 "optimal solution" is generated from a Normal Distribution, and sparsified
+	\item A random mean 0 matrix of features is generated in the same manner
+	\item Labels are generated, by using sign of the optimal solution multiplied by the features matrix with additional noise added
+\end{enumerate}
+
+The objective function has the form 
+\begin{equation}
+	f(w;x,y) = \frac{1}{N} \sum_i \log \left( 1 + e^{-y_i(x_i^T w)}\right),
+\end{equation}
+where the labels $y_i \in \{0,1\}$.
+The gradient is given by
+\begin{equation}
+	\nabla f(w;x,y) = \frac{1}{N} \sum_i   \frac{-y_i}{1 + e^{y_i (x_i^T w)}}x_i .
+\end{equation}
+The hessian is 
+\begin{equation}
+	\nabla f(w;x,y) = \frac{1}{N} \sum_i x_i x_i^T \frac{y_i^2 e^{-y_i(x_i^T w)}}{(1 + e^{-y_i(x_i^T w)})^2}
+\end{equation}
+
+
+
+
+The 50 variable matrices can be inverted instantaneously. 
+
+\subsection{Methods}
+
+\begin{itemize}
+	\item Exact inverse hessian of the training function at $x_k$
+	\item Exact inverse hessian of the expectation at $x_k$
+	\item Exact inverse hessian of the training function at $x^*$
+	\item Exact inverse hessian of the expectation at $x^*$
+	\item An (almost) exact natural gradient suggested by Le Roux. The inexactness comes from the need to estimate the covariance matrix using the currently available data. It might be computable exactly, but I'm not sure how. See discussion below.
+\end{itemize}
+$x^*$ is the minimizer of the expected cost. The choices satisfy the common assumption that $H_k$ must converge to the inverse of the hessian of the expected risk at the optimum. 
+
+Using a Gauss-Newton matrix for the single layer problem at hand is identical to using the Hessian. See Schraudolph and Y. Bengio.
+  
+\subsubsection{Le Roux Natural Gradient Method}
+ 
+$\sigma^2$ is the covariance of the prior distribution on $g$, $m$ is the number of datapoints, $\hat{g}$ is the sample gradient. 
+
+The precise algorithm is as follows. We assume $C(\cdot)$ is the true covariance matrix of the gradients, and computable by 
+\begin{equation}
+	C(\theta) = \int_x \left( \frac{\partial L(\theta,x)}{\partial \theta}-g\right) \left(\frac{\partial L(\theta,x)}{\partial \theta}-g \right)^T p(x) dx
+\end{equation}
+
+\begin{algorithm}[H]
+\caption{Natural Gradient - Ideal version}
+\label{alg1}
+\begin{algorithmic}[1]
+\REQUIRE  $\alpha_k$, $C(\cdot)$, $\hat{g}(\cdot)$, $x^0$
+\STATE  $k=0$
+\WHILE{$x^k$ doesn't satisfy stopping condition}   
+\STATE $x^{k+1} = x^k - \alpha_k \left[ I +  \frac{C(x^k)}{m \sigma^2}\right]^{-1} \hat{g}(x^k)$
+\STATE $k=k+1$
+\ENDWHILE
+\end{algorithmic}
+\end{algorithm}
+
+The algorithm below requires an approximation to the covariance to be constructed at each iteration. 
+\begin{equation}
+	\hat{C(\theta)} = \frac{1}{m} \sum_i \left( \frac{\partial L(\theta,x_i)}{\partial \theta}-g\right) \left(\frac{\partial L(\theta,x_i)}{\partial \theta}-g \right)^T
+\end{equation}
+
+\begin{algorithm}[H]
+\caption{Natural Gradient - Inexact but implementable Version}
+\label{alg1}
+\begin{algorithmic}[1]
+\REQUIRE  $\alpha_k$, $\hat{C(\cdot)}$, $\hat{g}(\cdot)$, $x^0$
+\STATE  $k=0$
+\WHILE{$x^k$ doesn't satisfy stopping condition}   
+\STATE $x^{k+1} = x^k - \alpha_k \left[ I +  \frac{\hat{C}}{m \sigma^2}\right]^{-1} \hat{g}$
+\STATE $k=k+1$
+\ENDWHILE
+\end{algorithmic}
+\end{algorithm}
+
+For $\sigma^2$ we can use the suggested quantity $\| x^*-x^k\|^2_2$
+
+
+\subsubsection{Incremental GN}
+
+\begin{algorithm}[H]
+\caption{Incremental GN}
+\label{alg1}
+\begin{algorithmic}[1]
+\REQUIRE  $\eta>0$ $\delta \geq 0$
+\STATE  $t=0$, $H_0 = \delta I $
+\WHILE{$x^t$ doesn't satisfy stopping condition}   
+\STATE $H_t = H_{t-1}+ g_t  g_t^T$
+\STATE $x^{t+1} = x^t - \frac{\eta}{t} H_t^{-1} g_t$
+\STATE $t=t+1$
+\ENDWHILE
+\end{algorithmic}
+\end{algorithm}
+
+\section{Algorithms Coded}
+
+\subsubsection{Natural Gradient}
+
+\begin{algorithm}[H]
+\caption{Natural Gradient}
+\label{alg1}
+\begin{algorithmic}[1]
+\REQUIRE  $\eta>0$ $\delta \geq 0$
+\STATE  $t=0$, $H_0 = \delta I $
+\WHILE{$x^t$ doesn't satisfy stopping condition}   
+\STATE $H_t = \frac{t-1}{t}H_{t-1}+ \frac{1}{t}g_t  g_t^T$
+\STATE $x^{t+1} = x^t - \frac{\eta}{t} H_t^{-1} g_t$
+\STATE $t=t+1$
+\ENDWHILE
+\end{algorithmic}
+\end{algorithm}
+
+
+\subsubsection{Full AdaGrad}
+
+\begin{algorithm}[H]
+\caption{AdaGrad}
+\label{alg1}
+\begin{algorithmic}[1]
+\REQUIRE  $\eta>0$ $\delta \geq 0$
+\STATE  $t=1$,$G_{0}=0$
+\WHILE{$x^t$ doesn't satisfy stopping condition}   
+\STATE $G_t = G_{t-1}+ g_t  g_t^T$
+\STATE $H_t = \delta I + G_t^{1/2}$
+\STATE $x^{t+1} = x^t - \frac{\eta}{t} H_t^{-1} g_t$
+\STATE $t=t+1$
+\ENDWHILE
+\end{algorithmic}
+\end{algorithm}
+
+\subsubsection{Diagonal AdaGrad}
+
+\begin{algorithm}[H]
+\caption{AdaGrad (Original Version)}
+\label{ada1}
+\begin{algorithmic}[1]
+\REQUIRE  $\eta>0$ $\delta \geq 0$
+\STATE  $k=0$ $s_{-1}=0$
+\WHILE{$x^k$ doesn't satisfy stopping condition}   
+\STATE $s_{k,i} =\sqrt{   \sum_{j=1}^k g_{j,i}^2   }  =\sqrt{ ((k-1) s_{k-1,i})^2 +g_{k,i}^2 }, \quad i=1, \cdots, n  $
+\STATE $H_k =\delta I + diag(s_k)$
+\STATE $x^{k+1} = x^k - \eta H_k^{-1} g_k$
+\STATE $k=k+1$
+\ENDWHILE
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Running the six methods}
+
+\subsubsection{train}
+\includegraphics[scale=1]{paperOnImpFigures/yoram-train-6.eps}
+\subsubsection{test}
+\includegraphics[scale=1]{paperOnImpFigures/yoram-test-6.eps}
+\subsubsection{Questions}
+
+Tune based on testing or training error? \\
+Tune based on how many passes over data? \\
+
+\subsection{Amari's Natural Gradient}
+Let $S = \{ w \in \mathbb{R}^n \}$ be a parameter space on which $L(w)$, the loss function is defined. For $S$ Euclidean, 
+\begin{equation}
+	\|dw\|^2 = \sum (dw_i)^2
+\end{equation}
+Otherwise,
+\begin{equation}
+	\|dw\|^2 = \sum g_{ij}dw_i dw_j
+\end{equation}
+The parameter space in neural networks has the Riemannian character.
+Steepest descent is $dw$ taht minimizes $L(w+dw)$ for a fixed length $\phi$.
+In a Riemannian space, 
+\begin{equation}
+	\tilde{\nabla L(w)} = \nabla L(w) G^{-1} \nabla L(w)
+ \end{equation}
+Where $G = (g_{ij})$. Amari claims that the Riemannian structure of the parameter space of a statistical model is defined by the Fisher Information. 
+For a statistical model, 
+\begin{equation}
+	g_{ij}(w) = E \left[ \frac{\partial \log p(x,w)}{\partial w_i} \frac{\partial \log p(x,w)}{\partial w_j} \right]
+\end{equation}
+For a multilayer network, 
+\begin{equation}
+	g_{ij}(w) = E \left[ \frac{\partial \log p(x,y;w)}{\partial w_i} \frac{\partial \log p(x,y;w)}{\partial w_j} \right]
+\end{equation}
+Yann Olivier likes this, and develops four methods using the natural gradient. He claims that Second-order effects are emulated in the same way the Gauss–Newton algorithm emulates the Newton method.
+
+\subsubsection{Takio Kurita Paper - 1994}
+For a network with only one neuron, with a logistic output we have a model equivalent to Yoram's problem. The Fisher information is computed as the minus of the expected value of the Hessian. It can be thought as a weighted covariance of the input vectors. Fisher information is same as Hessian except the sign. This corresponds to the expression given in Yoshua Bengio's paper. 
+
+For a network with one hidden layer, Fisher information is given as a weighted covariance matrix of inputs and outputs of hidden units. 
+
+
+\subsubsection{Schraudolph}
+$N$ is the network. $M$ is identity for linear outputs. $L$ is loss. 
+Gradient is 
+\begin{equation}
+	g=J_N J_M J_L
+\end{equation}
+Extended Gauss-Newton matrix comes from ignoring the second term in 
+\begin{equation}
+	H = \frac{\partial}{\partial w} (J_{LoM} J_N)  = J_N H_{LoM} J_N + \sum_i (J_{LoM}) H_{N_i}
+\end{equation}
+Only second order interactions among N's outputs are modeled. This is a compromise between hessian which models all second order information and Fisher information which ignores it all. 
+
+For linear outpus with sum-squared loss (conventional Gauss-Newton), $H_{LoM}  = J_M = I$. For logisitc outputs with cross-entropy loss it is $diag(diag(z)(1-z))$.
+
+
+\subsubsection{Yoshua Bengio Paper}
+The Natural Gradient algorithm steps in the direction
+\begin{equation}
+\nabla_N L(\theta) = \nabla L(\theta) E_z \left[ (\nabla \log p_{\theta}(z))^T  (\nabla \log p_{\theta}(z)) \right]^{-1}
+\end{equation}
+where $p$ is the distribution of features, and the gradients are taken with respect to $\theta$. $L$ is the loss function parametrized by $\theta$.
+These can be computed precisely for the randomly generated problems generated with Yoram's scheme. 
+   
+  
+
+\subsection{Efficient Approximations}
+Here we test some known efficient approximations to the methods above.
+
+\subsubsection{AdaGrad}
+We code a diagonal AdaGrad version
+
+\begin{algorithm}[H]
+\caption{AdaGrad}
+\label{alg1}
+\begin{algorithmic}[1]
+\REQUIRE  $\eta>0$ $\delta \geq 0$
+\STATE  $t=0$ $s_{-1}=0$
+\WHILE{$x^t$ doesn't satisfy stopping condition}   
+\STATE $s_{t,i} = \frac{1}{t} \sqrt{   \sum_{j=1}^t g_{j,i}^2   }  =\frac{1}{t} \sqrt{ ((t-1) s_{t-1,i})^2 +g_{t,i}^2 }  $
+\STATE $H_t = \frac{\delta I}{t} + diag(s_t)$
+\STATE $x^{t+1} = x^t - \frac{\eta}{t} H_t^{-1} g_t$
+\STATE $t=t+1$
+\ENDWHILE
+\end{algorithmic}
+\end{algorithm}
+
+There is no need to store the actual history $1:t$. The update to $s_t$ can be done recursively. 
+
+Need to tune the constant steplength $\eta$. In practice $\delta$ can be set to 0
+
+Quote from AdaGrad there is no need to keep track of a learning rate as in previous algorithms, as it is imlicitly given by the growth of the proximal function
+
+\begin{itemize}
+	\item Using a leaky average of the per-example Gauss-Newton approximation of the Hessian (Bottou, Le Cun. Large Scale Online Learning 2004)
+	\item Diagonal Adagrad version
+	\item Stochastic Quasi-Newton methods
+\end{itemize}
+
+\subsection{Neural Nets}
+Here the Gauss-Newton case is more interesting due to the fact that there are multiple layers, and it is not equivalent to the Hessian matrix. 
+
+
+\section{SQN vs AdaGrad}
+
+I have intentionally left the p1 in the labels - this is meant to signify that I used $\alpha/k$ for the steplength strategy. This is useful to distinguish from any constant step tests. I tried different powers of 2 for the AdaGrad experiments. All plots below show progress for running for work equivalent to five passes through the data. 
+
+\subsection{Yoram}
+
+\subsubsection{train}
+\includegraphics[scale=1]{paperOnImpFigures/yoram-adagrad-l-train.eps}
+
+\subsubsection{test}
+\includegraphics[scale=1]{paperOnImpFigures/yoram-adagrad-l-test.eps}
+
+\subsection{Speech}
+
+\subsubsection{train}
+\includegraphics[scale=1]{paperOnImpFigures/speech-adagrad-l-train.eps}
+\subsubsection{test}
+\includegraphics[scale=1]{paperOnImpFigures/speech-adagrad-l-test.eps}
+
+
+\subsection{RCV1}
+
+\subsubsection{train}
+\includegraphics[scale=1]{paperOnImpFigures/rcv1-adagrad-l-train.eps}
+\subsubsection{test}
+\includegraphics[scale=1]{paperOnImpFigures/rcv1-adagrad-l-test.eps}
+
+\section{More experiments}
+
+
+Test whether sqn will work without 
+\begin{verbatim}
+    if norm(s) > 1
+        s = s/norm(s);
+    end
+\end{verbatim}
+
+Test whether a fast generalization error will actually work for Yoram's problem.
+
+\section{Experiment with using gradient differencing with consistent samples}
+
+In equation (2.3) in the stochBFGS, we will use the consistent batches. This is an alternative approach to using the hessian-vector product, and is another tool to ensure consistency. 
+
+\end{document} 

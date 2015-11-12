@@ -1,0 +1,2123 @@
+% Jorge to check literature
+
+\documentclass[11pt]{article}
+%\usepackage{subeqn}
+\usepackage{amsfonts,amsmath,amssymb,graphicx,color}
+%\usepackage{enumerate, amsmath, amsfonts, amsthm, xcolor, url, bbm, hyperref, amssymb,graphicx}
+%\usepackage{wasysym,subfigure, wrapfig, algorithm}
+ %\usepackage[left=2cm,top=1.5cm,right=2cm,nohead,nofoot]{geometry}
+%\usepackage{psfig}
+\usepackage{psfrag}
+\usepackage{pdflscape}
+\usepackage{epstopdf}
+%\usepackage{multirow} 
+%\usepackage{showlabels}
+\usepackage{algorithm} 
+\usepackage{algorithmic}
+
+\textwidth     =  6.0in
+\textheight    =  8.2in
+\oddsidemargin =  0.2in
+\topmargin     = -0.4in
+
+\newcommand{\X}{{\cal X}}
+\newcommand{\Xk}{{\cal X}_k}
+\renewcommand{\S}{{\cal S}}
+\newcommand{\Sk}{{\cal S}_k}
+\newcommand{\RR}{\mathbb{R}}
+\newcommand{\ra}{\rightarrow}
+\newcommand{\op}{\left(}
+\newcommand{\cp}{\right)}
+\newcommand{\sgn}{\mbox{{sgn}}}
+\newcommand{\nf}{\nabla f}
+\newcommand{\nnf}{\nabla^2 f}
+\newcommand{\setA}{\mathcal{A}} 
+\newcommand{\setP}{\mathcal{P}} 
+\newcommand{\setN}{\mathcal{N}} 
+\newcommand{\setF}{\mathcal{F}} 
+\def\sign{\mathop{\rm sign}}
+
+\numberwithin{figure}{section}
+\numberwithin{table}{section}
+
+\def\Q{\mathbb{Q}}
+\def\Z{\mathbb{Z}}
+\def\C{\mathbb{C}}
+\def\P{\mathbb{P}}
+\def\E{\mathbb{E}}
+
+\newcommand{\bequ}{\begin{equation}}     \newcommand{\eequ}{\end{equation}}
+\newcommand{\benn}{\begin{equation*}}    \newcommand{\eenn}{\end{equation*}}
+\newcommand{\bbma}{\begin{bmatrix}}      \newcommand{\ebma}{\end{bmatrix}}
+\newcommand{\thalf}[1]{\textstyle\frac{#1}{2}}
+\newcommand{\tpi}{\textstyle\frac{1}{\pi}}
+\renewcommand{\L}{{\cal L}}
+\newcommand{\I}{{\cal I}}
+\newcommand{\V}{{\cal V}}
+\newcommand{\var}{\mbox{Var}}
+
+\newcommand{\B}{{\cal B}}
+\newcommand{\A}{{\cal A}}
+\newcommand{\cah}{{\cal \hat A}}
+\newcommand{\cav}{{\cal \hat V}}
+\newcommand{\cas}{{\cal \hat S}}
+
+\newcommand{\dLP}{d^{\mbox{\tiny LP}}}
+
+\newcommand{\half}[1]{\tfrac{#1}{2}}
+\newcommand{\inv}{^{-1}}
+\newcommand{\nab}[2]{\nabla^{#2}_{\!#1}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Rt}{\R^t}
+\newcommand{\Rm}{\R^m}
+\newcommand{\Rn}{\R^n}
+\newcommand{\bsub}{\begin{subequations}}
+\newcommand{\esub}{\end{subequations}}
+\newcommand{\DeltaLP}{\Delta_{\mbox{\tiny LP}}}
+\newcommand{\DeltaEQP}{\Delta_{\mbox{\tiny EQP}}}
+\newcommand{\Heqp}{H^{\mbox{\tiny EQP}}}
+\newcommand{\gEQP}{g^{\mbox{\tiny EQP}}}
+\newcommand{\dN}{d^{\mbox{\tiny N}}}
+
+
+
+
+%%%%%%%%%%%%%%% General Commands %%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{Def}[thm]{Definition}
+\newtheorem{alg}[thm]{Algorithm}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{assum}[thm]{Assumptions}
+\numberwithin{equation}{section} 
+
+
+
+
+\renewcommand{\theequation}{\thesection.\arabic{equation}}
+\newcommand{\comment}[1]{}
+
+\setcounter{section}{0}%
+
+\newcommand{\be}{\begin{equation}}
+\newcommand{\ee}{\end{equation}}
+\newcommand{\eqn}[2]{%
+ \begin{equation} \label{#1}
+  {#2}
+ \end{equation}
+}
+\newcommand{\bea}{\begin{eqnarray}}
+\newcommand{\eea}{\end{eqnarray}}
+\newcommand{\beqa}{\begin{eqnarray}}
+\newcommand{\eeqa}{\end{eqnarray}}
+\newcommand{\beann}{\begin{eqnarray*}}
+\newcommand{\eeann}{\end{eqnarray*}}
+\newcommand{\noi}{\noindent}
+\newcommand{\brt}{\begin{flushright}}
+\newcommand{\ert}{\end{flushright}}
+\newcommand{\bc}{\begin{center}}
+\newcommand{\ec}{\end{center}}
+
+\newcommand{\xk}{x_{k}}
+\newcommand{\zk}{z_{k}}
+%\newcommand{\sk}{s_{k}}
+%\newcommand{\Sk}{S_{k}}
+\newcommand{\lk}{\lambda_{k}}
+\newcommand{\nuk}{\nu_{k}}
+\newcommand{\alphabar}{{\overline \alpha}}
+\newcommand{\dkz}{d^{k}_{z}}
+\newcommand{\dkx}{d^{k}_{x}}
+\newcommand{\dks}{d^{k}_{s}}
+\newcommand{\Hk}{H_{k}}
+\newcommand{\Wk}{W_{k}}
+%%\newcommand{\nutrial}{\mbox{$\nu_{\mbox{{ \tiny TRIAL}}}$}}
+\newcommand{\nutrial}{\nu_{\mbox{\tiny TRIAL}}}
+
+\newcommand{\bmat}{\left[ \begin{array}}
+\newcommand{\emat}{\end{array} \right]}
+
+\newcommand{\Dx}{\Delta x}
+\newcommand{\Dz}{\Delta z}
+\newcommand{\Dy}{\Delta y}
+\newcommand{\Ds}{\Delta s}
+\newcommand{\Dl}{\Delta \lambda}
+\newcommand{\lam}{\lambda}
+\newcommand{\D}{\Delta}
+\newcommand{\gap}{\hspace*{2em}}
+\newcommand{\beq}{\begin{equation}}
+\newcommand{\eeq}{\end{equation}}
+
+
+\newcommand{\Min}{\mbox{minimize}}
+\newcommand{\Subj}{\mbox{subject to}}
+\renewcommand{\Re}{{\mathbb R}}          % Reals
+\newcommand{\N}{{\mathbb N}}            % Nonnegative integers
+\newcommand{\reals}{\Re}                % Reals
+\newcommand{\Ren}{\Re^n}                % vector space
+\newcommand{\Renn}{\Re^{n \times n}}    % square matrices space
+\newcommand{\rank}{\mbox{rank}}
+\newcommand{\fraction}[2]{\textstyle\frac{#1}{#2}}
+\def\pref#1{$(\ref{#1})$}
+\newcommand{\bproof}{\begin{description} \item[{\it Proof}.] ~ }
+%\newcommand{\eproof}{\hspace*{\fill}{\bf \sc QED } \end{description}}
+\newcommand{\eproof}{\hspace*{\fill}$\Box$\medskip \end{description}}
+
+
+\newcommand{\gmin}{\gamma_{\min}}
+
+% Optimization notation
+
+\newcommand{\xt}{x_{\mbox{\tiny T}}}
+\newcommand{\diag}{\mathop{\mathrm{diag}}}
+\newcommand{\Span}{\mathop{\mathrm{span}}}  % NB the capital ``S''
+                                            % (b/c \span already exists)
+
+\newcommand{\norm}[1]{\Vert #1 \Vert}
+\newcommand{\normF}[1]{\norm{#1}_{\mbox{{\tiny F}}}}
+\newcommand{\req}[1]{(\ref{#1})}
+
+% E/I notation
+
+% h/g notation
+
+\newcommand{\gE}{h}
+\newcommand{\gI}{g}
+\newcommand{\aE}{A_h}
+\newcommand{\aI}{A_g}
+\newcommand{\rE}{r_h}
+\newcommand{\rI}{r_g}
+\newcommand{\lE}{\lambda_h}
+\newcommand{\lI}{\lambda_g}
+\newcommand{\mE}{m_h}
+\newcommand{\mI}{m_g}
+
+\newcommand{\Ae}{\mbox{$A_{\mbox{{\it \tiny E}}}$}}
+\newcommand{\Ai}{\mbox{$A_{\mbox{{\it \tiny I}}}$}}
+\newcommand{\ce}{\mbox{$c_{\mbox{{\it \tiny E}}}$}}
+\newcommand{\ci}{\mbox{$c_{\mbox{{\it \tiny I}}}$}}
+\newcommand{\re}{\mbox{$r_{\mbox{{\it \tiny E}}}$}}
+\newcommand{\ri}{\mbox{$r_{\mbox{{\it \tiny I}}}$}}
+\newcommand{\qn}{\mbox{$q_{\mbox{{\it \tiny N}}}$}}
+\newcommand{\ql}{\mbox{$q_{\mbox{{\it \tiny L}}}$}}
+
+
+
+
+\def\eqnok#1{(\ref{#1})}
+\newcommand{\defeq}{\stackrel{\rm def}{=}}
+\newcommand{\sgap}{\hspace*{1.2em}}
+\newcommand{\btab}{\begin{tabbing}
+\ \ \= thenn \= thenn \= thenn \= thenn \= thenn \= \kill}
+\newcommand{\etab}{\end{tabbing}}
+\newcommand{\beqas}{\begin{eqnarray*}}
+\newcommand{\eeqas}{\end{eqnarray*}}
+
+\newcommand{\mat}[2]{\left[\begin{array}{#1}#2\end{array}\right]}
+\newcommand{\vect}[1]{\left[\begin{array}{c}#1\end{array}\right]}
+
+\newcounter{algo}[section]
+\renewcommand{\thealgo}{\thesection.\arabic{algo}}
+\newcommand{\algo}[3]{\refstepcounter{algo}
+\begin{center}\begin{figure}[h!]
+\framebox[\textwidth]{
+\parbox{0.95\textwidth} {\vspace{\topsep}
+{\bf Algorithm \thealgo : #2}\label{#1}\\
+\vspace*{-\topsep} \mbox{ }\\
+{#3} \vspace{\topsep} }}
+\end{figure}\end{center}}
+
+\newcounter{prog}[section]
+\newcommand{\prog}[3]{\refstepcounter{prog}
+\begin{center}\begin{figure}[h!]
+\framebox[\textwidth]{
+\parbox{0.95\textwidth} {\vspace{\topsep}
+{\bf Algorithm I: #2}\label{#1}\\
+\vspace*{-\topsep} \mbox{ }\\
+{#3} \vspace{\topsep} }}
+\end{figure}\end{center}}
+
+\title{Convergence Analysis and Design of Stochastic Quasi-Newton Methods for Large-Scale Learning}
+% Set author
+\author{Richard H. Byrd\thanks{Department of Computer Science, University of Colorado,
+        Boulder, CO, USA.  This author was supported by National Science Foundation
+        grant CMMI 0728190 and Department of Energy grant DE-SC0001774.}\and     
+       Jorge Nocedal \thanks{Department of Industrial Engineering and Management Sciences, Northwestern University, 
+       Evanston, IL, USA.  This author was supported by National Science Foundation grant DMS-0810213, and by Department 
+       of Energy grant DE-FG02-87ER25047.} 
+       \and
+       Stefan Solntsev\thanks{Department of Industrial Engineering and Management Sciences, Northwestern University, 
+       Evanston, IL, USA.  This author was supported by National Science Foundation grant DMS-0810213, and by Department 
+       of Energy grant DE-FG02-87ER25047.} 
+       \and
+        Figen Oztoprak\thanks{Istanbul Technical University. This author was supported by Department of Energy grant DE-SC0001774,   
+        and by a grant from Tubitak.}
+      }
+%***************************************************************
+
+
+\date{\today}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+
+\maketitle
+
+\begin{abstract}
+Something or the other \end{abstract}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\section{New Agenda}
+\setcounter{equation}{0}
+%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{enumerate}
+\item Theory of Stochastic Quasi-Newton Methods
+\begin{enumerate}
+	\item It would be nice to be the first to develop realistic convergence analysis for the stochastic quasi-Newton iteration
+	\begin{equation}
+	         x_{k+1}= x_k - \alpha H_k \widehat \nabla f(x_k)    \label{qn}
+	 \end{equation}
+	 Where to start? Murata, or some classical Robbins-Monro analysis? There has been some work in the stochastic
+	  programming community (Shapiro, Tito, etc) but it may be too academic. Look at the Glynn paper. Nevertheless it is \emph{important to
+	  check} what has been done. \textcolor{blue}{Can a meaningful result be obtained? Even for the small dimensional case}
+	\item Can one use an estimate of the covariance matrix instead of the Hessian? What is the relationship between
+	         iteration \eqref{qn} and the idealized version of AdaGrad that keeps a full matrix? Is there a real algorithm that uses both
+	         the Hessian and Covariance matrices?
+	\end{enumerate}         
+	\item Algorithmic Developments with Stochastic QN
+		\begin{enumerate}
+		\item Clean Sammy's code and transfer to Stefan. Go over Sammy's code. \textcolor{blue}{active}
+		\item Run, analyze and report results for small batches $b=1,2, 5$ \textcolor{blue}{active}
+		\item Try algorithm with constant steplength
+		\item Compare with AdaGrad (possibly with Schraudolph)
+		\item  How should $s$ be defined? 
+		\item Frank variation (described below). Explain why it is unlikely to improve upon current approach.
+		\item Consider a stochastic Newton-CG method. Do operation counts, write document arguing why
+		         it is less attractive than stochastic QN. 
+		\item Coordination between $L$ and $b_H$.
+		\item Develop and post the code. 
+		\item How should one sample for Hessian-vector products? Yoram suggests oversampling and then
+		         choosing the terms with a high classification error. How can the memory parameter $M$ vary during
+		         the course of the iteration? Relationship with theory of random matrices.
+		 \item Develop Neural Nets version (non-convex) using Gauss-Newton matrix. Is line search appropriate
+		          in this context?
+		\item Consider dynamic sampling strategies. Discuss the new Peter Glynn paper. \textcolor{blue}{Are there reasons or
+		          scenarios where dynamic sampling should NOT be done}
+     \end{enumerate}
+
+\item Parallel Computing, Averaging and Acceleration
+	\begin{enumerate}
+	\item how to obtain sparsity quickly with an averaging method such as RDA. See comment by Lin Xiao below.  \label{xiao}
+	\item people claim that Polyak-Ruppert cannot be parallelized; look at this
+	\end{enumerate}	
+\item Second order information in averaging methods
+	\begin{enumerate}
+	\item Can one design averaging methods that benefit from second order information? Literature review: who has tried this?
+	 Bach and Moulines developed a very theoretical method, but it is driven by the benefits of averaging and second order 
+	 information. Numerical results are given at the end of this document.
+	 \item Fishing Methods. A description of the method is given in section \ref{fishing}
+	 	\end{enumerate}
+\end{enumerate}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+\section{IPAM Workshop}
+\subsection{Figen comments of 2/22/14 related to Amari, LeRoux}
+
+I think I can now put in words the point of the figure I was drawing on the whiteboard today (data-function-parameter).
+
+I think the question I had in my mind was the following: In a quasi-Newton method, we accumulate some useful information about the geometry of the function we minimize.  In a stochastic setting, our observations are not purely on the rate of change in the gradient of the function, but we also make observations on the noise in those evaluations.  Can't it then be useful to accumulate some information about the character of that random noise as we proceed?
+
+To make it more concrete, suppose we have two matrices at each iteration, an approximation H to the Hessian, and an estimation C to the variance of the noise term $\xi$.  Each update of H is rank two, and each update of C is rank one ($\xi_k$'s has independent identical distribution with zero mean).  The two updates support each other: given a noisy measurement $g_k$ of the gradient at $x_k$, $H(x_k-x)$ provides an approximation $y_k$ so that we can use $(g_k-y_k)$ to update C; on the other hand, scaling $g_k$ with the inverse of $C^{-1/2}$, we can get an estimate $t_k$ of $g_k$ with reduced variance and use $t_k$ to update H.  Finally, we can use $H^{-1}$ to scale $t_k$, and move from $x_k$ to a new solution point.
+
+The above scenario assumes that the decision variables of the optimization problem are different from the parameters of the probability distribution of measurement errors.  When they are the same (as in a maximum likelihood problem), minimizing f is equivalent to learning the distribution -- perhaps we can then work with a single matrix.  I did not yet think about that.
+
+\bigskip\noindent\emph{Remark 1:}
+On item \eqref{xiao}. Comment by Lin Xiao.
+``I also have been thinking about restart in the dual averaging method. In fact we need to keep restarting the process for better active set identification (a couple of times may not be enough), preferably with longer and longer period for restarting. However, complete restart will not work, since at the beginning of each restart, there will be too much volatility in the new average gradient (which is what the idea of averaging tries to avoid).
+ 
+I have a gentle restart scheme: maintain two average vectors in memory, one stores the average of the most recent half of the stochastic gradients processed, and another stores the average of the older half stochastic gradients. We can use the average of these two vectors as the overall average gradient in optimization or prediction. At the beginning of each restart, we reset the old-half average to zero and start to use it to store average of newly computed stochastic gradients, at the same time, the original new-half average becomes the old-half average. This way, even at the beginning of each restart, we can combine the most recent half average with new coming stochastic gradients. This should remove the volatility at the beginning of each restart, yet keep refreshing the average.
+ 
+I havenÕt implemented or done any analysis of it, so donÕt know how well it can work.''
+
+\textcolor{blue}{Comment by Figen}I think I am a little bit confused about the question.  I understand that the original problem we consider is l1-regularized.  If the average of the (weighted) stochastic gradients is a good direction in minimizing the smooth part of the original problem, why can it become particularly disadvantageous when the l1 term is added --because the subproblem of the RDA method has the same l1-term and it has a closed-form solution?  Perhaps I misunderstand something. (I refer to the definition of the RDA method on page 7 of the attached paper).
+
+\section{Stochastic Quasi-Newton}
+Frank's comments:  2.) In terms of the algorithm, the main thing I wonder is: If you're going to compute an approximate Hessian at a certain iteration, then why not use that matrix has the Hessian approximation for L iterations, after which you can compute a new one and continue?  (There are other algorithms for smooth optimization where people do this, right?  Compute and reuse a derivative matrix for K iterations and then recompute a new one.)  I don't know the stochastic gradient literature as well, but based on the literature that you talk about in the paper, it doesn't seem like this idea was mentioned.  It may not work as well and/or may be more expensive, but it seems related.
+
+\section{Fishing Methods}
+This method attempts a single 
+
+
+\begin{algorithm}[H]
+\caption{Fishing Method}
+\label{alg1}
+\begin{algorithmic}[1]
+\REQUIRE  $\gamma$, $x^0$, oracles to compute gradients and HV products at each datapoint
+\STATE  $k=0$
+\STATE  $\bar{x}^0 = x^0$
+\WHILE{$x^k$ doesn't satisfy stopping condition  }   
+\STATE Choose a random $h$, a datapoint
+\STATE $x^{k+1} = x^k - \gamma (\nabla f_h(\bar{x}^k) + \nabla^2 f_h(\bar{x}^k) (x^k - \bar{x}^k))$
+\STATE $\bar{x}^{k+1} = \frac{k\bar{x}^k +  x^{k+1}}{k+1}$
+\STATE $k=k+1$
+\ENDWHILE
+\STATE $x^{END} = x^k - \gamma ((\nabla^2)^{-1} f_h(\bar{x}^k) \nabla f_h(\bar{x}^k) (x^k)$
+\end{algorithmic}
+\end{algorithm}
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{old research notes}
+\begin{verbatim}
+1. Bottou analysis:
+     a) Cotter mini-batch paper
+     b) effect of curvature on analysis (see Murata, Amari)
+     c) parallel setting
+     d) understanding the "proven" superiority of stochastic
+         gradient as a learning algorithm
+2. Dynamic Sample
+    a) finish the constrained case (general projections)
+    b) get rid of exponential growth backup
+    c) Bertsekas paper
+
+3. Can Dostal be generalized to non-quadratics?
+
+4. L_p norm
+    a) find a customer
+    b) design algorithms that with convergence guarantees
+       to stationary points
+
+5. Degeneracy in interior point methods
+    a) in LP pre-processing resolves the issue
+    
+6. Piecewise linear models in semi-smooth methods
+    a) relationship to Griewank AD (C-differential, B-differential?)
+    b) can the Figi framework be generalized to the nuclear norm?
+       (perhaps with Andreas and new student or Daniel)
+
+7. Numerical Study: Extension of Nips paper
+    a) explore both OBM and NL approaches carefully
+    b) Katya's working set mechanism: does it resolve the Owl
+        convergence issue
+
+8. Exponential loss to derive quasi-Newton updates 
+    a) Properties of Adaboost (see Schapire)
+
+-------------------------------------------
+
+Objective
+     - expected loss (exponential?)
+     - variance of solution
+Problems
+      - smooth
+      - non-smooth
+      - constrained (Bertsekas)
+Methods
+      - (Re) derivations for stochastic functions
+      - learning behavior
+Tools
+      - second order methods
+      - sample size (variance control)
+Implementation
+       - parallel computing
+       -computational complexity
+
+\end{verbatim}
+
+\section{Previous Research Agenda}
+\begin{enumerate}
+\item Covariance Matrices
+\begin{itemize}
+	\item Low rank or block diagonal?
+	\item Does the use of a covariance matrix improve the practical performance of a stochastic
+	         optimization method? Try this on toy problems where exact covariance matrix can be used
+	\item Do they help in theory?
+		\begin{itemize}
+		\item LeRoux, AdaGrad,
+		\item How do they affect Bottou's analysis? ( $Q^{-1} H$)
+		\end{itemize}
+     \end{itemize}
+\item Quasi-Newton Hessian estimation
+	\begin{itemize}
+	\item Direct continuation of Sammy's paper. Precise questions to be determined
+	\item BFGS vs New Formulae: analyze the difference
+     \end{itemize}
+\item Stochastic Learning Theory
+	\begin{itemize}
+	\item classical SG analysis (Murata, Amari)
+	\item ``proven'' superiority of SG over batch methods
+	\item  theory of batching with varying sample size (why is this inferior?)
+	\item  parallel computing: why is mini-batching not better than asynchronous SG. Find a good testing
+	          environment (not the Brain network)
+	\end{itemize}
+\end{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Figen's Outline}
+\begin{enumerate}
+\item Objective
+	\begin{itemize}
+     \item expected loss (exponential?)
+     \item variance of solution
+     \end{itemize}
+\item Problems
+\begin{itemize}
+     \item smooth
+     \item non-smooth
+     \item constrained (Bertsekas)
+     	\end{itemize}
+\item Methods
+\begin{itemize}
+     \item(Re) derivations for stochastic functions
+     \item learning behavior
+	\end{itemize}
+\item Tools
+\begin{itemize}
+     \item second order methods
+      \item  sample size (variance control)
+      \end{itemize}
+\item Implementation
+\begin{itemize}
+     \item parallel computing
+     \item computational complexity
+     	\end{itemize}
+\end{enumerate}
+
+\section{Microsoft Notes}
+Here are some things I learned during my visit to Microsoft Research yesterday. I added some "research questions" written from the top of my head, without a lot of thought.
+
+1. Apparently Polyak wrote a paper a long time ago on an Optimal SGD method in which he shows that the gradient needs to be scaled by the inverse covariance. But later he and Juditsky wrote their famous paper on averaging and they argue that averaging is just as good theoretically and is practical.
+
+Research question: is the role of averaging to eliminate bias? Note that averaging is proposed also for deterministic problems, so what exactly does it do in the stochastic case.
+
+2. Mark Schmidt has mentioned that instead of dynamic sampling it is better to simply erase and old gradient and replace it by the newly computed gradient. (Paper by Bach, Schmidt et al). He talked about that at ISMP. The idea seems a bit ad hoc. But it turns out that it can be interpreted as doing coordinate ascent on the dual. A paper by Shaleve-Schartz and Tong Zhan, explores this dual ascent method.
+
+Research question: if this framework is useful, what happens if one applies a more powerful method in the dual
+
+3. There are various people trying to develop stochastic Newton methods because ill-conditioning can be a problem. But there is confusion because some are trying to approximate the covariance matrix and others the Hessian. Nobody seems to have a procedure that is scalable, but the idea to do something is in the air.
+
+Research question: identify a good testing environment where stochastic quasi-Newton methods can be tried. Google may have better problems than Microsoft (where everyone says that Bottou is the person who has thought about these issues).
+
+4. There has been so much emphasis on global rates that people have forgotten about fast local rate. An example is Fista, which gives an optimal global rate, but everyone feels that the complexity bound is the actual behaviour and that is not good for high accuracy where it goes on and on (Stefan, Figen know this very well).
+
+Research question: how can improve upon a method like Fista so that it is able to converge quickly without using second order information?
+
+5. We should take a look at the paper that Yoram asked Sammy to referee. There are many numerical experiments there (and they reference our IBM paper with Figen). We should discuss this algorithm and results in our group meeting (or in sub-group via google+ with Figen).
+
+6. Mini-batching. Some of the work here consists in showing that the variance of the batch gives a more favorable constant for convergence analysis. Is there another way to decrease variance? In a recent paper by Tong Zhang, he suggests subtracting two terms to the stochastic gradient at each iteration (one which is an average) and he claims that this reduces noise. Tong is at Rutgers, I think.
+
+7. People have tried regularization for neural nets but they have found that Hinton's idea of "dropout" works better because it seems more drastic (it makes arcs exactly zero, and at random).
+
+8. People feel that coordinate descent methods are slow and not very interesting -- except when one thinks about them in the context of the dual (see point 2 above) in which case they do interesting things in the primal.
+
+9. Final comment: Lin Xiao, and Richtarik are organizing sessions for SIOPT 2014 on coordinate descent methods and they already have more than 20 speakers including Nesteov, SteveW, Dhillon, Singer. So coordinate descent (in various forms) is a hot area. Optimization is moving backwards...
+
+\section{Sunday October 20 Notes}
+
+One of the stochastic methods we believe is sound is Polyak-Ruppert. Therefore, let us consider developing second order methods based on the PR methodology.
+
+
+\begin{verbatim}
+Fishing Method
+--------------------
+1. Run PR for 100 iterations
+2. compute x-bar and g-bar to be the averages for the first 100 iterations
+3. take a Newton step from x-bar:      xN1= x-bar - [hessian}^-1 * g-bar
+4. see if Xn1 satsifies the stop test
+5. If not, keep running PR as if the Newton step had not been computed
+6 after 100 iterations repeat the process:
+      - x-bar and g-bar are the averages from the whole run
+      - take newton step from new average; see if you converged
+Remark: a property of this method is that the Newton iterates are never used in the
+      PR iteration. Their only goal is to try to reach the solution
+      
+Interlacing Method
+------------------------
+One can introduce two design changes in the method above:
+    - include a criterion to decide if the Newton step should be taken
+    - use the Newton iterate: after a Newton step restart the PR iteration
+    
+
+\end{verbatim}
+
+	
+	
+\section{Questions From Sammy's Paper}
+
+\begin{enumerate}
+\item Why does $\alpha^k$ have a form $\frac{\beta}{k}$?
+\item Is it really best to try and approximate $\nabla^2 F$, and not the hessian of the SAA formulation if limited data is available? 
+\item Mini-batch seems to be a hack. If operating in SA regime, why are multiple samples really needed? 
+\item BFGS is overwriting, but what if a non-overwriting method is used? Could single gradients be used?`
+\item Where is the justification for using hessian-vector product instead of gradient differences?
+\item Consistency error is STILL there! Because the sk computation is inconsistent.
+\item Why is the hessian at wI used? And not at wJ?
+\item For RCV1, why not do multiclass?
+\item How does the fact that datapoints in RCV1 are extremely sparse help the optimization procedure?
+\end{enumerate}
+	
+\end{document}
+%\newpage
+\section{Introduction}
+\label{intro}
+\setcounter{equation}{0}
+
+In this paper, we study an inexact Newton-like method for solving optimization problems of the form
+\begin{equation}    \label{l1prob}
+        \min_{x \in \R^n} \ \phi(x) = f(x) + \mu \|x\|_1 ,
+\end{equation}
+where $f$ is a smooth convex function and $\mu >0$ is a (fixed) regularization parameter. The method constructs, at every iteration, a piecewise quadratic model of $\phi$ and minimizes this model \emph{inexactly} to obtain a new estimate of the solution. 
+
+The piecewise quadratic model is defined, at an iterate $x_k$, as
+\begin{equation}  \label{quadm}
+           q_k(x) = f(x_k) + g(x_k)^T (x-x_k) + \fraction{1}{2} (x -x_k)^T H_k (x-x_k) + \mu \| x \|_1 ,
+\end{equation}
+where $g(x_k) \defeq \nabla f(x_k)$ and $H_k$ denotes the Hessian $\nabla^2 f(x_k)$ or a quasi-Newton approximation to it. After computing an approximate solution $\hat x$ of this model, the algorithm performs a backtracking line search along the direction $d_k=\hat x - x_k$ to ensure decrease in the objective $\phi$. 
+
+We refer to this method as the \emph{successive quadratic approximation method} in analogy to the successive quadratic programming method for nonlinear programming. This method is also known in the literature as a ``proximal Newton method'' \cite{Patr98,sra2011optimization}, but we prefer not to use the term ``proximal'' in this context since the quadratic term in \pref{quadm} is better interpreted as a second-order model rather than as a term that simply restricts the size of the step. 
+%We should also note that \eqref{quadm} is similar in form  to the Lasso model \cite{Tibs96}, and therefore we sometimes refer to the subproblem \eqref{quadm} as the Lasso problem. 
+The paper covers both the cases when the quadratic model $q_k$ is constructed with an exact Hessian or a quasi-Newton approximation. 
+
+The two crucial ingredients in the inexact successive quadratic approximation method are the algorithm used for the minimization of the model $q_k$, and the criterion that controls the degree of inexactness in this minimization. In the first part of the paper, we  propose an inexactness criterion for the minimization of $q_k$ and prove that it guarantees global convergence of the iterates, and that it can be used to control the local rate of convergence. This criterion is based on the optimality conditions for the minimization of \pref{quadm}, expressed in the form of a semi-smooth function that is derived from the soft-thresholding operator. 
+
+The second part of the paper is devoted to the practical implementation of the method. Here, the choice of algorithm for the inner minimization of the model $q_k$ is vital, and we consider two options: {\sc fista} \cite{fista}, which is a first-order method, and an orthant-based method \cite{andrew2007scalable,dss,figi}. The latter is a second-order method where each iteration consists of an orthant-face identification phase, followed by the minimization of a smooth model restricted to that orthant. The subspace minimization can be performed by computing a quasi-Newton step or a Newton-CG step (we explore both options).  A projected bactracking line search is then applied; see section~\ref{obm}.
+
+Some recent work on successive quadratic approximation methods for problem \eqref{l1prob} include: Hsie et al. \cite{hsieh2011sparse}, where \eqref{quadm} is solved using a coordinate descent method, and which focuses on the inverse covariance selection method; \cite{tanscheinberg} which also employs coordinate descent but uses a different working set identification than \cite{hsieh2011sparse}, and makes use of a quasi-Newton model;  and Olsen et al. \cite{olsen2012newton}, where the inner solver is {\sc fista}. None of these papers address convergence for inexact solutions of the subproblem. Recently Lee, Sun and Saunders \cite{lee2012proximal} presented an inexact proximal Newton method that, at first glance, appears to be very close to the method presented here. Their inexactness criterion is, however, different from ours and suffers from a number of drawbacks, as discussed in section~\ref{algo}.  
+
+Inexact methods for solving generalized equations have been studied by Patricksson \cite{patriksson1998cost}, and more recently by Dontchev and Rockafellar \cite{dontchev2013convergence}.  Special cases of the general methods described in those papers result in inexact sequential quadratic approximation algorithms. Patricksson \cite{patriksson1998cost} presents convergence analyses based on two conditions for controlling inexactness.  The first is based on running the subproblem solver for a limited number of steps. The second rule requires that the residual norm be sufficiently small, but it does not cover the inexactness conditions presented in this paper (since the residual is computed differently and their inexactness measure is is different from ours).  The rule suggested in Dontchev and Rockafellar \cite{dontchev2013convergence} is very general, but it too does not cover the condition presented in this paper.
+%\textcolor{blue}{(Figen:  I thought about this again, and I think I am convinced that 
+%their rule would apply to an inexact semismooth Newton algorithm, but it does not cover our $F_q$ here).} 
+Our rule, and those presented in \cite{dontchev2013convergence,lee2012proximal}, is inspired by the classical inexactness condition proposed by Dembo et al. \cite{DembEiseStei82}, and reduces to it for the smooth unconstrained minimization case (i.e. when $\mu=0$). 
+%\textcolor{blue}{(Figen: The criterion in the Rockafellar paper is also based on Dembo et al, and reduces to the original Dembo et al condition in a certain case.)}
+
+Another line of research that is relevant to this paper is the  global and rate of convergence analysis for inexact proximal-gradient algorithms, which can be seen as special cases of sequential quadratic approximation without acceleration \cite{schmidtLR2011,SalVil12, tappenden2013inexact}.  The inexactness conditions applied in those papers require that the subproblem objective function value  be $\epsilon$-close to the optimal subproblem objective \cite{schmidtLR2011,tappenden2013inexact}, or that the approximate solution be exact with respect to an $\epsilon$-perturbed subdifferential \cite{SalVil12}, for a decreasing sequence $\{\epsilon\}$.
+
+%%
+ Our interest in the successive quadratic approximation method is motivated by the fact that it has not received sufficient attention from a practical perspective, where inexact solutions to the inner problem \eqref{quadm} are imperative. Although a number of studies have been devoted to the formulation and analysis of  proximal Newton methods for convex composite optimization problems, as mentioned above,  the viability of the approach in practice has not been fully explored.
+%%
+
+This paper is organized in 5 sections. In section~\ref{algo} we outline the algorithm, including the inexactness criteria that govern the solution of the subproblem \pref{quadm}. In sections~\ref{global} and \ref{local}, we analyze the global and local convergence properties of the algorithm. Numerical experiments are reported in section~\ref{numerical}. The paper concludes in section~\ref{finalr} with a summary of our findings, and a list of questions to explore.
+
+
+\bigskip\noindent{\em Notation.} In the remainder, we let $g(x_k)= \nabla f(x_k)$, and let $\| \cdot \|$ denote any vector norm. We sometimes abbreviate successive quadratic approximation method as ``SQA method'', and note that this algorithm is often referred to in the literature as the ``proximal Newton method''.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The Algorithm}   \label{algo}
+\setcounter{equation}{0}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Given an iterate $x_k$, an iteration of the algorithm begins by forming the model \pref{quadm}, where  $\mu >0$ is a given scalar and $H_k \succ 0$ is an approximation to the Hessian $\nabla^2 f(x_k)$. Next, the algorithm computes an \textit{approximate} minimizer $\hat x$ of the subproblem
+\begin{equation}  \label{lassop}
+    \min_{x \in \R^n} \ q_k(x) = f(x_k) + g(x_k)^T (x-x_k) + \fraction{1}{2} (x -x_k)^T H_k (x-x_k) + \mu \| x \|_1 .
+\end{equation}
+The point $\hat x$ defines the search direction $d_k= \hat x - x_k$. The algorithm then performs a backtracking line search along the direction $d_k$ that ensures sufficient decrease in the objective $\phi$. The minimization of \eqref{lassop} should be performed by a method that exploits the structure of this problem.
+
+ In order to compute an adequate approximate solution to \pref{quadm}, we need some measure of closeness to optimality. In the case of smooth unconstrained optimization, (i.e. \pref{l1prob} with $\mu = 0$), the norm of the gradient is a standard measure of optimality, and it is common \cite{DembEiseStei82} to require the approximate solution $\hat x$ to satisfy the condition 
+\be \label{smoothcond}
+           \| g(x_k)+H_k(\hat x -x_k) \|  \leq \eta_k \|g(x_k)\|, \quad\quad  0< \eta_k <1 .
+\ee
+The term on the left side of \pref{smoothcond} is a measure of optimality for the model $q_k(x)$, in the unconstrained case.  
+
+For problem \eqref{l1prob}, the length of the iterative soft-thresholding (ISTA) step is a natural measure of optimality. The ISTA iteration is given by  
+\be \label{ista} 
+    x_{\rm ista}= \arg\min_{x}   \ g(x_k)^T(x-x_k) + {\frac{1}{2 \tau}} \|x-x_k\|^2 + \mu \|x\|_1  ,
+\ee
+where $\tau>0$ is a fixed parameter. It is easy to verify that $\| x_{\rm ista}- x_k \|$ is zero if and only if $x_k$ is a
+solution of problem \eqref{l1prob}. We need to express $\| x_{\rm ista}- x_k \|$ in a way that is convenient for our analysis, and for this purpose we note \cite{milzareksemismooth} that  some algebraic manipulations show that $\| x_{\rm ista} - x_k \| = \tau \|F(x_k)\|$, where 
+\begin{equation}   \label{Fdef}
+        F(x) = g(x) - P_{[-\mu , \mu ]} ( g(x) - x/\tau) .
+\end{equation}
+Here $P(x)_{[-\mu, \mu]}$ denotes the component-wise projection of $x$ onto the interval $[ -\mu, \mu ]$,  and $\tau$ is a positive scalar. 
+
+One can directly verify that \eqref{Fdef} is a valid optimality measure by noting that $F(x)=0$ is equivalent to 
+the standard necessary optimality condition for \pref{l1prob}:
+\begin{eqnarray*}
+    g_i(x^*) +\mu =0 & \mbox{for   } i \mbox{    s.t.   }   x_i^* >0 , \\
+    g_i(x^*) -\mu =0 & \mbox{for   } i \mbox{    s.t.   }   x_i^* <0 , \\
+    -\mu \leq g_i(x^*) \leq \mu  & \mbox{for   } i \mbox{    s.t.   }   x_i^* =0  .
+\end{eqnarray*}
+For the objective $q_k$ of \eqref{lassop},  this function takes the form
+\begin{equation}   \label{Fqdef} 
+    F_q (x_k; x)= g(x_k)+H_k(x -x_k)-P_{[-\mu,\mu]}( g(x_k)+H_k(x -x_k) -x/\tau).  
+\end{equation}
+Using the measures \pref{Fdef} and \pref{Fqdef} in a manner similar to \pref{smoothcond},
+leads to the condition $\|F_q(x_k; \hat x)\| \leq \eta_k \|F(x_k)\|$. However, depending on the method used to approximately solve
+\pref{lassop}, this does not guarantee that $\hat x -x_k$ is a descent direction for $\phi$. To achieve this, we impose the additional condition
+that the quadratic model is decreased at $\hat x$.
+
+\bigskip\noindent\textit{Inexactness Conditions.}  A point $\hat x$ is considered an acceptable approximate solution of subproblem \eqref{lassop} if 
+\begin{equation}   \label{inx}
+          \|F_q(x_k; \hat x)\| \leq \eta_k \|F_q(x_k; x_k)\| \ \mbox{ and } \ \ q_k(\hat x) < q_k(x_k) , \ 
+\end{equation}
+ for some parameter $0 \leq \eta_k <1$, where $\| \cdot \|$ is any norm.  (Note  that
+ $F_q(x_k; x_k)= F(x_k)$, so that the first condition can also be written as
+ $ \|F_q(x_k; \hat x)\| \leq \eta_k \|F(x_k)\| $.)
+ 
+ \bigskip
+The method is summarized in Algorithm~2.1.
+
+
+\newpage
+ \algo{xalgo}{Inexact Successive Quadratic Approximation (SQA) Method for Problem \pref{l1prob}}
+{
+	Choose an initial iterate $x_0$. 
+	 
+	\noindent Select constants  $\theta \in (0,1/2) $ and $0< \tau < 1$ (which is used in definitions \eqref{Fdef}, \eqref{Fqdef}). \\
+	
+	\noindent
+	\textbf{for} $k = 0, \cdots, $ until the optimality conditions of~\eqref{l1prob} are satisfied:	
+\smallskip
+\begin{itemize}
+\item[1.] Compute (or update) the model Hessian $H_k$ and form the piecewise quadratic model \pref{quadm}; 
+
+\item[2.] Compute an inexact solution $\hat x $ of \pref{quadm} satisfying conditions \eqref{inx}. 
+
+\item[3.] Perform a backtracking line search along the direction $d= \hat x -x_k$: starting with $\alpha=1$, find $\alpha \in (0,1]$ such that
+\begin{equation}  \label{decrease}
+ \phi(x_k) - \phi(x_k+\alpha d) \geq \theta (\ell_k(x_k)- \ell_k(x_k+\alpha d)) ,
+\end{equation}
+where $\ell$ is the following piecewise linear model of $\phi$ at $x_k$:
+\begin{equation}    \label{ell}
+         \ell_k(x)  = f(x_k)+g(x_k)^T(x-x_k)+\mu\|x\|_1 .
+\end{equation}
+\item[4.] Set $x_{k+1}= x_k + \alpha d$. \\
+
+
+\end{itemize}    
+{\bf end(for)}
+}
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+For now, we simply assume that the sequence $\{\eta_k\}$ in \eqref{inx} satisfies $\eta_k \in [0,1)$, but in section~\ref{local} we show that by choosing  $\{\eta_k\}$ and the parameter $\tau$ appropriately, the algorithm achieves a fast rate of convergence.
+  One may wonder whether the backtracking line search of Step 3 might hinder sparsity of the iterates. Our numerical experience indicates  that this is not the case because, in our tests,  Algorithm~\ref{xalgo} almost always accepts the unit steplength ($\alpha=1$).
+ 
+ It is worth pointing out that  Lee et al. \cite{lee2012proximal} recently proposed and analyzed an inexactness
+criterion that is similar to the first inequality of \pref {inx}.  
+The main difference is that they use the subgradient of $q_k$ on the left side of the inequality,
+and both norms are scaled by $H_k^{-1}$. They claim similar convergence results to ours, but a worrying consequence
+of the lack of continuity of the subgradient of $q_k$ is that their inexactness condition can fail for vectors $x$ arbitrarily close to the exact minimizer of $q_k$. As a result, their criterion is not an appropriate termination test for the inner iteration.
+(In addition, their use of the scaling $H_k^{-1}$ precludes setting $ H_k= \nabla^2 f(x_k)$, except for small or highly structured problems.) 
+%\footnote{According to Nitish another flaw in their analysis is that it requires the $H_k$ be the true Hessian}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Global Convergence}   \label{global}
+\setcounter{equation}{0}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+In this section, we show that Algorithm~2.1 is globally convergent under certain assumptions on the function $f$ and the (approximate) Hessians $H_k$. Specifically, we assume that $f$ is a differentiable function with Lipschitz continuous gradient, i.e., there is a constant $M>0$ such that
+\begin{equation}   \label{lips}
+       \| g(x) - g(y) \| \leq M \| x - y \|,
+\end{equation}
+for all $x, y$. We denote by $\lambda_{\min}(H_k)$ and $\lambda_{\max}(H_k)$ the smallest and largest eigenvalues of $H_k$, respectively.
+
+%%%%%%%%%%%%%%%%%
+\begin{thm} Suppose that $f$ is a smooth  function that is bounded below and that satisfies \pref{lips}. Let $\{ x_k \}$ be the sequence of iterates generated by Algorithm~2.1, and suppose that there exist constants $0< \lambda \leq \Lambda$ such that the sequence $\{ H_k \}$ satisfies
+\[
+      \lambda_{\min}(H_k) \geq \lambda >0 \quad\mbox{and} \quad \lambda_{\max}(H_k) \leq \Lambda, 
+\]
+for all $k$.
+Then
+\begin{equation}    \label{limit}
+       \lim_{k \rightarrow \infty} F(x_k) =0 .
+\end{equation}
+\end{thm}
+%---------------
+\textbf{Proof.} We first show that if $\hat x$ is an approximate solution of \pref{quadm} that satisfies the inexactness conditions \pref{inx}, then there is a constant $\gamma >0$ (independent of $k$) such that for  all $k \in \{0,1, \cdots \}$ 
+\begin{equation} \label{ldec}
+ \ell_k(x_k) - \ell_k(\hat x)   \geq \gamma \|F(x_k)\|^2,
+ \end{equation}
+ where $\ell_k$ and $F$ are defined in \pref{ell} and \pref{Fdef}.
+To see this, note that by \eqref{inx}
+\[
+0 > q_k(\hat x)-q_k(x_k) = \ell_k(\hat x)-\ell_k(x_k) + \fraction{1}{2}(\hat x-x_k)^TH_k(\hat x-x_k) ,
+\]
+and therefore
+\begin{equation}    \label{lpre}
+      \ell_k(x_k) - \ell_k(\hat x) > \fraction{1}{2}(\hat x-x_k)^TH_k(\hat x-x_k) \geq  \fraction{1}{2}\lambda \|\hat x-x_k\|^2 .
+\end{equation}
+ 
+Next, since $F(x_k)= F_q(x_k;x_k)$, and using \pref{inx}  and the contraction property of the projection, we have that
+\begin{align*}
+  (1-\eta_k)\|F(x_k)\| &= (1-\eta_k)\|F_q(x_k;x_k)\| \\
+     & \leq \|F_q(x_k;x_k)\| - \|F_q(x_k,\hat x)\|  \\
+     & \leq  \|F_q( x_k;\hat x)-F_q(x_k;x_k)\| \\
+  & = \|H_k(\hat x-x_k)-P_{[-\mu,\mu]}(g(x_k) + H_k(\hat x-x_k)-\fraction{1}{\tau}\hat x) + P_{[-\mu,\mu]}(g(x_k)-\fraction{1}{\tau}x_k)\|\\ 
+  & \leq \|H_k(\hat x-x_k)\| + \|\fraction{1}{\tau}(\hat x-x_k)-H_k(\hat x-x_k)\| \\
+  & \leq \fraction{1}{\tau}\|\hat x-x_k\| + 2\|H_k\|\|\hat x - x_k\| \\
+  & = \left(\fraction{1}{\tau} + 2\|H_k\| \right)\|\hat x-x_k\|   \\
+  & \leq \left(\fraction{1}{\tau} + 2\Lambda \right)\|\hat x-x_k\|.
+  %& = O(\|x-x_k\|),
+\end{align*}
+Combining this expression with \pref{lpre}, we obtain \pref{ldec} for
+\[
+ \gamma = \frac{\lambda}{2}\left( \frac{1-\eta}{\frac{1}{\tau}+2\Lambda}\right)^2.
+\]
+Note that $\gamma>0$ as $\tau,\lambda, \Lambda>0$ and $\eta\in[0,1)$.
+
+\smallskip
+ 
+Let us define the search direction as $d= \hat x- x_k$. We now show that by performing a line search along $d$ we can ensure that the algorithm provides sufficient decrease in the objective function $\phi$, and this will allow us to establish the limit \eqref{limit}. 
+
+Since $g(x)$ satisfies the Lipschitz condition \pref{lips}, we have
+\[
+f(x_k+\alpha d) + \mu \|x_k+\alpha d\|_1 \leq f(x_k) + \alpha g(x_k)^Td + \frac{M}{2}\alpha^2\|d\|^2 + \mu\|x_k+\alpha d\|_1 ,
+\]
+and thus
+\[
+\ f(x_k) + \mu \|x_k\|_1 - f(x_k+\alpha d) - \mu \|x_k+\alpha d\|_1 \geq - \alpha g(x_k)^Td - \frac{M}{2}\alpha^2\|d\|^2 - \mu\|x_k+\alpha d\|_1 + \mu\|x_k\|_1.
+\]
+Recalling the definition of $\ell_k$, we have
+\[
+\phi(x_k) - \phi(x_k+\alpha d) \geq \ell_k(x_k) - \ell_k(x_k+\alpha d) - \frac{M}{2}\alpha^2\|d\|^2.
+\]
+By convexity of the $\ell_1$-norm, we have that
+\[
+\ell(x_k) - \ell(x_k+\alpha d) \geq  \alpha(\ell(x_k) - \ell(x_k+d)).
+\]
+Combining this inequality with \eqref{lpre}, and recalling that $x+d = \hat x$, we obtain for $ \theta\in(0,1)$,
+\begin{align}
+ \phi(x_k) - \phi(x_k+\alpha d) - \theta(\ell(x_k) - \ell(x_k+\alpha d)) & \geq (1-\theta)(\ell(x_k) - \ell(x_k+\alpha d))- \frac{M}{2}\alpha^2\|d\|^2  \nonumber \\
+ & \geq (1-\theta)\alpha(\ell(x_k) - \ell(x_k+d))- \frac{M}{2}\alpha^2\|d\|^2 \nonumber  \\
+ & \geq (1-\theta)\alpha\frac{\lambda}{2}\|d\|^2- \frac{M}{2}\alpha^2\|d\|^2\nonumber\\
+ & = \fraction{1}{2}\alpha\|d\|^2 \left((1-\theta)\lambda-M\alpha\right) \nonumber \\
+ & \geq  0 , \label{spray}
+\end{align}
+provided $\left(  (1-\theta)\lambda-M\alpha \right) \geq 0$. Therefore, the sufficient decrease condition \eqref{decrease} is satisfied for any steplength $\alpha$ satisfying
+\[
+0 \leq \alpha \leq (1-\theta)\frac{\lambda}{M},
+\]
+and if the backtracking line search cuts the steplength in half (say) after each trial, we have that the steplength chosen by the line search satisfies
+\[
+\alpha \geq  (1-\theta)\frac{\lambda}{2 M} .
+\]
+% \[
+%  f(x_k+\alpha d) + \mu \|x_k+\alpha d\|_1 \leq f(x_k) + \alpha g(x_k)^Td + \frac{M}{2}\alpha^2\|d\|^2 + \mu((1-\alpha)\|x_k\|_1 + \alpha\|x_k+d\|_1)
+%  \]
+%  or
+%  \[
+%     f(x_k+\alpha d) + \mu \|x_k+\alpha d\|_1 - f(x_k) -\mu\|x_k\|_1 \leq \alpha g(x_k)^Td + \frac{M}{2}\alpha^2\|d\|^2 -\alpha\mu(\|x_k\|_1-\|x_k+d\|_1).
+% \]
+% Since the search direction $d$ satisfies \eqref{lpre}, we obtain for $ \theta\in(0,1)$,
+% \begin{align*}
+%  \phi(x_k) - \phi(x_k+\alpha d) & \geq \alpha (\ell(x_k) - \ell(x_k+d))-\frac{M}{2}\alpha^2\|d\|^2\\
+% & \geq \theta\alpha (\ell(x_k) - \ell(x_k+d)) + (1-\theta)\frac{\delta_1}{2}\alpha\|d\|^2 - \frac{M}{2}\alpha^2\|d\|^2 . 
+% \end{align*}
+% Therefore, the condition \textcolor{blue}{(this condition differs from \eqref{decrease} by a factor $\alpha$)} 
+% \footnote{RB: The condition \eqref{decrease} uses $\ell(x_k + \alpha d)$ and is by convexity stronger than what is used here (thus the result 
+% here is stronger) The proof could be easily be done the other way, and I don't think it makes much difference except that we should be
+% consistent}.
+% \begin{equation}
+%     \phi(x_k) - \phi(x_k+\alpha d) \geq \theta\alpha (\ell(x_k) - \ell(x_k+d)) 
+% \end{equation}
+% is satisfied for 
+% \[
+%  0\leq \alpha \leq (1-\theta)\frac{\delta_1}{M}.
+% \]
+Thus, from \eqref{spray} and \eqref{ldec} we obtain 
+\[
+ \phi(x_k) - \phi(x_k+\alpha d) \geq \theta(1-\theta)\frac{\lambda}{2 M}\gamma\|F(x_k)\|^2.
+\]
+Since $f$ is assumed to be bounded below, so is the objective function $\phi$, and given that the decrease in $\phi$ is proportional to $\| F(x_k) \|$ we obtain the limit \pref{limit}. 
+\hspace*{\fill}$\Box$\medskip\medskip
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+We note that to establish this convergence result it was not necessary to assume convexity of $f$. 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Local Convergence}   \label{local}
+\setcounter{equation}{0}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+To analyze the local convergence rate of the successive quadratic approximation method, we use
+the theory developed in Chapter 7 of Facchinei and Pang \cite{facchinei2003finite}.
+To do this, we first show that, if $x^*$ is a nonsingular minimizer of $\phi$, then the functions
+$F_q (x; \cdot): \R^n \rightarrow \R^n$
+%, defined by
+% \[
+%         F_q (x;y)= g(x) +H(y-x)-P_{[-\mu,\mu]}( g(x) +H(y-x) -y/\tau), 
+%  \]
+are a family of uniformly Lipschitzian  nonsingular homeomorphisms for all $x$ in a
+neighborhood of $x^*$.
+
+%\paragraph{Strong monotonicity of $F_q$. }  %%%%%%%%%%%%%%%%%%
+\begin{lem}  \label{strongmono}
+If $H$ is a symmetric positive definite matrix with smallest eigenvalue $\lambda >0$,
+then the function of $y$ given by 
+\[ 
+           F_q (x;y)= g(x)+H(y-x)-P_{[-\mu,\mu]}( g(x)+H(y-x) -y/\tau),  
+\]
+is strongly monotone if $\tau < 1/\|H\|$. Specifically, for any vectors $y,z \in \R^n$,
+\be \label{smono}
+           (z-y)^T(F_q (x;z)- F_q (x;y)) \geq \fraction{1}{2}{\lambda} \|z-y\|^2 .
+\ee
+\end{lem}
+\textbf{Proof.}
+%This approach to proving $F_q$ is a homeomorphism is to show
+%that $F_q$ is strongly monotone, i.e. that
+%$[F_q(z)-F_q(y)]^T(z-y) \geq const*||z-y||^2$.
+%Clearly if we can prove this, then it follows immediately from Cauchy-Schwarz
+%that $F_q$ has a Lipschitz continuous inverse.
+%
+%We will use the form of $F_q$ where for an iterate $x$, we define
+%\[ F_q (x;y)= g+H(y-x)-P_[-\mu,\mu]( g+H(y-x) -y/\tau),  \]
+%where $g$ is the gradient of $f$ at $x$ and $H$ is the  Hessian at $x$.
+%
+It is straightforward to show that for any scalars $a \neq b$ and interval $[-\mu,\mu]$,
+\begin{equation} \label{projlip}  
+       0 \leq { P_{[-\mu,\mu]}(a) -  P_{[-\mu,\mu]}(b)  \over a-b }  \leq 1.
+\end{equation}
+Therefore  for any vectors $y$ and $z$, and for any index $i \in \{1, \cdots, n\}$ we have
+\begin{align*}
+ F_q (x;z)_i- F_q (x;y)_i &= H(z-y)_i-P_{[-\mu,\mu]}( g_i(x)+H(z-x)_i -z_i/\tau)] \\
+                                      & \quad + P_{[-\mu,\mu]}( g_i(x)+H(y-x)_i -y_i/\tau)] \\
+                                   &= H(z-y)_i -\bar d_i [H(z-y)_i -(z_i-y_i)/ \tau] ,
+\end{align*}
+where $\bar d_i \in [0,1]$ is a scalar implied by (\ref{projlip}). This implies that
+\[
+             F_q (x;z)- F_q (x;y) =H(z-y) + D(\fraction{1}{ \tau}I-H)(z-y) ,
+\]
+where $D = {\rm diag}(\bar d_i)$. Hence
+\begin{equation}    \label{ezza}
+(z-y)^T (F_q (x;z)- F_q (x;y))=(z-y)^T H(z-y) + (z-y)^TD(\fraction{1}{ \tau}I-H)(z-y).
+\end{equation}
+Since the right hand side is a quadratic form, we symmetrize the matrix, and if we let $w=z-y$, the right side is
+\begin{equation}  \label{loud}
+w^T [H+ \tau^{-1}D - \fraction{1}{2}(DH+HD)]w .
+\end{equation}
+To show that the symmetric matrix inside the square brackets is positive definite, we note that since
+$(\tau H -D)^T(\tau H -D) = \tau^2 H^2 -\tau (HD+DH) +D^2$ is positive semi-definite,
+we have that 
+\[
+w^T(HD+DH)w \leq w^T(\tau H^2 +\tau^{-1}D^2)w.
+\] 
+Substituting this into \eqref{loud} yields
+\begin{align*}
+    w^T \left[H+ \tau^{-1} D -\fraction{1}{2}(DH+HD)\right]w & \geq w^T\left[H-{\tau \over 2}H^2 + {D-D^2/2 \over \tau }\right]w \\
+          &    \geq w^T\left[H-{\tau \over 2}H^2 \right]w ,
+\end{align*}
+since  $D-D^2/2$ is positive semi-definite given that the elements of the diagonal matrix $D$ are in $[0,1]$.
+If $\lambda_i$ is an eigenvalue of $H$, the corresponding eigenvalue of the matrix $H-{\tau \over 2}H^2$
+is $\lambda_i-\tau \lambda_i^2 /2 \geq \lambda_i/2$  since our assumption on $\tau$ implies $1>\tau \|H\|\geq \tau \lambda_i$.
+Therefore, we have from \eqref{ezza} that 
+\[
+(z-y)^T (F_q (x;z)- F_q (x;y)) \geq \fraction{1}{2}\lambda\|z-y\|^2 .
+\]
+% \textcolor{blue}{Actually}, it looks like we can get positive definiteness as long as $\tau \|H\| <2$ . 
+% In particular, if $\tau \leq (2-\delta)/\lambda_n$, where $\lambda_n$ is the
+% largest eigenvalue, then the smallest eigenvalue of $H-{\tau \over 2}H^2$ is
+% \[
+% \min\{\lambda_n \delta/2, \lambda_1(1- {\lambda_1  \over \lambda_n} (1-\delta/2) ) \} \geq 
+% \lambda_1 \delta/2  .
+% \] 
+\hspace*{\fill}$\Box$\medskip
+%%%%%%%%%%%%%%%%%%% commented old derivation   %%%%%%%%%%%%%%%%%%
+\comment{
+We claim that if $\tau \|H\| <1$ the matrix $H+ D( {1 \over \tau}I -H)$ is positive definite. 
+To show this, let $w=y-z$. For an arbitrary scalar $\delta \in (0,1)$, 
+decompose $D=D_1 +D_2$, where the diagonal matrix $D_1$ contains the values $d_i$ in $[0, \delta]$
+and $D_2$ contains those in $(\delta, 1]$. Similarly decompose $w=w_1+w_2$.
+%
+Then
+\begin{eqnarray*}
+ w^T Hw +w^TD({1\over \tau}I-H)w &=&  w^T(I-D_1)Hw + w^T(\fraction{1}{\tau}D -D_2 H)w \\
+ &\geq& (\lambda -\delta \|H\|)\|w_1\|^2 + w_2^TD_2({1 \over \tau}-\|H\| ) w_2 \\
+ &\geq& (\lambda -\delta \|H\|) \|w_1\|^2 + ({1\over \tau}-\|H\| )\delta \|w_2\|^2 \\
+ &\geq&  \min\{ \lambda -\delta \|H\| , ({1 \over \tau}-\|H\|) \delta \} \|w\|^2.
+\end{eqnarray*}
+%
+If the value $\tau < 1/ \|H\|$, and we choose $\delta = \tau \lambda$
+then $F_q$ is strongly monotone with constant 
+\[ \lambda(1 -\tau \|H\| ). \]
+If $\tau < {1 \over 2 \|H\|}$
+the constant is $\lambda/2$.
+\hspace*{\fill}$\Box$\medskip
+}   %%%%%%%%%%%%%  end comment    %%%%%%%%%%%%%%%%
+
+
+Inequality \eqref{smono} establishes that $F_q(x;\cdot)$ is strongly monotone. 
+Next we show that, when $H$ is defined as the Hessian of $f$,  the functions $ F_q (x;\cdot)$ are homeomorphisms and that they represent an accurate
+approximation to the function $F$ defined in \eqref{Fdef}.
+
+\begin{thm} \label{homeo} If $\nabla^2 f(x^*)$ is positive definite and $\tau < 1/\|\nabla^2 f(x^*) \|$, then
+there is a neighborhood $\cal{N}$ of $x^*$ such that 
+for all $x \in \cal{N}$ the functions of $y$ given by
+\begin{equation}   \label{ella} 
+      F_q (x;y)= g(x) +\nabla^2 f(x)(y-x)-P_{[-\mu,\mu]}( g(x)+ \nabla^2 f(x)(y-x) -y/\tau)
+ \end{equation}
+are a family of homeomorphisms from $\R^n$ to $\R^n$, whose inverses
+$F_q^{-1}(x;\cdot) $ are uniformly Lipschitz continuous.
+In addition, if $\nabla^2 f(x)$ is Lipschitz continuous, then 
+there exists a constant $\beta>0$ such that 
+\be \label{fqerror}
+\| F(y) -F_q(x;y) \| \leq \beta \|x-y\|^2  
+\ee
+for any $x \in \cal{N}$.
+\end{thm}
+\textbf{Proof.}
+Since $\nabla^2 f(x)$ is continuous, there is a neighborhood ${\cal N}$ of $x^*$ and a positive constant
+$\lambda$ such that
+$\lambda_{min} (\nabla^2 f(x)) \geq \lambda >0$ and $\tau \|\nabla^2 f(x) \| < 1$,
+for all $x\in \cal{N}$.  
+It follows from Lemma \ref{strongmono} that for any such $x$,
+the function $F_q(x;y)$ given by \eqref{ella} is strongly (or uniformly) monotone with constant greater than $ \lambda/2$. We now invoke the Uniform Monotonicity Theorem (see e.g.  Theorem~6.4.4 in \cite{OrteRhei70}), which states that if a function $F:\R^n \rightarrow \R^n$ is continuous and uniformly monotone, then $F$ is a homeomorphism of $\R^n$ onto itself.
+We therefore conclude that  $F_q(x;y)$ is a homeomorphism.  
+
+In addition, we have from \pref{smono} and the Cauchy-Schwartz inequality that
+\[ 
+     \|z-y\| \| F_q (x;z)- F_q (x;y)\| \geq (z-y)^T(F_q (x;z)- F_q (x;y)) \geq  \fraction{1}{2} \lambda \|z-y\|^2 ,
+\]
+which implies Lipschitz continuity of $F_q^{-1}(x;\cdot) $ with constant $ 2 / \lambda $.
+To establish \pref{fqerror}, note that
+\begin{align*}
+F(y)-F_q(x;y) & = g(y) -P_{[-\mu,\mu]}( g(y) -y/\tau) - \left(g(x) +\nabla^2 f(x)(y-x) \right)  \\
+   & +P_{[-\mu,\mu]}( g(x)+\nabla^2 f(x)(y-x) -y/\tau),
+\end{align*}
+and thus
+\begin{eqnarray*}
+\|F(y)-F_q(x;y)\| &\leq& \| g(y) - (g(x) +\nabla^2 f(x)(y-x)) \| \\
+         & & +
+          \|P_{[-\mu,\mu]}( g(y) -y/\tau) - P_{[-\mu,\mu]}( g(x)+\nabla^2 f(x)(y-x) -y/\tau) \| \\
+       &\leq& 2 \| g(y) - ( g(x) +\nabla^2 f(x)(y-x)) \|   \\
+       & = & O(\|y-x\|^2) ,
+\end{eqnarray*}
+by the non-expansiveness of a projection onto a convex set and Taylor's theorem. 
+%\textcolor{red}{(Figen: For the last line, don't we need to assume Lipschitz continuity of $\nabla^2 f$ with parameter C ?)}
+\hspace*{\fill}$\Box$\medskip
+
+
+Theorem~\ref{homeo} shows that $F_q(x;y)$ defines a strong nonsingular Newton approximation 
+in the sense of Definition~7.2.2 of Pang and Facchinei \cite{facchinei2003finite}. This implies quadratic convergence for the (exact) successive quadratic approximation (SQA) method.
+
+\begin{thm} If $\nabla^2 f(x)$ is Lipschitz continuous and positive definite at $x^*$, and $\tau < 1/\|\nabla^2 f(x^*) \|$, then
+there is a neighborhood of $x^*$ such that, if $x_0$ lies in that neighborhood, the iteration that
+defines $x_{k+1}$ as the unique solution to
+\[ F_q (x_k;x_{k+1})= 0 \]
+converges quadratically to  $x^*$.
+\end{thm}
+\textbf{Proof.}
+By Theorem \ref{homeo}, $F_q(x_k;y)$ satisfies the definition of a nonsingular strong Newton
+approximation of $F$ at $x^*$, given by Facchinei and Pang (\cite{facchinei2003finite}, 7.2.2) and thus by Theorem~7.2.5
+of that book the local convergence is quadratic.
+\hspace*{\fill}$\Box$\medskip
+
+Now we consider the inexact SQA algorithm that, at each step, computes a point $y$
+satisfying
+\be
+ F_q (x_k;y)= r_k ,
+\ee
+where $r_k$ is a vector such that $\|r_k\| \leq \eta_k \|F(x_k)\|$ with $\eta_k <1$; see \eqref{inx}.
+We obtain the following result for a method that sets $x_{k+1}=y$. 
+
+\begin{thm} \label{inexact} Suppose that $\nabla^2 f(x)$ is Lipschitz continuous and positive definite at $x^*$, $\tau < 1/\|\nabla^2 f(x^*) \|$,
+and that $x_{k+1}$ is computed by solving
+\[ F_q (x_k;x_{k+1})= r_k , \]
+where $\|r_k\| \leq \eta_k \|F(x_k)\|$.
+Then, there is a neighborhood $\cal{N}$ of $x^*$ and a value $\bar{\eta}>0 $ such that if $\eta_k \leq \bar{\eta} $
+for all $k$ and if $x_0 \in \cal{N}$ then the sequence $\{x_k\}$ converges Q-linearly to $x^*$.
+In addition if $\eta_k \rightarrow 0$, then the convergence rate of $\{x_k\}$ is Q-superlinear.
+Finally, if for some $\tilde{\eta}$, $\eta_k \leq \tilde{\eta} \|F(x_k)\|$ then the convergence rate
+is Q-quadratic.  
+\end{thm}
+\textbf{Proof.}
+By Theorem \ref{homeo}, the iteration described in the statement of the theorem satisfies
+all the conditions of Theorem~7.2.8 of \cite{facchinei2003finite}. The results then follow immediately from that
+theorem.
+\hspace*{\fill}$\Box$\medskip
+
+We have shown above the the inexact successive quadratic approximation (SQA) method with $\alpha_k =1$ yields a fast rate of convergence. We now show that this inexact SQA algorithm will select the steplength $\alpha_k=1$ in a neighborhood of the solution.  In order to do so, we strengthen the inexactness conditions \eqref{inx} slightly so that they read
+\begin{equation}   \label{inxx}
+          \|F_q(x_k; \hat x)\| \leq \eta_k \|F_q(x_k; x_k)\| \ \mbox{ and } \ \ q_k(\hat x)-q_k(x_k) \leq 
+          \zeta (\ell_k(\hat x)-\ell_k(x_k) )  ,
+          \end{equation}
+where $\eta_k <1$,  $\zeta \in (\theta , 1/2)$ and $\theta$ is the input parameter of Algorithm~2.1 used in \eqref{decrease}. Thus, instead of simple decrease, we now impose sufficient decrease in $q_k$. 
+
+%%%
+\begin{lem} \label{nloa}
+ If $H_k$ is positive definite, the inexactness condition \pref{inxx} is satisfied by any sufficiently accurate solution to \pref{lassop}.
+\end{lem}
+%%%
+\textbf{Proof.}
+If we denote by $\bar{y}$ the (exact) minimizer of $q_k$, we claim that 
+\begin{equation}  \label{masia}
+    q_k(x_k) - q_k(\bar{y}) \geq \fraction{1}{2} (\ell_k(x_k) - \ell_k(\bar{y}) ). 
+\end{equation}
+To see this, note that $q_k(y) = \ell_k(y) + {1\over2} (y-x_k)^TH_k (y-x_k)$, 
+and since $\ell_k$ and $q_k$ are convex and $\bar{y}$ minimizes $q_k$, there exists a
+vector $v \in \partial \ell_k(\bar{y})$ such that $ v+ H_k (\bar{y}-x_k) =0$.
+By convexity
+\begin{equation}  \label{ficus}
+   \ell_k(x_k) \geq \ell_k(\bar{y}) + v^T(x_k - \bar{y} )= \ell_k(\bar{y}) + (\bar{y}-x_k)^TH_k(\bar{y}-x_k).
+\end{equation}   
+Therefore, 
+\[ q_k(x_k) - q_k(\bar{y}) = \ell_k(x_k)- \ell_k(\bar{y}) - \fraction{1}{2}(\bar{y}-x_k)^TH_k (\bar{y}-x_k)  \\ 
+                    \geq \fraction{1}{2} (\ell_k(x_k)- \ell_k(\bar{y}) ) ,
+\]
+which proves \eqref{masia}. 
+
+Now consider the continuous function $q_k(x)- q_k (x_k) - \zeta (\ell_k(x) - \ell_k(x_k) )$.
+By \pref{masia} its value at $x=\bar{y}$ is 
+\be
+   q_k(\bar y )- q_k (x_k) - \zeta ( \ell_k(\bar y ) -  \ell_k(x_k) )    \leq (\fraction{1}{2} -\zeta)( \ell_k(\bar y ) -  \ell_k(x_k) ) <0,
+\ee
+where the last inequality follows from \eqref{ficus}.
+Therefore by continuity, the value of this function for any $x$ in some neighborhood of $\bar{y}$ is negative, implying that \pref{inxx} is satisfied by
+any approximate solution $\hat{x}$ sufficiently close to $\bar{y}$.
+\hspace*{\fill}$\Box$\medskip
+
+%%%
+\begin{thm} \label{approxaccept}
+Suppose that $H_k=\nabla^2f(x_k)$ in Algorithm~2.1, and that we modify Step 2 in that algorithm to require that the approximate solution $\hat x$ satisfies \eqref{inxx} instead of \eqref{inx}. If we assume that $\nabla^2f(x)$ is Lipschitz continuous, then for all $k$ sufficiently large we have $\alpha_k =1$.
+\end{thm}
+%%%
+\textbf{Proof.}
+%Now, 
+Given that $\hat x = x_k +d_k$ satisfies \pref{inxx}, it follows from
+Taylor's theorem, the Lipschitz continuity of $\nabla^2f(x)$, and equation \pref{lpre} that for some constant $\rho>0$
+\begin{eqnarray*}
+\phi(x_k + d_k) -\phi(x_k) &=&  [ \phi(x_k + d_k) -\phi(x_k) - q_k(x_k+d_k) +q_k(x_k)] \\
+               &   & -(q_k(x_k)-q_k(x_k+d_k)) \\
+               &\leq&  -\zeta (\ell_k(x_k)- \ell_k(x_k +d_k) ) +\rho \|d_k\|^3     \\
+               &\leq&  \theta ( \ell_k(x_k + d_k)- \ell_k(x_k) ) + (\zeta - \theta) ( \ell_k(x_k+ d_k)- \ell_k(x_k) ) + \rho\|d_k\|^3     \\
+               &\leq&  \theta ( \ell_k(x_k+ d_k)- \ell_k(x_k) ) - (\zeta - \theta) {\lambda \over 2} \|d_k\|^2 + \rho \|d_k\|^3     \\
+               &\leq&  \theta ( \ell_k(x_k + d_k)- \ell_k(x_k) )
+\end{eqnarray*}
+if $\|d_k\| \leq (\zeta -\theta) \lambda/2\rho$ .
+Since the global convergence analysis implies $\|d_k\| \rightarrow 0$, we have from \eqref{decrease} that eventually the steplength $\alpha_k =1$ is accepted and used.
+\hspace*{\fill}$\Box$\medskip
+
+\bigskip
+We note that \eqref{inxx} is stronger than \eqref{inx}, and therefore, all the results presented in this and the previous section apply also to the strengthened condition \eqref{inxx}.
+Theorem \ref{approxaccept} implies that if Algorithm~2.1 is run with the strengthened accuracy condition \pref{inxx}, 
+and $H_k=\nabla^2f(x_k)$, then once the iterates are close enough to 
+a nonsingular minimizer $x^*$, the iterates have the linear, superlinear or quadratic convergence rates described in Theorem~\ref{inexact} if
+$\eta_k$ is chosen appropriately.
+
+
+ %Algorithm~\ref{xalgo} can use condition \eqref{inx} or \eqref{inxx}, which are very similar. We have implemented both. Condition \eqref{inxx} has the advantage that it guarantees acceptability of the unit step near to the solution.  
+
+\comment{
+\bigskip\bigskip
+%%%%%%%%%%%%  old text
+\textcolor{blue}{Old analysis for exact step, should be removed}.
+ First suppose the subproblem $F_q(x_k;x_k+d)=0$ is solved exactly.
+\begin{lem} \label{exact acceptance}
+If the step $d_k$ is computed as the exact minimizer of $q_k$, $H_k$ is the exact Hessian of $f$ 
+and $\nabla^2f(x_k)$ is Lipschitz continuous, then for $k$
+sufficiently large we have $\alpha_k =1$.
+\end{lem}
+\textbf{Proof.}
+First we claim that $q_k(0) - q_k(d_k) \geq 0.5 (L_k(0) - L_k(d_k) )$.
+To see this recall $q_k(d) = L_k(d) + {1\over2} d^TH_k d$. 
+Since $L_k$ and $q_k$ are convex and $d_k$ minimizes $q_k$, there exists a
+vector $v \in \partial L_k(d_k)$ such that $ v+ H_k D_k =0$.
+By convexity, $L_k(0) \geq L_k(d_k) - v^Td_k = L_k(d_k) + d^TH_kd_k$ .  
+Therefore, 
+\[ q_k(0) - q_k(d_k) = L_k(0)- L_k(d_k) - {1\over2}d^TH_k d_k  \\ 
+                    \geq {1\over2} (L_k(0)- L_k(d_k) )
+\]
+%
+Now considering the linesearch and using Taylor's theorem, 
+the Lipschitz continuity of $\nabla^2f(x)$, and equation \pref{lpre}
+\bea
+\phi(x_k + d_k) -\phi(x_k) &=& -(q_k(0)-q_k(d_k)) + [ \phi(x_k + d_k) -\phi(x_k) - q_k(d_k) +q_k(0)]  \\
+               &\leq&  -{1\over2} (L_k(0)- L_k(d_k) ) +\gamma_2 \|d_k\|^3     \\
+               &\leq&  \theta ( L_k(d_k)- L_k(0) ) + ({1\over2} - \theta) ( L_k(d_k)- L_k(0) ) + \gamma_2 \|d_k\|^3     \\
+               &\leq&  \theta ( L_k(d_k)- L_k(0) ) - ({1\over2} - \theta) \gamma \|d_k\|^2 + \gamma_2 \|d_k\|^3     \\
+               &\leq&  \theta ( L_k(d_k)- L_k(0) ) 
+\eea
+if $\|d_k\| \leq (({1\over2} -\theta) \gamma)/\gamma_2$ .
+Since the global convergence analysis implies $\|d_k\| \rightarrow 0$, eventually the steplength $\alpha_k =1$
+is accepted and used.
+\hspace*{\fill}$\Box$\medskip
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Numerical Results}   \label{numerical}
+\setcounter{equation}{0}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+One of the goals of this paper is to investigate whether the successive quadratic approximation ({\sc sqa}) method is, in fact, an effective approach for solving convex $\ell_1$ regularized problems of the form \eqref{l1prob}. Indeed, it is reasonable to ask whether it might be more effective to apply an algorithm such as {\sc ista} or {\sc fista}, directly to problem \eqref{l1prob}, rather than performing an inner iteration on the subproblem \eqref{lassop}.  Note that each iteration of {\sc fista} requires an evaluation of the gradient of the objective \eqref{l1prob}, whereas each inner iteration for the subproblem \eqref{lassop} involves the product of $H_k$ times a vector.
+
+  To study this question, we explore various algorithmic options within the successive quadratic approximation method, and evaluate their performance using data sets with different characteristics. One of the data sets concerns the covariance selection problem (where the unknown is a matrix), and the other involves a logistic objective function (where the unknown is a vector). Our benchmark is {\sc fista} applied directly to problem \eqref{l1prob}. {\sc fista} enjoys convergence guarantees when applied to problem \eqref{l1prob}, and is generally regarded as an effective method. 
+
+We employ two types of methods for solving the subproblem \eqref{lassop} in the successive quadratic approximation method: {\sc fista} and an orthant based method {\sc (obm)}  \cite{andrew2007scalable,dss,figi}. The orthant based method (described in detail in section~\ref{obm}) is a two-phase method in which an \emph{active orthant face} of $\R^n$ is first identified, and a subspace minimization is then performed with respect to the variables that define the orthant face. 
+%A line search ensures that the new iterate belongs to the active orthant \cite{andrew2007scalable,dss}. 
+The subspace phase can be performed by means of a Newton-CG iteration, or by computing a quasi-Newton step; we consider both options. 
+
+\bigskip\noindent
+The methods employed in our numerical tests are as follows.  
+
+
+\begin{itemize}
+\item[ ] {\sc \textbf{FISTA.}} This is the {\sc fista} algorithm \cite{fista} applied to the original problem \eqref{l1prob}. We used the
+                               implementation from the  
+                               TFOCS package,  called N83 \cite{becker2011templates}.  This implementation differs from the 
+                               (adaptive) algorithm described by 
+                                Beck and Teboulle~\cite{fista} in the way the Lipschitz parameter is updated, and
+                                performed significantly better in our test set than the method in \cite{fista}. 
+\item[ ] \textbf{PNOPT.}  This is the sequential quadratic approximation (proximal Newton) method of Lee, Sun and Saunders \cite{lee2012proximal}.  The Hessian $H_k$ in the subproblem \eqref{lassop} is updated using the limited memory BFGS formula, with a (default) memory of 50. (The {\sc pnopt}
+package also allows for the use of the exact Hessian, but since this matrix must be formed and factored at each iteration, its use is impractical.) The subproblem \eqref{lassop} is solved using the N83 implementation of {\sc fista} mentioned 
+                             above. {\sc pnopt} provides the option
+                            of using {\sc sparsa} \cite{sparsa} instead of N83 as an inner solver, but the performance of {\sc sparsa} was not robust in our tests, and we will 
+                            not report results with it.
+\item[ ] \textbf{SQA.}  Is the sequential quadratic approximation method described in Algorithm~\ref{xalgo}. We implemented 3 variants that differ in the method used to solve the subproblem \eqref{lassop}.
+   \begin{itemize}
+       \item[ ] \textbf{SQA-FISTA.} This is an {\sc sqa} method using {\sc fista-n}{\small 83} to solve the subproblem \eqref{lassop}. The 
+                  matrix $H_k$ is the exact Hessian $\nabla^2 f(x_k)$; each inner {\sc fista} iteration requires two multiplications with $H_k$.
+               \item[ ] \textbf{SQA-OBM-CG.}  This is an {\sc sqa} method that employs an orthant based method 
+                       to solve the subproblem \eqref{lassop}. The {\sc obm} method performs the subspace minimization step using  a Newton-CG iteration. The number of CG iterations varies
+                       during the course of the (outer) iteration according to the rule $\min\{3, 1+\lfloor k/10\rfloor \}$, where $k$ is the outer iteration number.
+              \item[ ] \textbf{SQA-OBM-QN.}  This is an {\sc sqa} method where the inner solver is an {\sc obm} method in which the
+                      subspace phase consists of a limited memory BFGS step, with a memory of 50.  The correction
+                      pairs used to update the quasi-Newton matrix employ gradient differences from the outer iteration (as in
+                      {\sc pnopt}).
+   \end{itemize}
+\end{itemize}
+
+
+The initial point was set to the zero vector in all experiments, and the iteration was terminated if $\| F (x_k)\|_\infty \leq 10^{-5}$, where $F$ is defined in \eqref{Fdef}. The maximum number of outer iterations for all solvers was $3000$. In the SQA method, the parameter  $\eta_k$ in  the inexactness condition \eqref{inx} was defined as $\eta_k = \max \{1/k , 0.1\}$, and we set $\theta=0.1$ in \eqref{decrease}. For {\sc pnopt} we set  `ftol'=$1e-16$, and `xtol'=$1e-16$ (so that those two tests do not terminate the iteration prematurely), and chose `Lbfgs\_mem'=50. 
+
+We noted above that Algorithm~\ref{xalgo} can employ the inexactness conditions \eqref{inx} or \eqref{inxx}. We implemented both conditions, with  $\zeta=\theta=0.1$, and obtained identical results in all our runs. 
+
+We now describe the numerical tests performed with these methods.
+
+\subsection{Inverse Covariance Estimation Problems } 
+The task of estimating a high dimensional sparse inverse covariance matrix is closely tied to the topic of Gaussian Markov random fields \cite{picka:06}, and arises in a variety of recognition tasks. This model can be used to recover a sparse social or genetic network from user or experimental data.
+
+A popular approach to solving this problem \cite{Banerjee:08,Banerjee:06} is to minimize the negative log likelihood function, under the assumption of normality, with an additional $\ell_1$ term to enforce sparsity in the  estimated inverse covariance matrix. We can write the optimization problem as
+\begin{equation}    \label{cov}
+        \min_{P \in \R^{n\times n} } \ {\rm tr}(S P) - \log \det P +\mu \| P\| ,
+\end{equation}
+where $S$ is a given sample covariance matrix, $P$ denotes the unknown inverse covariance matrix, $\mu$ is the regularization parameter, and $\| P \| \defeq \| vec( P) \|_1$.  
+%The initial point is set as $P_0 = (diag(S)+\mu I)^{-1}$ in all the experiments.\textcolor{blue}{(Figen: For ER and Leukemia, I replaced this starting point with one that is closer to the optimal solution so that FISTA no more gets stuck in the infeasible region; these two tables are now completely updated with respect to those new starting points.)} 
+We note that the Hessian of the first two terms in \eqref{cov} has a very special structure: it is given by $P^{-1} \otimes P^{-1}$.
+
+Since the objective is not defined when $\det(P)\leq 0$, we define it as $+\infty$ in that case to ensure that all iterates remain positive definite. Such a strategy could, however, be detrimental to a solver like {\sc fista}, and to avoid this we selected the starting point so that the condition $\det (P ) \leq 0$  did not occur.
+%We should note that N83 does not employ a line search, but uses function evaluations for estimating the Lipschitz constant \cite{becker2011templates}.  The strategy of assigning $+\infty$ to the function value at infeasible points may be not be the most efficient in the context of the N83 solver.\textcolor{blue}{However, starting the algorithm from good enough initial points, we observe in our runs below that FISTA may leave the feasible region only a few times within the first few iterations.}
+
+We employ three data sets: the well-known {\tt Estrogen} and {\tt Leukemia} test sets  \cite{li2010inexact}, and the problem given in Olsen et al. \cite{olsen2012newton}, which we call {\tt OONR}. The characteristics of the data sets are given in Table~1, where  nnz($P^\ast_\mu$) denotes the number of nonzeros in the solution. 
+% The problems were generated by  first creating a random sparse inverse covariance matrix \cite{Banerjee:08}, and then sampling data to compute acorresponding non-sparse empirical covariance matrix $S$.  We tested a problem of dimension $500 \times 500$, and for $\mu= 0.05$ the conditioning of the Hessian, at the solution $P^*$ of the smooth part in  \eqref{cov} is  
+ \begin{center}
+ Table 1.\\
+\begin{tabular}{|r | c c c |}
+\hline
+Data set & number of features & $\mu$ & nnz($P^\ast_\mu$)\\
+\hline
+Estrogen & 692 & 0.5 & 10,614 (2.22\%) \\
+Leukemia & 1255 & 0.5 & 34,781 (2.21\%) \\
+OONR & 500 & 0.5 & 1856 (0.74\%) \\
+\hline
+\end{tabular}
+\end{center}
+
+\bigskip
+The performance of the algorithms  on these three test problems is given in Tables~2, 3 and 4. We note that {\sc  fista} does not perform inner iterations since it is applied directly to the original problem \eqref{l1prob}, and that {\sc pnopt-fista} does not compute Hessian vector products because the matrix $H_k$ in the model \eqref{lassop} is defined by quasi-Newton updating. Each inner iteration of  {\sc sl-obm-qn} performs a Hessian-vector multiplication to compute the subproblem objective, and a multiplication of the inverse Hessian times a vector to compute the unconstrained minimizer on the active orthant face --- we report these as two Hessian-vector products in  Tables~2, 3 and 4.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\bigskip
+
+
+% The new initial point for these runs is obtained by starting SQA-OBM-CG from the default P_0, and stopping it after two iterations
+
+\small
+\begin{center}
+{\large Table 2.} {ESTROGEN}; $\mu = 0.5$, optimality tolerance = $10^{-5}$ \\ 
+\begin{tabular}{|r | c c c c  c| }
+%\hline
+%\multicolumn{7}{l}{data set = \textbf{Estrogen}, $\mu = 0.5$, optimality tolerance = $1e-5$ }\\%size = 692 $\times$ 692} \\
+%\multicolumn{7}{l}{$\eta_k = \max \{1/k , 0.1\}$, LBFGS memory size = 50 } \\
+\hline 
+solver       &  FISTA &  SQA   & PNOPT & SQA &   SQA \\ \hline\hline
+inner solver &       & {\sc fista} & {\sc fista} & {\sc obm-qn}   &{\sc obm-cg} \\
+\hline
+  outer iterations & 808 & 9 & 43 & 44 & 8 \\
+  inner iterations & - & 183 & 2134$^\ast$ & 64 & 93 \\
+  function/gradient evals & 1751 & 10 & 44 & 45 & 10 \\
+  Hessian-vect mults & - & 417 & - & 2 & 213 \\
+  time (s) & 208.87 & 51.54 & 355.15 & 38.74 & 26.95 \\
+\hline
+\multicolumn{6}{l}{$^{\ast}$ For PNOPT we report the number of prox. evaluations}\\
+%\multicolumn{7}{l}{$^{\sharp}$ the QN routines for computing HvMult and invHvMult are called 196 times}
+\end{tabular}
+\end{center}
+\normalsize
+
+\bigskip
+
+% The new initial point for these runs is obtained by starting SQA-OBM-CG from the default P_0, and stopping it after three iterations
+\small
+\begin{center}
+{\large Table 3.} {LEUKEMIA}; $\mu = 0.5$, optimality tolerance = $10^{-5}$ \\ 
+\begin{tabular}{|r | c c c c  c |}
+%\hline
+%\multicolumn{7}{l}{data set = \textbf{Leukemia}, $\lambda = 0.5$, optimality tolerance = $1e-5$ } \\%size = 1255 $\times$ 1255} \\
+%\multicolumn{7}{l}{$\eta_k = \max \{1/k , 0.1\}$, LBFGS memory size = 50 } \\
+\hline 
+solver       & FISTA &  SQA   & PNOPT$^{\ast}$ & SQA$^{\ast}$ &  SQA \\ \hline\hline
+inner solver &       & {\sc fista} & {\sc fista} & {\sc obm-qn}  &  {\sc obm-cg} \\
+\hline
+ outer iterations & 838 & 8 & $>488^{\ast\ast}$ & 101 & 8 \\
+ inner iterations & - & 187 & - & 196 & 101 \\
+ function/gradient evals & 1803 & 9 & - & 103 & 9 \\
+ Hessian-vect mults & - & 420 & - & 4 & 239 \\
+ time (s) & 1048.77 & 239.23 & - & 171.41 & 140.33 \\
+\hline
+\multicolumn{6}{l}{$^{\ast}$ out of memory for memory size = 50, we decrease memory size to 5}\\
+\multicolumn{6}{l}{$^{\ast\ast}$ exit with message: ``Relative change in function value below ftol''}\\
+\multicolumn{6}{l}{$^{\ast\ast}$ optimality error is below $1e-4$ after iteration 73, it is $2.3136e-05$ at termination}\\
+%\multicolumn{7}{l}{$^{\sharp\sharp}$ the QN routines for computing HvMult and invHvMult are called 445 times}
+\end{tabular}
+\end{center}
+\normalsize
+
+ 
+\bigskip
+
+\small
+\begin{center}
+{\large Table 4.} {OONR}; $\mu = 0.5$, optimality tolerance = $10^{-5}$ \\ 
+\begin{tabular}{|r | c c c c  c |}
+%\hline
+%\multicolumn{7}{l}{data set = \textbf{OONR}, $\lambda = 0.5$, optimality tolerance = $1e-5$ } \\%\textbf{Problem 500\_3} of the tests under Section 5.1 } \\
+%\multicolumn{7}{l}{$\eta_k = \max \{1/k , 0.1\}$, LBFGS memory size = 50 } \\
+\hline
+solver       & FISTA &  SQA       &  PNOPT      & SQA  &  SQA \\ \hline\hline
+inner solver &       & {\sc fista} &  {\sc fista}  & {\sc obm-qn} &  {\sc obm-cg} \\
+\hline
+  outer iterations & 212 & 10 & 39 & 37 &  7 \\
+  inner iterations & $-$ & 80 & 761 & 37 &  60 \\
+  function/gradient evals & 461 & 11 & 41 & 44 &  9 \\
+  Hessian-vect mults & $-$ & 193 & - & 2 &  125 \\
+  time (s) & 23.53 & 10.14 & 70.37 & 12.73 &  7.09 \\
+  %CPU time (s) & 48.15 & 20.84 & 84.92 & 25.43 & 10.29 & 14.40 \\
+\hline
+%\multicolumn{7}{l}{$^{\ast}$ number of prox. evaluations is reported for PNOPT}\\
+%\multicolumn{7}{l}{$^{\sharp\sharp}$ the QN routines for computing HvMult and invHvMult are called 682 times}
+\end{tabular}
+\end{center}
+\normalsize
+
+\bigskip
+We now comment on the results given in Tables~2-4. For the inverse covariance selection problem \eqref{cov}, Hessian-vector products are not as expensive as for other problems (c.f. Tables 5-6) --- in fact, these products are not much costlier  than computations with the limited memory BFGS matrix. This fact, combined with the effectiveness of the {\sc obm} method, makes  {\sc sqa-obm-cg} the most efficient of the methods tested. {\sc obm} is a good subproblem solver due to its ability to estimate the set of zero variables quickly, so that the subspace step is computed in a small reduced space  (the density of $P_\mu^\ast$ is less than $2.5\%$ for the three test problems.) In addition, the {\sc obm-cg} method can decrease $\| F_q \|$ drastically in a single iteration, often yielding a high quality {\sc sqa} step and thus  a low number of outer iterations.
+
+We note that the quasi-Newton algorithms {\sc sl-obm-qn} and {\sc pnopt} are different methods because of the subproblem solvers they employ. {\sc sl-obm-qn} uses the two-phase {\sc obm} method in which the quasi-Newton step is computed in a subspace, whereas {\sc pnopt} applies the {\sc fista} iteration to subproblem \eqref{quadm} where $H_k$ is a quasi-Newton matrix.  Although the number of outer iterations of both methods is comparable for problems {\tt Estrogen} and {\tt OONR}, there is a large difference in the number of inner iterations due to power of the {\sc obm} approach.
+
+Note that the number of inner {\sc fista} iterations in {\sc sqa-fista} is always smaller than for {\sc fista}. We repeated the experiment with problem {\tt OONR} using looser optimality tolerances (TOL); the total number of {\sc fista} is given in 
+Table~5.%\textcolor{blue}{Figen, I read these numbers from your graphs so they are not precise; please correct}. 
+\bigskip
+
+\small
+\begin{center}
+{\large Table 5.} Effect of convergence tolerance TOL; OONR  \\ 
+\begin{tabular}{|r  |  c c  c | }
+\hline
+  TOL        & $10^{-2}$    & $10^{-3}$    & $10^{-4}$   \\ \hline\hline
+  FISTA (\# of outer iterations) & 30 & 74 & 136  \\
+  SQA-FISTA (\# of inner iterations) &  47 & 56 &  69 \\
+  \hline
+\end{tabular}
+\end{center}
+\normalsize
+These results are typical for the covariance selection problems, where the {\sc sqa-fista} is clearly more efficient than {\sc fista}; we will see that this is not the case for the problems considered next.
+
+
+\subsection{Logistic Regression Problems} 
+In our second set of experiments the function $f$ in \eqref{l1prob} is given by a logistic function.  Given $N$ data pairs $(z_i,y_i)$, with $z_i\in\Re^n, \, y_i\in\Re,\,  i=1,\dots,N$, the optimization problem is given by
+\[ 
+\min_x \ \ \frac{1}{N}\sum_{i=1}^{N}\log(1+\exp(-y_ix^Tz_i)) + \mu \|x\|_1.
+\]
+We employed the data given in Table~6, which was downloaded from the SVMLib repository. The values of the regularization parameter $\mu$ were taken from Lee et al. \cite{lee2012proximal}.
+
+\bigskip
+\begin{center}
+{\large Table 6. Test problems for logistic regression tests}
+\begin{tabular}{|r | c c c c |}
+\hline
+Data set  & $N$ & number of features & $\mu$ & nnz($x^\ast_\mu$)\\
+\hline
+Gisette (scaled) & 6,000 & 5,000 & 1/1500 & 482 (9.64\%) \\
+RCV1 (multi-class) & 15,564 & 47,236 & 1/62256 & 144 (0.31\%)\\
+\hline
+\end{tabular}
+\end{center}
+
+\bigskip
+
+\small
+\begin{center}
+{\large Table 7.} {GISETTE}; $\mu = 1/1500$, optimality tolerance = $10^{-5}$ \\ 
+\begin{tabular}{|r | c c c c  c |}
+\hline
+%\multicolumn{7}{l}{data set = \textbf{gisette}, $\lambda = 1/1500$,  optimality tolerance = $1e-5$} \\
+solver       & FISTA & SQA & PNOPT         & SQA    &  SQA \\ \hline\hline
+inner solver &      & {\sc fista} & {\sc fista}  & {\sc obm-qn}  &  {\sc obm-cg} \\
+\hline
+  outer iterations & 1023 & 11 & 237 & 253 &  10\\
+  inner iterations & $-$ & 1744 & 25260$^\ast$ & 1075 &  770\\
+  function/gradient evals & 2200 & 12 & 240 & 254 &  11\\
+  Hessian-vector mults & $-$ & 3761 & $-$ & 2 &  3321\\
+  time & 185.55 & 311.28 & 108.84 & 38.47 &  273.10 \\
+  %CPU time (s) & 187.10 & 312.01 & 135.93 & 79.11 & 136.69 & 280.61\\
+\hline
+\multicolumn{6}{l}{$^\ast$ For PNOPT we report the number of prox. evaluations.}
+\end{tabular}
+\end{center}
+\normalsize
+
+\bigskip
+
+\small
+\begin{center}
+{\large Table 8.} {RCV1}; $\mu = 3.3065e-04$, optimality tolerance = $10^{-5}$ \\ 
+\begin{tabular}{|r | c c c c  c | }
+\hline
+%\multicolumn{6}{l}{data set = \textbf{rcv1}, $\lambda = 1/62256$,  optimality tolerance = $1e-5$} \\
+
+solver & FISTA & SQA & PNOPT & SQA &  SQA \\ \hline\hline
+inner solver & & {\sc fista} & {\sc fista} &  {\sc obm-qn}  &  {\sc obm-cg} \\
+\hline
+  outer iterations & 90 & 7 & 19 & 18 & 6 \\
+  inner iterations & $-$ & 366 & 1148 & 27 & 54 \\
+  function/gradient evals & 184 & 8 & 20 & 19 & 7 \\
+  Hessian-vector mults & $-$ & 738 & $-$ & 2 & 120 \\
+  time (s) & 1.95 & 7.52 & 11.23 & 0.92 &  1.33 \\
+\hline
+%\multicolumn{6}{l}{$^\ast$ number of prox. evaluations is reported for PNOPT.}
+\end{tabular}
+\end{center}
+
+\bigskip\normalsize
+For the logistic regression problems,  Hessian-vector products are expensive, particularly for {\tt gisette}, where the data set is dense. As a result, the {\sc obm} variant that employs quasi-Newton approximations, namely {\sc sqa-obm-qn}, performs best (even though {\sc sqa-obm-cg} requires a smaller number of outer iterations). Note that {\sc sqa-fista} is not efficient; in fact it requires a much larger number of inner iterations than the total number of iterations in {\sc fista}. In Table~9 we observe the effect of the optimality tolerance, on these two methods, using problem {\tt gisette}.
+\bigskip
+
+\small
+\begin{center}
+{\large Table 9.} Effect of convergence tolerance TOL ; Gisette \\ 
+\begin{tabular}{|r  |  c c  c | }
+\hline
+  TOL        & $10^{-4}$    & $10^{-5}$    & $10^{-6}$   \\ \hline\hline
+  FISTA (\# of outer iterations) & 605 & 1023 & 2555  \\
+  SQA-FISTA (\# of inner iterations) &  1249 & 1744 &  2002 \\
+  \hline
+\end{tabular}
+\end{center}
+\normalsize
+\bigskip
+
+We observe from Table~9, that {\sc fista} requires a smaller number of iterations; it is only for a very high accuracy of
+$10^{-6}$ that {\sc sqa-fista} becomes competitive. This is in stark contrast with Table~5.
+
+In summary, for the logistic regression problems the advantage of the {\sc sqa} method is less pronounced than for the inverse covariance estimation problems, and is achieved only through the appropriate choice of model Hessian $H_k$ (quasi-Newton) and the appropriate choice of inner solver (active set {\sc obm} method).
+
+%%%%
+\subsection{Description of the orthant based method (OBM) } \label{obm}
+We conclude this section by describing the orthant-based method  used in our experiments to solve the subproblem \eqref{lassop}. We let $t$ denote the iteration counter of the {\sc obm} method, and let $z_t$ denote its iterates.
+
+Given an iterate $z_t$, the method defines an orthant face $\Omega_t$ of $\R^n$ by
+ \begin{equation}    \label{ao}
+    \Omega_t = \mbox{\textbf{cl}}(\{ d \in \R^n: \sgn(d_i) = \sgn([\omega_t]_i), \ i=1,...,n \}),   
+ \end{equation}
+ with
+ \begin{equation}
+ [\omega_t]_i = \begin{cases} \sgn([z_t]_i) \quad \ \ \mbox{if }  [z_t]_i\neq 0 \\ \sgn(-[v_t]_i) \quad \mbox{if } [z_t]_i= 0 , \end{cases}  
+\end{equation}
+ where $v_t$ is the minimum norm subgradient of $q_k$ computed at $z_t$, i.e.,
+    \begin{equation}    \label{mnsub}
+      [v_t]_i = \begin{cases} [\nabla q_k(z_t)]_i + \mu \quad &\mbox{ if } [z_t]_i> 0 \quad \mbox{or }  \mbox{ }( [z_t]_i = 0 
+                           \mbox{ } \land \mbox{ } \nabla q_k(z_t)]_i + \mu < 0 ) \\
+                          [\nabla q_k(z_t)]_i - \mu \quad &\mbox{ if } [z_t]_i< 0 \quad \mbox{or } \mbox{ }  ([z_t]_i= 0 
+                          \mbox{ } \land \mbox{ } \nabla q_k(z_t)]_i - \mu > 0 ) \\
+                           \qquad \quad 0 \quad   \quad &\mbox{ if }  [z_t]_i= 0 
+                           \quad \mbox{and }  \mbox{ } 0 \in [\nabla q_k(z_t)]_i - \mu,\nabla q_k(z_t)]_i + \mu] . \\ \end{cases}
+ \end{equation}
+ Defining $\Omega_t$ in this manner was proposed, among others, by Andrew and Gao \cite{andrew2007scalable}.
+ In the relative interior of $\Omega_t$, the model function $q_k$ is differentiable. The active set in the orthant-based method, defined as $A^k = \{i : \omega^k_i =0\}$, determines the variables that are kept at zero, while the rest of the variables are chosen to minimize a (smooth) quadratic model. Specifically, the search direction $d_t$  of the algorithm is given by $d_t=\hat z -z_t$, where $\hat z$ is a solution of 
+ \begin{align}    
+      \min_{z \in \R^{n}} & \ \ \psi(z) =   q_k(z_t) + (z-z_t)^Tv^k 
+                                          + \fraction{1}{2} (z-z_t)^T  H_k (z-z_t) \nonumber \\
+      \mbox{s.t.} & \ \ z_i=[z_t]_i, \ i \in A^k . \label{aomodel}
+\end{align}  
+Note that $\psi(z) = f(x_k) + (g(x_k)+\omega_t\mu)^T(z-x_k) + \frac{1}{2}(z-x_k)^TH_k(z-x_k)$.
+
+In the {\sc obm-cg} variant, we set $H_k = \nabla^2  f(x_k)$, and perform an  approximate minimization of this problem using the projected conjugate gradient iteration \cite{mybook}. In the {\sc obm-qn} version, $H_k$ is a limited memory BFGS matrix and $\hat z$ is the exact solution of \eqref{aomodel}. This requires computation of the inverse reduced Hessian $R_k=(Z_k^T \nabla^2 H_k Z_k)^{-1}$, where $Z_k$ is a basis for the space defined by \eqref{aomodel}. The matrix $R_k$ can be updated using  the compact representations of quasi-Newton matrices \cite{ByrdNoceSch94}.
+After the direction $d_t= \hat z-z_t$ has been computed, the {\sc obm} method performs a line search along $d_t$, projecting the iterate back onto the orthant face $\Omega_t$, until a sufficient reduction in the function $q_k$ has been obtained.  Although this algorithm performed reliably in our tests, its convergence has not been proved (to the best of our knowledge) because the orthant face identification procedure \eqref{ao}-\eqref{aomodel} can lead to arbitrarily small steps.
+
+Our {\sc obm-qn} algorithm differs from the {\sc owl} method in two respects: it does not realign the direction $z-z_t$ so that the sign of its components match those of $v_t$, and it performs the minimization of the model exactly, while the {\sc owl} method computes only an approximate solution -- defined by computing the reduced inverse Hessian $Z_k^T \nabla^2 H_k^{-1} Z_k$,
+instead of the inverse of the reduced Hessian $R_k$. 
+
+
+
+% 
+% In the next table we give the change in $\|F(x_k)\|$ and $\|F_q(x_{k+1}; x_k)\|$ for the run with $\eta_k = 0.1$ (fixed).  (Since we run SL-OBM-CG, $F_q(x_{k+1}; x_k)$ is computed using the exact Hessian, not a quasi-Newton approximation).
+% 
+% \small
+% \begin{center}
+% \begin{tabular}{c c c c c c c}
+% \hline
+%  $k$ & $\|F(x_k)\|$ & $\phi(x_k)$ & inner iters (HvMults) & $\|F_q(x_{k+1}; x_k)\|$ & $\displaystyle\frac{\|F(x_k)\|}{\|F(x_{k-1})\|}$ & $\displaystyle\frac{\|F(x_k)\|}{\|F_q(x_k; x_{k-1})\|}$\\
+% \hline 
+%  0 & 3.11e-01 & 6.93e-01 & 13 (30) & 2.49e-02 & - & - \\
+%  1 & 9.00e-02 & 2.87e-01 & 30 (98) & 8.88e-03 & 0.289 & 3.62 \\
+%  2 & 3.39e-02 & 1.58e-01 & 136 (546) & 3.28e-03 & 0.377 & 3.82 \\
+%  3 & 1.39e-02 & 1.07e-01 & 95 (448) & 1.38e-03 & 0.410 & 4.24 \\
+%  4 & 5.61e-03 & 8.31e-02 & 104 (487) & 5.36e-04 & 0.403 & 4.07 \\
+%  5 & 2.15e-03 & 7.12e-02 & 132 (607) & 2.03e-04 & 0.383 & 4.01 \\
+%  6 & 7.41e-04 & 6.63e-02 & 84 (375) & 7.05e-05 & 0.345 & 2.45 \\
+%  7 & 1.64e-04 & 6.54e-02 & 214 (910) & 1.64e-05 & 0.221 & 2.33 \\
+%  8 & 3.07e-05 & 6.5198e-02 & 182 (696) & 3.06e-06 & 0.187 & 1.87 \\
+%  9 & 2.94e-06 & 6.5194e-02 & - & - & 0.096 & 0.96 \\
+% \hline 
+% % \multicolumn{7}{l}{elapsed time: 353.62}\\
+% %\hline 
+% \end{tabular}
+% \end{center}
+% \normalsize
+% 
+% \bigskip
+% 
+% The table for the run with OBM-QN-$\Delta g$, $\eta_k = 0.1$ (fixed).  This time $F_q(x_{k(t)+1}; x_{k(t)})$ is computed using LBFGS quasi-Newton approximation with $m=50$.  The results are printed every 25 iterations, $k(t)$ is the outer iteration counter.
+% \small
+% \begin{center}
+% \begin{tabular}{c c c c c c c }
+% \hline
+% $t$ & $k(t)$ & $\|F(x_{k(t)})\|$ & $\phi(x_{k(t)})$ & total inner iters (QNCalls) & $\|F_q(x_{k(t)+1}; x_{k(t)})\|$ & $\displaystyle\frac{\|F(x_{k(t)})\|}{\|F(x_{k(t-1)})\|}$ \\
+% \hline 
+% 0 & 0 & 3.11e-01 & 6.93e-01 & 112 (275) & 2.83e-04 & - \\
+% 1 & 25 & 3.25e-03 & 8.43e-02 & 159 (419) & 2.52e-06 & 0.0105 \\
+% 2 & 50 & 1.46e-03 & 6.80e-02 & 185 (496) & 5.84e-06 & 0.449 \\
+% 3 & 75 & 1.26e-03 & 6.61e-02 & 128 (315) & 3.91e-08 & 0.863 \\
+% 4 & 100 & 1.13e-03 & 6.56e-02 & 108 (265) & 1.22e-16 & 0.897 \\
+% 5 & 125 & 1.43e-04 & 6.532e-02 & 97 (286) & 1.23e-05 & 0.127 \\
+% 6 & 150 & 1.46e-04 & 6.527e-02 & 70 (153) & 2.19e-07 & 1.021 \\
+% 7 & 175 & 6.87e-05 & 6.522e-02 & 64 (131) & 3.91e-16 & 0.471 \\
+% 8 & 200 & 5.33e-05 & 6.520e-02 & 62 (135) & 8.90e-07 & 0.776 \\
+% 9 & 225 & 3.17e-05 & 6.5199e-02 & 42 (88) & 2.39e-05 & 0.595 \\
+% 10 & 250 & 2.31e-05 & 6.5195e-02 & 38 (76) & 2.63e-17 & 0.729 \\
+% 11 & 275 & 9.26e-06 & 6.5195e-02 & - & - & 0.401 \\
+% \hline
+% %\multicolumn{7}{l}{elapsed time: 106.96}\\
+% %\hline 
+% \end{tabular}
+% \end{center}
+% \normalsize
+                              
+\section{Final Remarks} \label{finalr}
+One of the key ingredients in making the successive quadratic approximation (or proximal Newton) method practical for problem \eqref{l1prob} is the ability to terminate the inner iteration as soon as a step of sufficiently good quality is computed. In this paper, we have proposed such an inexactness criterion; it employs an optimality measure that is tailored to the structure of the problem. We have shown that the resulting algorithm is globally convergent, that its rate of convergence can be controlled through an inexactness parameter, and that the inexact method will naturally accept unit step lengths in a neighborhood of the solution. We have also argued that our inexactness criterion is preferable to the one proposed by Lee et al. \cite{lee2012proximal}.
+
+The method presented in this paper can use any algorithm for the inner minimization of the subproblem \eqref{quadm}. In particular, all the results are applicable to the case  when this inner minimization is performed using a coordinate descent algorithm \cite{hsieh2011sparse, tanscheinberg}. In our numerical tests we employed {\sc fista} and an orthant-based method as the inner solvers, and found the latter method to be particularly effective. The efficacy of the successive quadratic approximation approach depends of the choice of matrix $H_k$ in \eqref{quadm}, which is problem dependent:  when Hessian-vector products are expensive to compute, then a quasi-Newton approximation is most efficient; otherwise defining $H_k$ as the exact Hessian and implementing a Newton-CG iteration is likely to give the best results.
+
+\bigskip\noindent{\it Acknowledgement.} The authors thank Jong-Shi Pang for his insights and advice throughout the years. The theory presented by Facchinei and Pang \cite{facchinei2003finite} in the context of variational inequalities was used in our analysis,  showing the power and generality  that masterful book.
+
+
+\small
+\bibliographystyle{plain}
+\bibliography{../../References/references}
+\end{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%  END END END END END END END END END END END 
+\bigskip \bigskip \bigskip
+\subsection{Original Figen Results\textcolor{blue}{To be removed }}
+
+
+We discussed the following question: Under what conditions solving the quadratic model by an iterative method can perform better than solving directly the original problem itself by using the same method?  It was argued that employing the quadratic model can be useful only if there is a method to solve the quadratic that can take the advantage of its special structure.  Then, we did some quick testing with ISTA and FISTA methods to see what happens when we use them (a)for directly solving the original problem, (b)for (inexactly) solving the quadratic model. 
+
+\subsection{Inverse Covariance Estimation}
+ 
+\bigskip
+
+ The below results are obtained from tests on a few inverse covariance problem instances.
+
+\bigskip
+
+%\begin{verbatim}
+\small
+(number of outer iterations/number of inner iterations)\\
+\begin{tabular}{r|lll|lll}
+\hline
+&\multicolumn{3}{c}{FISTA$^{**}$ }     & \multicolumn{3}{c}{ISTA }\\
+\hline
+problem    &    Inexact NL  &  Direct  &  Exact$^*$ NL   &    Inexact NL  &  Direct   &  Exact$^*$ NL \\        
+\hline
+\multicolumn{7}{l}{optol=1E-5, mu=0.1}
+\\
+\hline
+100\_1 &  6/51	&	80 &	4/211	&	6/143	&	90	&	4/246
+\\
+100\_2 &	6/48	&	79 &	4/251	&	6/110	&	79	&	5/288
+\\
+500\_1 &	5/33	&	61 &	3/109	&	5/71	&	64	&	3/124
+\\
+500\_2 &	5/28	&	43 &	3/79	&	5/57	&	48	&	3/86
+\\
+\hline
+\multicolumn{7}{l}{optol=1E-2, mu=0.1}
+\\
+\hline
+100\_1	& 4/29	&	11 &    3/23	&	3/42	&	19	&	3/39
+\\
+100\_2	& 3/17	&	14 &	4/27	&	3/34	&	22	&	3/50
+\\
+500\_1	& 2/9	&	6 &	2/9	&	2/16	&	12	&	2/16
+\\
+500\_2	& 2/8	&	5 &	2/7	&	2/13	&	8	&	2/10	\\			
+\hline
+\multicolumn{7}{l}{optol=1E-2, mu=0.01}
+\\
+\hline
+100\_1  & 7/231 & 253 & &                        	8/585	&	2307
+& \\
+100\_2 	& 6/210 & 161 & &				9/725	&	1056
+& \\
+500\_1	& 8/236 & 206 & &				6/719    &       291
+& \\
+500\_2	& 8/296$^{***}$ & $>2000$ & &			5/676	&	702
+& \\
+\hline
+\multicolumn{7}{l}{optol=1E-2, mu=0.005}
+\\
+\hline
+100\_1 & 6/269 & 992 & &				10/828	&	$>$5000& \\
+100\_2 & 5/180 & 287 & &				13/1178	&	1430 & \\
+500\_1 & 7/313 & 999 & &				5/872	&	1253 & \\
+500\_2 & 10/451 & $^\sharp$& &				6/2068	&	$>$5000 & \\
+\hline
+\end{tabular}\\					
+%\end{verbatim}
+\footnotesize
+$^*$ In the exact case, we set the subproblem error tolerance equal to optol.\\
+$^{**}$ FISTA algorithm is implemented as described in the Beck\&Teboulle paper.\\
+$^{***}$ Successive Lasso can decrease the optimality error a lot in a single iteration, so the final optimality error provided by Successive Lasso can be much less than the optimality error tolerance $1e-2$; e.g., for this run, the final optimality error at the solution point provided by Successive-Lasso is less than $1e-4$.\\
+$^\sharp$ Left the positive definite orthant.
+
+\bigskip
+
+\normalsize
+Conditioning of the problems at the optimal solution point $P_\ast$:
+\begin{center}
+\small
+\begin{tabular}{r|rl|rl}
+ \hline\hline
+ problem & $\mu$ & cond($P_\ast\otimes P_\ast$) & $\mu$ & cond($P_\ast\otimes P_\ast$)\\
+ \hline
+ 100\_1 & 0.1 & 14.01 & 0.01 & 377.28\\
+ \hline
+ 100\_2 & 0.1 & 22.8 & 0.01 & 544.37\\
+ \hline
+ 500\_1 & 0.1 & 12.25 & 0.01 & 365.88\\
+ \hline
+ 500\_2 & 0.1 & 11.99 & 0.01 & 410.01\\
+ \hline
+ 500\_3 & 0.5 & 67.86 & 0.1 & 749.66\\
+ & 0.05 & $2.6\times 10^{3}$ & 0.01 & $1.4\times 10^{4}$\\
+ \hline\hline
+\end{tabular}
+\normalsize
+\end{center}
+
+\bigskip
+
+These results show that the Successive Lasso algorithm using FISTA in its inner iterations can be more advantageous as compared to the FISTA algorithm applied directly to the convex problem as the problem gets harder in terms of its conditioning and the level of accuracy required.  We anticipated that one reason causing FISTA to perform worse for badly-conditioned problems can be the rule used for adapting $L_k$ (the rule suggested by Beck\&Teboulle), and to eliminate this affect as much as possible we tried implementing FISTA by setting $L_k=\lambda_{max}(H_k)$ at every iteration.  We then solved another $500\times 500$ dimensional problem with the two versions of the FISTA algorithm and the Successive Lasso algorithm.  The results are given below, and they look consistent with the above conclusions.
+
+\bigskip
+
+\begin{center}
+\small
+problem: 500\_3 (number of outer iterations/number of inner iterations) \\ %(one of the NIPS paper problems)
+\begin{tabular}{r| ccccccc}
+\hline
+      &&&            & (B.\&T.) & {\small($L_k=\lambda_{max}(H_k)$)}& {\small($L_k=\lambda_{max}(H_k)$)}\\ 
+ &Inexact NL&Inexact NL& Inexact NL & FISTA & FISTA & FISTA \\
+\hline
+optol &1E-6&1E-3& 1E-2 & 1E-2 & 1E-2 & 1E-3\\
+\hline
+$\mu$=0.5 & 8/128 & 5/69 & 3/51 & 49 & 57 & 134\\
+$\mu$=0.1 & 10/551 & 7/314 & 7/314 & 513 & 378 & 1066\\
+$\mu$=0.05 & 11/921 & 8/521 & 8/521 & 2732 & 712 & 2219\\
+$\mu$=0.01 & 12/2563 & 11/2286 & 11/2286 & $>$5000 & 1280 & 4579\\
+\hline
+\end{tabular}
+\normalsize
+\end{center}
+
+\bigskip
+ 
+ Observation on the step lengths : In all of the above runs, the Successive Lasso algorithm started taking the full step ($\alpha=1$) after at most two outer iterations.  Therefore, we are not yet experimentally aware of any effect of the linesearch on the sparsity of the final solution.
+ 
+\bigskip 
+\subsection{Further Numerical Testing}
+
+\paragraph{Solvers.}
+
+\begin{itemize}
+\item Fista-N83: FISTA implementation in TFOCS package.  (This implementation differs from the Beck\&Teboulle paper description mainly in the way the Lipschitz parameter is updated.)
+\item Fista-BT: FISTA implementation following the description in Beck\&Teboulle paper.
+\item PNOPT : Sequential Lasso (Proximal Newton) implementation by lee2012proximal et al.  Employs LBFS approximation in constructing the quadratic model.
+\item SL : Sequential Lasso implementation described in this paper. 
+\item OBM-CG : Orthant based Newton method with a constant number of CG iterations in solving linear systems in active subspace and with a projected line search
+\end{itemize}
+
+\bigskip
+
+\paragraph{Parameter settings.}
+
+\begin{itemize}
+ \item We set optimality tolerance to $1e-5$, and maximum number of outer iterations to $3000$ for all solvers.
+ \item We defined a new termination criteria for Fista-N83 so that it is comparable to the other two solvers.  
+ \item The inexactness condition for SL is with $\eta_k = \max \{1/k , 0.1\}$.
+ \item We set 'Lbfgs\_mem'=50, 'ftol'=$1e-16$, and 'xtol'=$1e-16$ for PNOPT.
+ \item Initial point is set to the zero vector in all experiments.
+ \item We take $\min\{3, 1+(k/10)^+\}$ CG iterations in the OBM-CG method.
+\end{itemize}
+
+ 
+\bigskip 
+
+\subsection{Logistic Regression} 
+
+\begin{center}
+\begin{tabular}{r | c c c c }
+\hline
+Data set$^{\ast\ast}$  & size of training set & number of features & $\lambda^\ast$ & nnz($x^\ast_\lambda$)\\
+\hline
+gisette (scaled) & 6,000 & 5,000 & 1/1500 & 482 (9.64\%) \\
+rcv1 (multiclass) & 15,564 & 47,236 & 1/62256 & 144 (0.31\%)\\
+\hline
+\end{tabular}
+\end{center}
+$^\ast$ The $\lambda$ values determined with respect to the reference in lee2012proximal et al paper.\\
+$^{\ast\ast}$ Data sets are downloaded from the SVMLib repository
+
+\bigskip
+
+\small
+\begin{center}
+\begin{tabular}{r | c c c c c c }
+\hline
+\multicolumn{7}{l}{data set = gisette, $\lambda = 1/1500$,  optimality tolerance = $1e-5$} \\
+\hline
+solver & Fista-N83 & SL & PNOPT & SL & PNOPT & SL \\
+inner solver & & Fista-N83 & Fista-N83 & Fista-BT$^{\ast\ast}$ & Sparsa & OBM-CG \\
+\hline
+  number of outer iterations & 1023 & 11 & 237 & 11 & $>3000^{\ast\ast\ast}$ & 10 \\
+  number of inner iterations & $-$ & 1744 & 25260$^\ast$ & 2735 & 84038 & 770 \\
+  number of function/gradient evals & 2200 & 12 & 240 & 12 & 3003 & 11 \\
+  number of Hessian-vector mults & $-$ & 3761 & $-$ & 2863 & $-$ & 3321 \\
+  CPU time (s) & 186.79 & 327.78 & 135.93 & 242.22 & 895.90 & 280.61 \\
+\hline
+\end{tabular}
+\end{center}
+$^\ast$ number of prox. evaluations is reported for PNOPT\\
+$^{\ast\ast}$ $L_0=1$.\\
+$^{\ast\ast\ast}$ optimality error = $2.4436e-05$ at iteration 3000.
+\normalsize
+
+\bigskip 
+
+\small
+\begin{center}
+\begin{tabular}{r | c c c c c c }
+\hline
+\multicolumn{6}{l}{data set = rcv1, $\lambda = 1/62256$,  optimality tolerance = $1e-5$} \\
+\hline
+solver & Fista-N83 & SL & PNOPT & SL & PNOPT & SL \\
+inner solver & & Fista-N83 & Fista-N83 & Fista-BT$^{\ast\ast}$ & Sparsa & OBM-CG \\
+\hline
+  number of outer iterations & 112 & 11 & 19 & 11 & 19 & 11 \\
+  number of inner iterations & $-$ & 448 & 778$^\ast$ & 597 & 140 & 72 \\
+  number of function/gradient evals & 227 & 12 & 20 & 12 & 20 & 12 \\
+  number of Hessian-vector mults & $-$ & 899 & $-$ & 631 & $-$ & 154\\
+  CPU time (s) & 2.02 & 8.4 & 8.81 & 5.7 & 2.04 & 1.66 \\
+\hline
+\end{tabular}
+\end{center}
+$^\ast$ number of prox. evaluations is reported for PNOPT\\
+$^{\ast\ast}$ $L_0=0.01$.
+
+% \begin{center}
+% \begin{tabular}{r | c c c c c c }
+% \hline
+% \multicolumn{6}{l}{data set = rcv1, $\lambda = $ } \\
+% \hline
+% solver & Fista-N83 & SL & PNOPT & SL & PNOPT & SL \\
+% inner solver & & Fista-N83 & Fista-N83 & Fista-BT$^{\ast\ast}$ & Sparsa & OBM-CG \\
+% \hline
+%   number of outer iterations & & & & & & \\
+%   number of inner iterations & & & & & & \\
+%   number of function/gradient evals & & & & & & \\
+%   number of Hessian-vector mults & & & & & & \\
+%   CPU time (s) & & & & & & \\
+% \hline
+% \end{tabular}
+% \end{center}
+% \normalsize
+
+\bigskip
+\normalsize
+
+\paragraph{Quasi-Newton. }
+
+\begin{itemize}
+ \item \textbf{SL-OBM-Hv: } OBM with LBFGS Quasi-Newton approximation.  The inner algorithm takes 1 CG iteration for 4 iterations, 2 CG iterations for 4 iterations, 3 CG iterations for 1 iteration, and then switches to LBFGS (i.e. starts using the QN approximation to H after 9 inner iterations with CG).  Memory is updated with the Hessian-vector multiplications in quadratic function evaluations only.  LBFGS\_mem\_size = 9.
+ 
+ \item \textbf{SL-OBM-$\Delta g$: } OBM with LBFGS Quasi-Newton approximation.  Memory is updated with the [step, change in gradient] information from outer iterations (the same way in PNOPT).  LBFGS\_mem\_size = 50.
+\end{itemize}
+
+
+\small
+\begin{center}
+\begin{tabular}{r | c c c c c }
+\hline
+\multicolumn{6}{l}{data set = gisette, $\lambda = 1/1500$,  optimality tolerance = $1e-5$} \\
+\hline
+solver       & Fista-N83 & PNOPT     & SL     & SL     & SL \\
+inner solver &           & Fista-N83 & OBM-CG & OBM-QN-Hv & OBM-QN-$\Delta g$ \\
+\hline
+  number of outer iterations & 1023 & 237 & 10 & 45 & 253 \\
+  number of inner iterations & $-$ & 25260$^\ast$ & 770 & 701 & 1075 \\
+  number of function/gradient evals & 2200 & 240 & 11 & 46 & 254 \\
+  number of Hessian-vector mults & $-$ & $-$ & 3321 & 1468 & 2 \\
+  CPU time (s) & 186.79 & 135.93 & 280.61 & 136.69 & 99.42 \\
+\hline
+\end{tabular}
+\end{center}
+$^\ast$ number of prox. evaluations is reported for PNOPT.
+\normalsize
+
+\bigskip
+
+\paragraph{Accuracy. }
+
+Optol = $1e-6$, the rest of the setup is the same.
+
+\small
+\begin{center}
+\begin{tabular}{r | c c c c c }
+\hline
+\multicolumn{6}{l}{data set = gisette, $\lambda = 1/1500$, optimality tolerance = $1e-6$} \\
+\hline
+solver       & Fista-N83 &  SL       & SL     & SL       &  SL \\
+inner solver &           & Fista-N83 & OBM-CG & OBM-QN-Hv & OBM-QN-$\Delta g$ \\
+\hline
+  number of outer iterations & 2555& 12 & 11 & 53 & 386 \\
+  number of inner iterations & $-$ & 2002 & 1055 &782 & 1264 \\
+  number of function/gradient evals & 5486 & 13 & 12 & 54 & 387 \\
+  number of Hessian-vector mults & $-$ & 4316 & 4433 & 1676 & 2 \\
+  CPU time (s) & 455.70 & 367.69 & 373.06 & 155.28 & 136.79 \\
+\hline
+\end{tabular}
+\end{center}
+\normalsize
+PNOPT could not reach the required accuracy with neither Sparsa nor N83.
+
+\bigskip
+
+\paragraph{Inexactness.\\ }
+
+\textit{Dynamic $\eta_k$.} Results for the Gisette problem for different values of $\eta_{\min}$ in $[0.1,0.99]$; $\eta_k = \max \{1/k , \eta_{\min}\}$.
+
+\small
+\begin{center}
+\begin{tabular}{r | c c c c }
+\hline
+\multicolumn{3}{l}{data set = gisette, $\lambda = 1/1500$} \\
+\multicolumn{3}{l}{solver = SL-OBM-CG, optimality tolerance = $1e-5$}\\
+\hline
+$\eta_{\min}$ &           0.1 & 0.5 & 0.8 & 0.99 \\
+\hline
+  number of outer iterations  & 10 & 15 & 32 & 137 \\
+  number of inner iterations  & 770 & 733 & 900 & 1010 \\
+  number of function/gradient evals & 11 & 16 & 33 & 138 \\
+  number of Hessian-vector mults & 3321 & 2986 & 3155 & 2929 \\
+  CPU time (s) & 280.61 & 254.67 & 267.21 & 257.16 \\
+\hline
+\end{tabular}
+\end{center}
+
+\bigskip
+
+\textit{Fixed $\eta_k$. } 
+
+\small
+\begin{center}
+\begin{tabular}{r | c c c c }
+\hline
+\multicolumn{3}{l}{data set = gisette, $\lambda = 1/1500$} \\
+\multicolumn{3}{l}{solver = SL-OBM-CG, optimality tolerance = $1e-5$}\\
+\hline
+$\eta_k$ &           0.1 & 0.5 & 0.8 & 0.99 \\
+\hline
+  number of outer iterations  & 9 & 14 & 32 & 137 \\
+  number of inner iterations  & 990 & 916 & 900 & 1010 \\
+  number of function/gradient evals & 10 & 15 & 33 & 138 \\
+  number of Hessian-vector mults & 4225 & 3681 & 3155 & 2929 \\
+  CPU time (s) & 353.62 & 313.83 & 271.64 & 260.95 \\
+\hline
+\end{tabular}
+\end{center}
+\normalsize
+
+In the next table we give the change in $\|F(x_k)\|$ and $\|F_q(x_{k+1}; x_k)\|$ for the run with $\eta_k = 0.1$ (fixed).  (Since we run SL-OBM-CG, $F_q(x_{k+1}; x_k)$ is computed using the exact Hessian, not a quasi-Newton approximation).
+
+\small
+\begin{center}
+\begin{tabular}{c c c c c c c}
+\hline
+ $k$ & $\|F(x_k)\|$ & $\phi(x_k)$ & inner iters (HvMults) & $\|F_q(x_{k+1}; x_k)\|$ & $\displaystyle\frac{\|F(x_k)\|}{\|F(x_{k-1})\|}$ & $\displaystyle\frac{\|F(x_k)\|}{\|F_q(x_k; x_{k-1})\|}$\\
+\hline 
+ 0 & 3.11e-01 & 6.93e-01 & 13 (30) & 2.49e-02 & - & - \\
+ 1 & 9.00e-02 & 2.87e-01 & 30 (98) & 8.88e-03 & 0.289 & 3.62 \\
+ 2 & 3.39e-02 & 1.58e-01 & 136 (546) & 3.28e-03 & 0.377 & 3.82 \\
+ 3 & 1.39e-02 & 1.07e-01 & 95 (448) & 1.38e-03 & 0.410 & 4.24 \\
+ 4 & 5.61e-03 & 8.31e-02 & 104 (487) & 5.36e-04 & 0.403 & 4.07 \\
+ 5 & 2.15e-03 & 7.12e-02 & 132 (607) & 2.03e-04 & 0.383 & 4.01 \\
+ 6 & 7.41e-04 & 6.63e-02 & 84 (375) & 7.05e-05 & 0.345 & 2.45 \\
+ 7 & 1.64e-04 & 6.54e-02 & 214 (910) & 1.64e-05 & 0.221 & 2.33 \\
+ 8 & 3.07e-05 & 6.5198e-02 & 182 (696) & 3.06e-06 & 0.187 & 1.87 \\
+ 9 & 2.94e-06 & 6.5194e-02 & - & - & 0.096 & 0.96 \\
+\hline 
+% \multicolumn{7}{l}{elapsed time: 353.62}\\
+%\hline 
+\end{tabular}
+\end{center}
+\normalsize
+
+\bigskip
+
+The table for the run with OBM-QN-$\Delta g$, $\eta_k = 0.1$ (fixed).  This time $F_q(x_{k(t)+1}; x_{k(t)})$ is computed using LBFGS quasi-Newton approximation with $m=50$.  The results are printed every 25 iterations, $k(t)$ is the outer iteration counter.
+\small
+\begin{center}
+\begin{tabular}{c c c c c c c }
+\hline
+$t$ & $k(t)$ & $\|F(x_{k(t)})\|$ & $\phi(x_{k(t)})$ & total inner iters (QNCalls) & $\|F_q(x_{k(t)+1}; x_{k(t)})\|$ & $\displaystyle\frac{\|F(x_{k(t)})\|}{\|F(x_{k(t-1)})\|}$ \\
+\hline 
+0 & 0 & 3.11e-01 & 6.93e-01 & 112 (275) & 2.83e-04 & - \\
+1 & 25 & 3.25e-03 & 8.43e-02 & 159 (419) & 2.52e-06 & 0.0105 \\
+2 & 50 & 1.46e-03 & 6.80e-02 & 185 (496) & 5.84e-06 & 0.449 \\
+3 & 75 & 1.26e-03 & 6.61e-02 & 128 (315) & 3.91e-08 & 0.863 \\
+4 & 100 & 1.13e-03 & 6.56e-02 & 108 (265) & 1.22e-16 & 0.897 \\
+5 & 125 & 1.43e-04 & 6.532e-02 & 97 (286) & 1.23e-05 & 0.127 \\
+6 & 150 & 1.46e-04 & 6.527e-02 & 70 (153) & 2.19e-07 & 1.021 \\
+7 & 175 & 6.87e-05 & 6.522e-02 & 64 (131) & 3.91e-16 & 0.471 \\
+8 & 200 & 5.33e-05 & 6.520e-02 & 62 (135) & 8.90e-07 & 0.776 \\
+9 & 225 & 3.17e-05 & 6.5199e-02 & 42 (88) & 2.39e-05 & 0.595 \\
+10 & 250 & 2.31e-05 & 6.5195e-02 & 38 (76) & 2.63e-17 & 0.729 \\
+11 & 275 & 9.26e-06 & 6.5195e-02 & - & - & 0.401 \\
+\hline
+%\multicolumn{7}{l}{elapsed time: 106.96}\\
+%\hline 
+\end{tabular}
+\end{center}
+\normalsize
+
+\bigskip
+
+\paragraph{Inverse Covariance Estimation. }
+
+
+
+The objective function for this function is not defined when the determinant of the solution point is nonpositive.  We assign $+\infty$ to the objective function when $\det(P)\leq 0$ to derive the algorithms to the feasible region.  The initial point is set as $P_0 = (diag(S)+\lambda I)^{-1}$, where $S$ is the sample covariance matrix.
+
+\small
+\begin{center}
+\begin{tabular}{r | c c c c c c }
+\hline
+\multicolumn{7}{l}{data set = Problem 500\_3 of the tests under Section 5.1 } \\
+\multicolumn{7}{l}{$\lambda = 0.05$, optimality tolerance = $1e-5$ } \\
+\multicolumn{7}{l}{$\eta_k = \max \{1/k , 0.1\}$, LBFGS memory size = 50 } \\
+\hline
+solver       & Fista-N83 &  SL       & PNOPT & SL & PNOPT$^{\ast\ast\ast}$  & SL$^{\ast\ast\ast}$ \\
+inner solver &           & Fista-N83 & Fista-N83 & OBM-QN-$\Delta g$ & Fista-N83  & OBM-QN-$\Delta g$\\
+\hline
+  number of outer iterations & $>3000^\ast$ & 11 & 182 & 181 & 201 & 254 \\
+  number of inner iterations & $-$ & 538 & 9788$^{\ast\ast}$ & 271$^{\sharp}$ & 7284 & 343$^{\sharp\sharp}$\\
+  number of func/grad evals & 6414 & 15 & 186 & 187 & 207 & 260 \\
+  num of Hessian-vect mults & $-$ & 1170 & - & 4 & - & 4 \\
+  CPU time (s) & 731.79 & 127.37 & 1575.60 & 443.54 & 497.24 & 121.39 \\
+\hline
+\multicolumn{7}{l}{$^\ast$ the optimality error at termination is $4.2480e-05$} \\
+\multicolumn{7}{l}{$^{\ast\ast}$ number of prox. evaluations is reported for PNOPT}\\
+\multicolumn{7}{l}{$^{\ast\ast\ast}$ Memory size is reduced to 5}\\
+\multicolumn{7}{l}{$^{\sharp}$ the QN routines for computing HvMult and invHvMult are called 538 times}\\
+\multicolumn{7}{l}{$^{\sharp\sharp}$ the QN routines for computing HvMult and invHvMult are called 682 times}
+\end{tabular}
+\end{center}
+\normalsize
+
+\bigskip
+
+\small
+\begin{center}
+\begin{tabular}{r | c c c c c c }
+\hline
+\multicolumn{7}{l}{data set = Estrogen (ER), size = 692 $\times$ 692} \\
+\multicolumn{7}{l}{$\lambda = 0.5$, optimality tolerance = $1e-5$ } \\
+\multicolumn{7}{l}{$\eta_k = \max \{1/k , 0.1\}$, LBFGS memory size = 50 } \\
+\hline
+solver       & Fista-N83 &  SL       & PNOPT & SL &  SL  & SL \\
+inner solver &           & Fista-N83 & Fista-N83 & OBM-QN-$\Delta g$ & OBM-QN-Hv & OBM-CG \\
+\hline
+  number of outer iterations & 2079 & 13 & 44 & 53 & 12 & 10 \\
+  number of inner iterations & - & 271 & 1984$^\ast$ & 95$^{\sharp}$ & 85 & 109\\
+  number of func/grad evals & 4481 & 19 & 61 & 71 & 19 & 17 \\
+  num of Hessian-vect mults & - & 605 & - & 2 & 219 & 254 \\
+  CPU time (s) & 991.03 & 146.83 & 415.54 & 136.11 & 58.22 & 64.04 \\
+\hline
+\multicolumn{7}{l}{$^{\ast}$ number of prox. evaluations is reported for PNOPT}\\
+\multicolumn{7}{l}{$^{\sharp}$ the QN routines for computing HvMult and invHvMult are called 196 times}
+\end{tabular}
+\end{center}
+\normalsize
+
+\bigskip
+
+\small
+\begin{center}
+\begin{tabular}{r | c c c c c c }
+\hline
+\multicolumn{7}{l}{data set = Leukemia, size = 1255 $\times$ 1255} \\
+\multicolumn{7}{l}{$\lambda = 0.5$, optimality tolerance = $1e-5$ } \\
+\multicolumn{7}{l}{$\eta_k = \max \{1/k , 0.1\}$, LBFGS memory size = 50 } \\
+\hline
+solver       & Fista-N83 &  SL       & PNOPT$^{\ast\ast}$ & SL$^{\ast\ast}$ &  SL  & SL \\
+inner solver &           & Fista-N83 & Fista-N83 & OBM-QN-$\Delta g$ & OBM-QN-Hv & OBM-CG \\
+\hline
+ number of outer iterations & $>3000^\ast$ & 10 & $>474^\sharp$ & 97 & 12 & 9\\
+ number of inner iterations & - & 236 & 5069 & 219$^{\sharp\sharp}$ & 97 & 108\\
+ number of func/grad evals & 6502 & 21 & 489 & 114 & 22 & 20\\
+ num of Hessian-vect mults & - & 522 & - & 2 & 253 & 261\\
+ CPU time (s) & 4859.73 & 613.31 & 2402.82 & 418.08 & 313.10 & 300.58\\
+\hline
+\multicolumn{7}{l}{$^\ast$ the optimality error at termination is $0.9187$}\\ 
+\multicolumn{7}{l}{$^{\ast\ast}$ out of memory for memory size = 50, we decrease memory size to 5}\\
+\multicolumn{7}{l}{$^\sharp$ exit with message: Relative change in function value below ftol}\\
+\multicolumn{7}{l}{$^\sharp$ optimality error is below $1e-4$ after iteration 110, it is $1.6924e-05$ at termination}\\
+\multicolumn{7}{l}{$^{\sharp\sharp}$ the QN routines for computing HvMult and invHvMult are called 445 times}
+\end{tabular}
+\end{center}
+\normalsize
+
+\bigskip
+
+\paragraph{Further comparison to PNOPT. }
+
+We run the SL algorithm with quasi-Newton approximation to the Hessian the same way as in PNOPT, and call FISTA-N83 as the inner problem solver (SL-N83-$\Delta g$) so that the basic difference to PNOPT is now the control of the inexactness.  
+
+\small
+\begin{center}
+\begin{tabular}{r | c c c }
+\hline
+\multicolumn{4}{l}{Logistic Regression, data set = Gisette} \\
+\multicolumn{4}{l}{$\lambda = 1/1500$, optimality tolerance = $1e-5$ } \\
+%\multicolumn{5}{l}{$\eta_k = \max \{1/k , 0.1\}$, LBFGS memory size = 50 } \\
+\hline
+solver       & PNOPT     & SL                &  SL  \\
+inner solver & Fista-N83 & N83-QN-$\Delta g$ & OBM-QN-$\Delta g$ \\
+\hline
+ number of outer iterations & 237 & 265 & 253 \\
+ number of inner iterations & 25260 & 24693 & 1075 \\
+ number of func/grad evals  & 240 & 266 & 254 \\
+ %num of Hessian-vect mults  & - & 7 & 2 \\
+ CPU time (s) & 135.93 & 220.61 & 99.42 \\
+\hline
+\end{tabular}
+\end{center}
+\normalsize
+
+\small
+\begin{center}
+\begin{tabular}{r | c c c }
+\hline
+\multicolumn{4}{l}{Logistic Regression, data set = rcv1} \\
+\multicolumn{4}{l}{$\lambda = 1/62256$, optimality tolerance = $1e-5$ } \\
+%\multicolumn{5}{l}{$\eta_k = \max \{1/k , 0.1\}$, LBFGS memory size = 50 } \\
+\hline
+solver       & PNOPT     & SL                &  SL  \\
+inner solver & Fista-N83 & N83-QN-$\Delta g$ & OBM-QN-$\Delta g$ \\
+\hline
+ number of outer iterations & 19 & 18 & 19 \\
+ number of inner iterations & 778 & 702 & 30 \\
+ number of func/grad evals  & 20 & 19 & 20 \\
+ CPU time (s) & 8.81 & 10.5 & 2.71 \\
+\hline
+\end{tabular}
+\end{center}
+\normalsize
+
+\small
+\begin{center}
+\begin{tabular}{r | c c c }
+\hline
+\multicolumn{4}{l}{Inverse Covariance, data set = ER} \\
+\multicolumn{4}{l}{$\lambda = 0.5$, optimality tolerance = $1e-5$ } \\
+%\multicolumn{5}{l}{$\eta_k = \max \{1/k , 0.1\}$, LBFGS memory size = 50 } \\
+\hline
+solver       & PNOPT     & SL                &  SL  \\
+inner solver & Fista-N83 & N83-QN-$\Delta g$ & OBM-QN-$\Delta g$ \\
+\hline
+ number of outer iterations & 44 & 44 & 53 \\
+ number of inner iterations & 1984 & 1324 & 95 \\
+ number of func/grad evals  & 61 & 53 & 71 \\
+ CPU time (s) & 415.54 & 280.08 & 136.11 \\
+\hline
+\end{tabular}
+\end{center}
+\normalsize
+
+\small
+\begin{center}
+\begin{tabular}{r | c c c }
+\hline
+\multicolumn{4}{l}{Inverse Covariance, data set = Leukemia} \\
+\multicolumn{4}{l}{$\lambda = 0.5$, optimality tolerance = $1e-5$ } \\
+\multicolumn{4}{l}{LBFGS memory size = 5 } \\
+\hline
+solver       & PNOPT     & SL                &  SL  \\
+inner solver & Fista-N83 & N83-QN-$\Delta g$ & OBM-QN-$\Delta g$ \\
+\hline
+ number of outer iterations & $>$474$^\ast$ & 112 & 97 \\
+ number of inner iterations & 5069 & 1723 & 219 \\
+ number of func/grad evals  & 489 & 126 & 114 \\
+ CPU time (s) & 2402.82 & 865.43 & 418.08 \\
+\hline
+\multicolumn{4}{l}{$^\ast$ optimality error is below $1e-4$ after iteration 110, it is $1.6924e-05$ at termination}\\
+\end{tabular}
+\end{center}
+\normalsize
+
+\bigskip
+
+\paragraph{Additional condition of Lemma 4.6. }
+
+% \small
+% \begin{center}
+% \begin{tabular}{r | c c }
+% \hline
+% \multicolumn{3}{l}{Logistic Regression, data set = Gisette} \\
+% \multicolumn{3}{l}{$\lambda = 1/1500$, optimality tolerance = $1e-5$ } \\
+% \hline
+% solver       & SL-OBM-CG      & SL-OBM-CG                \\
+% rule         & $\Delta q > 0$ &  $\Delta q > \theta \Delta l$\\
+% \hline
+%  number of outer iterations & 10 & 10 \\
+%  number of inner iterations & 770 & 770\\
+%  number of func/grad evals  & 11 & 11 \\
+%  number of Hessian-vector mults & 3321 & 3321\\
+% \hline
+% \end{tabular}
+% \end{center}
+% \normalsize
+Same results are obtained with SL-OBM-CG for all the problems in above experiments.
+
+
+\bigskip\bigskip
+
+
+ 
+

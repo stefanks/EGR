@@ -1,0 +1,205 @@
+
+
+\documentclass[12pt]{article}
+
+
+\usepackage{graphicx}
+\usepackage{subfig}
+\usepackage{sidecap}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+
+\usepackage{psfrag}
+%\usepackage{graphics}
+\usepackage{float}
+
+\usepackage{algorithm} 
+\usepackage{algorithmic}
+%\usepackage{algpseudocode}
+\usepackage{epstopdf}
+
+%\usepackage{showlabels}
+
+
+
+
+
+%% For \bm (bold math)
+\usepackage{bm}
+\newcommand{\V}[1]{{\bm{\mathbf{\MakeLowercase{#1}}}}} % vector
+\providecommand{\e}[1]{\ensuremath{\times 10^{#1}}}
+\newcommand{\fraction}[2]{\textstyle\frac{#1}{#2}}
+\newcommand{\Tr}{\textrm{Tr}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\wkh}{\bar w_{k-L}^{k}}
+\newcommand{\gkh}{\bar g_{k-L}^{k}}
+\newcommand{\nh} {\widehat{\nabla}}
+\newcommand{\wkb}{\bar{w}^k}
+\newcommand{\gkb}{\bar{g}^k}
+\newcommand{\wib}{\bar{w}^i}
+\newcommand{\gib}{\bar{g}^i}
+\newcommand{\bHV}{b_{\textrm{hv}}}
+\newcommand{\bg}{\widehat{\nabla}F}
+\newcommand{\Ss}{{\cal S}}
+\newcommand{\Sh}{{\cal S}_H}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\bbh}{{b_H}}
+\newcommand{\bb}{{b}}
+\newcommand{\bM}{{M}}
+\newcommand{\bL}{{L}}
+%\newcommand{\bbh}{\boldsymbol{b_H}}
+%\newcommand{\bb}{\boldsymbol{b}}
+%\newcommand{\bM}{\boldsymbol{M}}
+%\newcommand{\bL}{\boldsymbol{L}}
+
+
+\def\NoNumber#1{{\def\alglinenumber##1{}\State #1}\addtocounter{ALG@line}{-1}}
+\newcommand{\INDSTATE}[1][1]{\STATE\hspace{#1\algorithmicindent}}
+\newcommand{\defeq}{\stackrel{\triangle}{=}}
+\usepackage{soul,color}
+
+
+%\usepackage{setspace}
+%\usepackage{rotating}
+
+\textwidth     =  6.0in
+\textheight    =  8.2in
+\oddsidemargin =  0.2in
+\topmargin     = -0.4in
+
+
+%margins
+%\setlength{\paperwidth}{8.5in} \setlength{\paperheight}{11in}
+%\setlength{\textwidth}{6in} \setlength{\textheight}{9in}
+%\setlength{\oddsidemargin}{0in} \setlength{\evensidemargin}{0in} \setlength{\hoffset}{0in}
+%\setlength{\topmargin}{0in} \setlength{\voffset}{0in} \setlength{\headheight}{0in} \setlength{\headsep}{0in} \setlength{\footskip}{30pt}%new types of headings
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{lem}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{problem}[theorem]{Problem}
+\newtheorem{example}[theorem]{Example}
+%\newtheorem{algorithm}[theorem]{Algorithm}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{question}[theorem]{Question}
+\newtheorem{open}[theorem]{Open Problem}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{claim}[theorem]{Claim}
+
+\renewcommand{\theequation}{\thesection.\arabic{equation}}
+\newcommand{\comment}[1]{}
+
+\setcounter{section}{0}%
+
+\begin{document}
+	Recursive methods of the form
+	\[
+		\theta_{t+1}= \theta_t - \alpha_t H_t^{-1} g_t 
+	\]
+	for problem 
+	\begin{equation*}
+		\label{prob}
+		\min F(\theta) = \mathbb{E}_{z}[ f(z;\theta)]
+	\end{equation*}
+	
+	\section{Robbins and Monro 1951}
+	When $H_t$ is fixed, then a sufficient condition for convergence is 
+	\[
+	\sum_{t=1}^{\infty} \alpha_t = \infty \qquad \sum_{t=1}^{\infty} \alpha_t^2 < \infty \
+	\]
+	\section{Murata}
+	$Q_\ast = \nabla^2 F(\theta^*) $ \\
+	$E\theta$ is the expected value of $\theta$ \\
+	$V\theta$ is the variance of $\theta$ \\
+	$G(\theta) = E[g(\theta) g(\theta)^T]$
+	\begin{lem}[Murata, 1998]
+	\label{lemm:murat2}
+	Assume $\theta_t\in\mathcal{N}(\theta_\ast)$ so that $E[\|\theta_t-\theta_\ast\|]=
+	o(\alpha_t\epsilon_t)$.  Then we have
+	\[
+	 E\theta_{t+1} = E\theta_t - \alpha_t H_t Q_\ast (E\theta_t - \theta_\ast) + o(\alpha_t^2\epsilon_t).
+	\]
+	and
+	\begin{align*}
+	 V\theta_{t+1} = & V\theta_t - \alpha_t (H_tQ_\ast V\theta_t + V\theta_tQ_\ast H_t) + \alpha_t^2H_tG(\theta_\ast)H_t\\ 
+	                       & -\alpha_t^2H_tQ_\ast(E\theta_t-\theta_\ast)(E\theta_t-\theta_\ast)^TQ_\ast H_t + o(\alpha_t^2\epsilon_t).
+	\end{align*}
+	\end{lem}
+
+		\begin{lem}[Murata, 1998]
+		\label{lemm:murat2}
+		Assume $\theta_t\in\mathcal{N}(\theta_\ast)$. If $H_t = Q_\ast$ and  $\alpha_t = \frac{1}{t}$, then
+		\begin{align*}
+			E\theta_{t} &= \theta_\ast + \frac{1}{t}(\theta_0-\theta_\ast)\\
+			V\theta_{t} &=\frac{1}{t}V_\ast + O(\frac{1}{t^2})\\	
+		\end{align*}
+		Also, 
+		\[
+			E[F(\theta_t) - F(\theta_\ast)] = \frac{tr(Q_\ast V_\ast)}{2t} + o(\frac{1}{t})
+		\]
+		\end{lem}
+		
+		\section{Polyak}
+
+		$G$ is the gradient covariance at the expectation objective \\
+		 If $H_t = Q_\ast$ and  $\alpha_t = \frac{1}{t}$, then 
+		\begin{equation}
+		 	\sqrt{t} (\theta_t - \theta_\ast)  \approx N(0,V)
+		\end{equation}
+		\begin{equation}
+			V = Q_\ast^{-1} G Q_\ast^{-1}
+		\end{equation}
+		
+	\section{Bootou \& LeCun}
+	$\theta_\ast$ is the minimizer of the expectation function \\
+	$Q_\ast$ is the Hessian of the expctation objective at the solution \\
+	$G$ is the gradient covariance at the expectation objective \\
+	\begin{lem}[Bottou \& LeCun 2004]
+		Consider the stochastic gradient iteration with $\alpha_t = \frac{1}{t}$ and $H_t \rightarrow Q_\ast$. Then
+		\[
+			E[(\|\theta_t-\theta_\ast\|^2)] = \frac{tr(Q_\ast^{-1}G(\theta_\ast)Q_\ast^{-1})}{t} + o(\frac{1}{t})
+		\]
+	\end{lem}
+	
+	
+	\section{Bottou \& Bousquet}
+	$F$ is the EMPIRICAL (SAA) objective function\\
+	Samples are drawn from a finite set that defines $F$\\
+	$Q_\ast$ is the Hessian of the EMPIRICAL (SAA) objective at the solution \\
+	$G$ is the gradient covariance at the EMPIRICAL (SAA) objective \\
+	Let $v \geq tr(G Q_\ast^{-1})$
+	These results are based on Murata, and are asymptotic
+	\begin{lem}[Bottou \& Bousquet 1 ]
+		 Consider the stochastic gradient iteration with $\alpha_t = \frac{1}{t}$ and $H_t = \eta I$. Choose $\eta = \dfrac{1}{\lambda_{\min}(Q_\ast)}$, we have that
+	\[
+	 E[F(\theta_t)-\inf F] = \frac{v \kappa^2}{t} + o(\frac{1}{t}).
+	\]
+	\end{lem}
+	
+	\begin{lem}[Bottou \& Bousquet 2 ]
+		 Consider the stochastic gradient iteration with $\alpha_t = \frac{1}{t}$ and $H_t = Q_\ast$. we have that
+	\[
+	 E[F(\theta_t)-\inf F] = \frac{v}{t} + o(\frac{1}{t}).
+	\]
+	\end{lem}
+	
+	
+	\section{Nemirovski}
+	\begin{lem}
+		Assume that $F$ is strongly convex with a constant $\mu>0$, and $\nabla F$ is Lipschitz continuous with constant $L>0$. Also assume that $E [\| g(\theta)\|^2  ] \leq M^2$ at all $\theta$, $\alpha_t = \dfrac{\eta}{k}$ for some constant $\eta > \dfrac{1}{2\mu}$, and $H_t = I$.
+		Then,
+		\[
+		 \frac{1}{2}E[\|\theta_{t+1}-\theta_\ast\|^2] \leq \frac{1}{2t}B(\eta) \qquad\mbox{for} \quad B(\eta)=\max\left\lbrace\frac{\eta^2M^2}{2\mu\eta-1},\|\theta_1-\theta_\ast\|^2\right\rbrace.
+		 \]
+		 Furthermore, 	
+		 \[
+	 E[F(\theta_t)] \leq F(\theta_\ast) + L\frac{1}{2}E[\|\theta_t-\theta_\ast\|^2] \ \Rightarrow \ E[F(\theta_t)] - F(\theta_\ast) \leq L \frac{1}{2k}B(\eta).
+	\]
+		\end{lem}
+\end{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

@@ -1,0 +1,138 @@
+\documentclass{article}
+\usepackage{amsmath}
+
+\newcommand{\grad}{\nabla}
+
+\begin{document}
+ 
+\noindent 
+Let us consider the following matrix
+\[
+ M_k = \begin{pmatrix} (1-\eta)(I+\alpha H_k) & \displaystyle\frac{1}{L} (1-\eta)\alpha H_k\bar H_{k-1}\\  
+                   -\alpha LI  & I-\alpha\bar H_{k-1} \end{pmatrix}                  
+\]
+with $\alpha=\displaystyle\frac{\eta}{4L}$.
+
+\bigskip
+\noindent
+In our experiments on the minimization of the sum of random quadratics, we observed that this matrix always have all eigenvalues less than 1 (even if it has singular values slightly larger than 1!).  As expected, the maximum eigenvalue decreases as $\eta$ increases (which should indicate a higher convergence rate).  The following table illustrates the situation on instances with problem dimension($n$)=20, and component functions($N$)=100.
+\begin{center}
+\begin{tabular}{cccc}
+ \hline
+ $\eta$ & max(eigenvalue(M\_k)) & max(singular\_value(M\_k)) & $L$\\
+ \hline
+ 0.01 & 0.9999 & 1.0001 &  5.1414e+03 \\
+ 0.05 & 0.9998 & 1.0006 &  5.1702e+03 \\
+ 0.1 & 0.9997 & 1.0013 & 5.1352e+03\\
+ 0.5 & 0.9983 & 1.0087 & 5.1197e+03\\
+ \hline
+\end{tabular}
+\end{center}
+
+\bigskip
+
+If we can generalize our numerical observation and prove that the spectral radius of this matrix is always less than 1, that would indicate 
+\[
+\prod_{t=1}^\infty M_t \rightarrow 0. 
+\]
+Since the random processes at each iteration are independent, this would provide $E[e_k, x_k-x_\ast]\rightarrow 0$ (did not yet think about the variance).
+
+
+\bigskip
+
+\paragraph{Bounding the spectral radius.}
+To simplify $M_k$, let us for now set $\bar H_{k-1}=H_k=H$.  So, $M_k$ becomes
+\[
+M = \begin{pmatrix} (1-\eta)(I+\displaystyle\frac{\eta}{4L} H) & \displaystyle(1-\eta)\frac{\eta}{4L^2} HH\\ 
+ \\
+                   -\displaystyle\frac{\eta}{4}I  & I-\displaystyle\frac{\eta}{4L} H \end{pmatrix}.                  
+\]
+Let us first observe that 
+\begin{align*}
+\sum_i \lambda_i = trace(M) &= trace(M_{11})+trace(M_{22})\\
+&=trace((1-\eta)(I+\frac{\eta}{4L} H))+trace(I-\frac{\eta}{4L} H)\\
+&\geq n(1-\eta)(1+\frac{\eta\mu}{4L})+n(1-\frac{\eta}{4})>0,
+\end{align*}
+and
+\begin{align*}
+\prod_i \lambda_i = \det(M) &= \det\left((1-\eta)(I+\alpha H)(I-\alpha H) + (1-\eta)\alpha^2 HH\right)\\
+&=\det\left((1-\eta)I\right) = (1-\eta)^n<1.\\
+\end{align*}
+
+\bigskip
+\noindent
+Now, we will prove that the largest eigenvalue of $M$ is less than 1.  Each eigenvalue $\lambda$ of $M$ by definition satisfies $\det(M-\lambda I)=0$.  Therefore,
+\[
+ \det \begin{pmatrix} (1-\eta)(I+\displaystyle\frac{\eta}{4L} H)-\lambda I & \displaystyle(1-\eta)\frac{\eta}{4L^2} HH\\ 
+ \\
+                   -\displaystyle\frac{\eta}{4}I  & I-\displaystyle\frac{\eta}{4L} H -\lambda I  \end{pmatrix}=0
+\]
+Since blocks $M_{21}$ and $M_{22}$ commute we have
+\[
+ \det\left((1-\eta)(I+\frac{\eta}{4L} H)-\lambda I)(I-\frac{\eta}{4L} H -\lambda I) + (1-\eta)\frac{\eta^2}{4^2L^2} HH \right)=0.
+\]
+
+With some algebra, this statement simplifies to 
+\[
+ \det\left((1-\lambda)(1-\lambda-\eta)I + \eta^2 \frac{\lambda}{4L}H \right)=0.
+\]
+
+Then, $-(1-\lambda)(1-\lambda-\eta)$ is an eigenvalue of the matrix $\eta^2 \displaystyle\frac{\lambda}{4L}H$; so,
+\begin{equation}
+ -(1-\lambda)(1-\lambda-\eta) \in \left[\frac{\eta^2\lambda\mu}{4L},\frac{\eta^2\lambda}{4}\right]
+ \label{eq:p}
+\end{equation}
+should hold.
+
+The concave function $p(\lambda)= -(1-\lambda)(1-\lambda-\eta)$ has two roots at $\lambda=1$ and at $\lambda=1-\eta$.  Then, $p(\lambda)<0$ for $\lambda>1$ and for $\lambda<1-\eta$.  So, having $\lambda>1$ is inconsistent with \eqref{eq:p}.  This proves that for all eigenvalues of $M$ we have $\lambda<1$ (i.e. the spectral radius is less than 1, and therefore $M$ is convergent).  Furthermore, if all eigenvalues of $M$ are positive, \eqref{eq:p} indicates that $\lambda\in(1-\eta,1)$ for all eigenvalues of $M$ (which is consistent with our practical observations). 
+
+\bigskip
+
+Let us now show that all eigenvalues of $M$ are positive.  Suppose that $\lambda<0$ is an eigenvalue of $M$.  Then, $p(\lambda)\geq \displaystyle\frac{\eta^2 \lambda}{4}$ by \eqref{eq:p}(since $\lambda<0$). That is,
+\begin{align*}
+ &-(1-\lambda)(1-\lambda-\eta) \geq \displaystyle\frac{\eta^2 \lambda}{4}\\
+ \Rightarrow&-\lambda^2+(2-\eta-\displaystyle\frac{\eta^2}{4})\lambda+\eta-1\geq 0.  
+\end{align*}
+The smaller root of the polynomial on the left hand side is
+\begin{align*}
+ &-\frac{1}{2}\left(-(2-\eta-\displaystyle\frac{\eta^2}{4})+\sqrt{(2-\eta-\displaystyle\frac{\eta^2}{4})^2+4(1-\eta)}\right)\\
+ &=1-\frac{\eta}{2}-\frac{\eta^2}{8}-\frac{1}{8}\sqrt{\eta^4+8\eta^3}>1-\eta\geq 0 \quad \mbox{for}\quad \eta\in(0,1]
+\end{align*}
+as $\ \frac{\eta}{2}+\frac{\eta^2}{8}+\frac{1}{8}\sqrt{\eta^4+8\eta^3}<\frac{\eta}{2}+\frac{\eta}{8}+\frac{3\eta}{8}=\eta$.
+Therefore, $p(\lambda)\geq \displaystyle\frac{\eta^2 \lambda}{4}$ cannot be satisfied for $\lambda<0$.  This proves all that all eigenvalues of $M$ are positive, and thus we can conclude that for all eigenvalues of $M$ we have $\lambda\in(1-\eta,1)$.
+\bigskip
+
+Since we now concluded that $\lambda\in(1-\eta,1)$, we will next investigate the $\lambda$ values that satisfy $p(\lambda)\leq \displaystyle\frac{\eta^2 \lambda}{4}$ and $p(\lambda)\geq \displaystyle\frac{\eta^2 \lambda\mu}{4L}$ to obtain a tighter bound for the spectral radius.  Even if we saw that $\lambda$ is strictly less than 1 provided that we have strong convexity ($\mu>0$), we wish to know how it depends on $\mu$, $L$, and $\eta$.
+
+\begin{itemize}
+ \item[I.] Consider $p(\lambda)\leq \displaystyle\frac{\eta^2 \lambda}{4}$. We have already derived the roots of the polynomial $p(\lambda)-\displaystyle\frac{\eta^2 \lambda}{4}$. Then, 
+ for the smaller root $\lambda_{s1}$ we have $1-\displaystyle\frac{3\eta}{4}>\lambda_{s1}>1-\eta$, and for the larger root $\lambda_{l1}$ we have $1-\displaystyle\frac{\eta}{2}<\lambda_{l1}<1-\eta^2$.  So, if $p(\lambda)-\displaystyle\frac{\eta^2 \lambda}{4}\leq 0$, then either $\lambda < 1-\displaystyle\frac{3\eta}{4}$ or $\lambda > 1-\displaystyle\frac{\eta}{2}$ (but not vice versa).
+ \item[II.] Consider $p(\lambda)\geq \displaystyle\frac{\eta^2 \lambda\mu}{4L}$.  The larger root of the polynomial $p(\lambda)-\displaystyle\frac{\eta^2 \lambda\mu}{4L}$ is
+ \[
+  \lambda_{l2} = 1-\frac{\eta}{2}-\frac{\mu\eta^2}{8L}+\frac{\eta}{2}\sqrt{1-\frac{\mu}{L}+\frac{\mu\eta}{2L}+\left(\frac{\mu\eta}{4L}\right)^2}
+ \]
+
+\end{itemize}
+
+
+% \newpage
+% 
+% \paragraph{An earlier attempt to get a bound.}
+% Let us first check the determinant of $M_k$ (product of all eigenvalues).  A result by Silvester (see Theorem 3 in paper \emph{block\_det.pdf} in this folder) simplifies the computation as follows.
+% \begin{align*}
+% \det(M_k) &= \det\left((1-\eta)(I+\alpha H_k)(I-\alpha\bar H_{k-1}) + (1-\eta)\alpha^2 H_k\bar H_{k-1}\right)\\
+% &=\det\left((1-\eta)(I+\alpha(H_k-\bar H_{k-1}))\right) = (1-\eta)^n\det\left(I+\alpha(H_k-\bar H_{k-1})\right)\\
+% &\leq (1-\eta^2)^n<1
+% \end{align*}
+% by Hadamard's inequality provided that $\max(diag(H_k-\bar H_{k-1}))\leq 4L$ holds and the matrix $(I+\alpha(H_k-\bar H_{k-1}))$ is positive definite. (For the quadratic case, $H_k=\bar H_{k-1}$, therefore $\det(M_k)=(1-\eta)^n$).
+% 
+% \bigskip
+% 
+% Now, we will try to provide a bound on the spectral radius of $M_k$ using Theorem 5 in paper \emph{spectral\_bound.pdf} by Derzko and Pfeffer, which provides a bound based on the determinant (in this folder as well).
+% 
+% \bigskip
+% 
+% (I quitted this approach because I numerically tested the bound in the above paper and saw that it does not provide a tight enough bound. I tried some other bounds that I found in other papers but none were tight enough to provide a bound that is less than 1. So I decided to directly work on the value of the maximum eigenvalue rather than a bound on it).
+
+
+\end{document}

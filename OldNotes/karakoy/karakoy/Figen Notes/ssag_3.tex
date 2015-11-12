@@ -1,0 +1,170 @@
+\documentclass{article}
+\usepackage{amsmath}
+
+\newcommand{\grad}{\nabla}
+
+\begin{document}
+ 
+\noindent 
+Consider the finite sum minimization problem with $N$ data points, 
+\[
+ F(x) = \frac{1}{N}\sum_{i=1}^N f_i(x),
+\]
+and an extension of the SAG algorithm that updates each gradient component with probability $\eta$ at each iteration.  Let 
+\[
+ x_{k+1} = x_k -\alpha y_k
+\]
+and
+\[
+ y_k = \frac{1}{N}\sum_{i=1}^N \nabla f_i(x_{k(i)}) 
+\]
+where
+\[
+ \begin{cases}
+  k(i) = k  & \mbox{ with probability }\eta,\\
+  k(i) = [k-1](i) & \mbox{ with probability }1-\eta.
+ \end{cases}
+\]
+
+\bigskip
+
+\noindent
+Define error terms 
+\[
+ e_k^i = \nabla f_i(x_{k(i)})-\nabla f_i(x_k) \qquad \mbox{and} \qquad e_k=\frac{1}{N}\sum_{i=1}^N e_k^i
+\]
+so that we can state 
+\[
+ y_k = \frac{1}{N}\sum_{i=1}^N (\nabla f_i(x_k)+e_k^i) = \nabla f(x_k) + e_k.
+\]
+Note that given $e_{k-1}$ and $x_{k-1}$, we have the conditional expectation 
+\[
+ E[e_k^i] = (1-\eta)(e_{k-1}^i + \nabla f_{k-1}^i - \nabla f_k^i).
+\]
+
+\bigskip
+\noindent
+Finally, let us define two average Hessian matrices, $H_k$ and $\bar H_k$, for each $k$, such that
+\[
+ \nabla f(x_k) = \nabla f(x_{k-1})+H_k(x_k-x_{k-1}),
+\]
+\[
+ \nabla f(x_k) = \bar H_k(x_k-x_\ast),
+\]
+and assume that 
+\[
+  \mu I \preceq H_k \preceq L I , \quad \mbox{and} \quad \mu I \preceq \bar H_k \preceq L I,\quad \mbox{for all }k
+\]
+are satisfied for some $\mu>0$ and $L>1$.
+
+\bigskip
+
+\noindent 
+Now, we will write two relations on the change of $e_k$ and on the change of $x_k-x_\ast$, respectively, and then merge the two.
+ \begin{align*}
+  E[e_k] &= (1-\eta)(e_{k-1} + \nabla f_{k-1} - \nabla f_k)\\
+  &= (1-\eta)(e_{k-1} - H_k(x_k-x_{k-1}))\\
+  &= (1-\eta)(e_{k-1} - H_k(-\alpha y_{k-1}))\\
+  &= (1-\eta)\left(e_{k-1} + \alpha H_k (\nabla f_{k-1}+e_{k-1})\right)\\
+  &= (1-\eta)\left((I+\alpha H_k)e_{k-1} + \alpha H_k\nabla f_{k-1}\right)\\ 
+  &= (1-\eta)(I+\alpha H_k)e_{k-1} + (1-\eta)\alpha H_k\bar H_{k-1}(x_{k-1}-x_\ast),
+ \end{align*}
+and
+ \begin{align*}
+  x_k-x_\ast &= x_{k-1}-x_\ast + (x_k-x_{k-1})\\
+  &=x_{k-1}-x_\ast -\alpha y_{k-1}\\
+  &=x_{k-1}-x_\ast -\alpha (\nabla f_{k-1} + e_{k-1})\\
+  &=x_{k-1}-x_\ast -\alpha\bar H_{k-1}(x_{k-1}-x_\ast) -\alpha e_{k-1}\\
+  &=(I-\alpha\bar H_{k-1})(x_{k-1}-x_\ast) -\alpha e_{k-1}.
+ \end{align*}
+ 
+\bigskip
+
+\noindent  
+So, merging the two equations yields,
+\[
+ \begin{pmatrix} \displaystyle\frac{1}{L}E[e_k] \\ x_k-x_\ast \end{pmatrix} 
+= M_k
+ \begin{pmatrix} \displaystyle\frac{1}{L}e_{k-1} \\ x_{k-1}-x_\ast \end{pmatrix}  \quad\mbox{for}\quad 
+ M_k = \begin{pmatrix} (1-\eta)(I+\alpha H_k) & \displaystyle\frac{1}{L} (1-\eta)\alpha H_k\bar H_{k-1}\\  
+                   -\alpha LI  & I-\alpha\bar H_{k-1} \end{pmatrix}.                   
+\]
+
+\bigskip
+\noindent
+We will consider choosing 
+\[
+ \alpha = \frac{\eta}{L}.
+\]
+With this choice of $\alpha$, we get
+\[
+ \|M_k^{11}\|= \|(1-\eta)(I+\frac{\eta}{L}H_k)\|\leq (1-\eta)(1+\eta) = 1-\eta^2 \leq 1,
+\]
+\[
+ \|M_k^{12}\|= \|\frac{1}{L} (1-\eta)\frac{\eta}{L} H_k\bar H_{k-1}\|\leq \eta(1-\eta)\leq 1,
+\]
+\[
+ \|M_k^{21}\|= \|-\frac{\eta}{L} LI \|\leq \eta \leq 1,
+\]
+\[
+ \|M_k^{22}\|= \|I-\frac{\eta}{L}\bar H_{k-1} \|\leq 1-\eta\frac{\mu}{L} \leq 1.
+\]
+
+
+% \noindent
+% Consider the following partitioning of the matrix $M_k$.
+% \[
+% T + E
+% =\begin{pmatrix} (1-\sigma)(I+\alpha H_k) & (1-\sigma)\alpha H_k\bar H_{k-1}\\  
+%                    0  & I-\alpha\bar H_{k-1} \end{pmatrix}              
+% +\begin{pmatrix} 0 & 0 \\  
+%                    -\alpha I  & 0 \end{pmatrix}                   
+% \]
+% Since $T$ is block triangular, it is eigenvalues are the eigenvalues of $T_{11}=(1-\sigma)(I+\alpha H_k)$ and $T_{22}=(I-\alpha\bar H_{k-1})$. (Let us denote these eigenvalues with $v$ and $w$, respectively).  Moreover, if $V$ and $W$ are the matrices containing the eigenvectors of $T_{11}$ and $T_{22}$, respectively, then the eigenvectors of $T$ are
+% \[
+%  R=\begin{pmatrix} V & K \\  
+%                    0 & W \end{pmatrix},                   
+% \]
+% where the $ith$ column of $K$ is given as
+% \[
+%  K_i = -(T_{11}-w_iI)^{-1}T_{12}W_i.
+% \]
+% Note that $T_{11}$ and $T_{22}$ are symmetric; so, $V$ and $W$ are unitary matrices.  Also,
+% \[
+%  R^{-1}=\begin{pmatrix} V^{-1} & -V^{-1}KW^{-1} \\  
+%                    0 & W^{-1} \end{pmatrix}.                   
+% \]
+% Then,
+% \[
+%  \kappa_1(R)=\|R\|_1\|R^{-1}\|_1\leq\max_i (\|K_i\|_1+1)^2
+% \]
+% The Bauer-Fike theorem implies that the maximum absolute gap between an eigenvalue $\lambda$ of $M_k$ and the eigenvalue of $A$ closest to $\lambda$ is 
+% \[
+%  \kappa_1(R)\|E\|_1 \leq \max_i (\|K_i\|_1+1)^2 \alpha.
+% \]
+% 
+% 
+% \bigskip\bigskip
+% 
+% 
+% \paragraph{Goal:} $\lambda_{\max}(M_k)\leq \max\{1-\alpha\mu, (1-\sigma)(1+L\alpha)\}$ for $\alpha = \displaystyle\frac{\sigma}{L}$.
+% 
+% \noindent
+% So, 
+% \[
+% 0<\lambda_{\max}(M_k)\leq \max\{1-\alpha\mu, (1-\sigma)(1+L\alpha)\}= \max\{1-\sigma\frac{\mu}{L}, 1-\sigma^2\}<1.
+% \]
+
+
+%\newpage
+
+\bigskip\bigskip
+
+\noindent
+This result could be easily adapted to the growing sample case (as long as we provide that the gradient of each component function is updated with probability $\eta$) because there is no dependence on the sample size.
+
+
+% \noindent 
+% Note that there is no dependence on $N$ here.  To extend this result to the infinite sum case, we will consider the expectation wrt $z$ as well as the expectation wrt $\sigma$.  Also, we will no more assume that the memory size is fixed, we will denote the memory size at iteration $k$ as $|I_k|$, and will consider the iterations with $|I_k|>N$ for some $N$. 
+%  
+\end{document}

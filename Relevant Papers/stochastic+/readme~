@@ -1,0 +1,14 @@
+
+* Stochastic Approximation vs Sample Average Approximation: NJLS.pdf, SrebroTewari.pdf(slides 21-28)
+
+* SA with averaging / accelaration: PolyakJuditski.pdf, BachSchmidt.pdf
+
+* Bottou trade-off analysis: Bottou.pdf(slides 56-61)
+
+* Second order SGD: AmariPark.pdf(also see Fisher_info_matrix.pdf, also LeRoux.pdf,Section 2.4), DuchiSinger.pdf(i.e.AdaGrad), Bottou2010.pdf(Section 4,with reference to BottouLeCun.pdf; also in Bottou.pdf,slides 103-111), JosephLevine.pdf
+
+* Empirical loss: SSSS.pdf, SLT-tutorial(Section 6), Tito.pdf(Section 3)
+
+* Parallel stochastic: Zinkevichetal.pdf
+
+

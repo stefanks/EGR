@@ -1,0 +1,43 @@
+\begin{thebibliography}{1}
+
+\bibitem{asmussen2007stochastic}
+S{\o}ren Asmussen and Peter~W Glynn.
+\newblock {\em Stochastic simulation: Algorithms and analysis}, volume~57.
+\newblock Springer, 2007.
+
+\bibitem{BottouBosq08}
+Leon Bottou and Olivier Bousquet.
+\newblock The tradeoffs of large scale learning.
+\newblock In J.C. Platt, D.~Koller, Y.~Singer, and S.~Roweis, editors, {\em
+  Advances in Neural Information Processing Systems 20}, pages 161--168. MIT
+  Press, Cambridge, MA, 2008.
+
+\bibitem{sammy}
+S.~Hansen and J.~Nocedal.
+\newblock Second-order methods for ${L}_1$ regularized problems in machine
+  learning.
+\newblock Technical report, Optimization Center Report 2011/3, Northwestern
+  University, 2011.
+\newblock To appear in ICAASP 2012.
+
+\bibitem{LiuNocedal89}
+D.~C. Liu and J.~Nocedal.
+\newblock On the limited memory bfgs method for large scale optimization.
+\newblock {\em Mathematical Programming}, 45:503--528, 1989.
+
+\bibitem{mokhtariregularized}
+Aryan Mokhtari and Alejandro Ribeiro.
+\newblock Regularized stochastic {BFGS} algorithm, 2013.
+
+\bibitem{murata1998statistical}
+Noboru Murata.
+\newblock A statistical study of on-line learning.
+\newblock {\em Online Learning and Neural Networks. Cambridge University Press,
+  Cambridge, UK}, 1998.
+
+\bibitem{RobMon51}
+H.~Robbins and S.~Monro.
+\newblock A stochastic approximation method.
+\newblock {\em The Annals of Mathematical Statistics}, pages 400--407, 1951.
+
+\end{thebibliography}

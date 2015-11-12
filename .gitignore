@@ -1,0 +1,17 @@
+*.pdf
+*.log
+*.dropbox
+*.lb
+*.aux
+*.gz
+*.out
+*.toc
+*.nav
+*.snm
+*Icon*
+*.blg
+karakoy/*
+*.svg
+*.synctex
+DefenseSlides/*
+AlmostThere/

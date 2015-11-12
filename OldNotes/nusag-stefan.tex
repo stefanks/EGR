@@ -1,0 +1,348 @@
+\documentclass[11pt]{article} 
+\usepackage[margin=1in]{geometry} 
+\usepackage{amsfonts,amsmath,amssymb,graphicx,color}
+\usepackage{mathtools}
+\usepackage{psfrag} 
+\usepackage{pdflscape} 
+\usepackage{soul} 
+\usepackage{algorithm} 
+\usepackage{algpseudocode} 
+\usepackage{hyperref} 
+\usepackage{multirow} 
+\usepackage{caption} 
+\usepackage{subcaption} 
+\usepackage{showlabels}
+\usepackage{appendix}
+\usepackage[T1]{fontenc} 
+
+\newtheorem{thm}{Theorem}
+
+\newcommand{\defeq}{\stackrel{\rm def}{=}}
+\newcommand{\defeqq}{\vcentcolon=}
+\newcommand{\Var}{\mathrm{Var}}
+
+\renewcommand{\theequation}{\thesection.\arabic{equation}}
+\newcommand{\comment}[1]{}
+
+\setcounter{section}{0}
+
+
+\title{Memory Reduction Techinques for Aggregated Gradient Methods}
+
+\begin{document}
+
+
+	\noindent 
+	Consider the expectation minimization problem 
+	\[
+	 F(x) = E[ f_i(x) ]
+	\]
+	which we approximate at iteration $k$ by
+	\[
+	  \frac{1}{|I_k|}\sum_{i\in I_k} f^i(x),
+	\]
+	and the EGR extension of the SAG algorithm that updates each previous gradient component with probability $\eta$ at each iteration.
+	At each iteration we increase $I_k$ so that $I_k=I_{k-1} \cup U_k$, where $U_k$ is a randomly chosen set large enough that 
+	\begin{equation}   \label{Igrowth}
+	 |I_k| \geq \frac{1}{\rho^2} |I_{k-1}| 
+	 \end{equation}
+	 for some $\rho \in( 0,1)$.
+
+	The algorithm sets.
+	\[
+	 x_{k+1} = x_k -\alpha y_k/t
+	\]
+	and
+	\[
+	 y_k = \frac{1}{n_k}\sum_{i=1}^{n_k}  \nabla f^i(x_{k(i)}) 
+	\]
+	where
+	\[
+	 \begin{cases}
+	  k(i)=k &\mbox{ if } k\in U_k \\
+	  k(i) = k  & \mbox{ if } i \in I_k \setminus U_k \mbox{  with probability }\eta,\\
+	  k(i) = [k-1](i) &\mbox{ if } i \in I_k \setminus U_k \mbox{ with probability }1-\eta.
+	 \end{cases}
+	\]
+
+	We first consider the error in the sample gradient, $\nabla f_k = \frac{1}{|I_k|}\sum_{i\in I_k}(\nabla f^i(x_k))$.
+	By Jensen's inequality
+	\[
+	(E[\|-\nabla F_{k}+\nabla f_{k} \|])^2 \leq E[\|-\nabla F_{k}+\nabla f_{k} \|^2] 
+	\]
+	It follows that 
+	\begin{equation}  \label{truegrad}
+	E[\|-\nabla F_{k}+\nabla f_{k} \|] \leq \sqrt {E[\|-\nabla F_{k}+\nabla f_{k} \|^2] }\leq  \sqrt{\sigma ^2/|I_k|} \equiv \sigma_k ,
+	\end{equation}
+	where $\sigma^2$ is a bound on the variance of $\|\nabla f^i(x)\|$. We have defined $\sigma_k = \sqrt{\sigma ^2|I_k|}$, 
+	and if  we assume $I_k$ grows geometrically: $| I_k|= \rho^{-2} |I_{k-1}|$ for some $\rho <1$, then we have that 
+	$\sigma_k = \rho \sigma_{k-1}$.
+
+	\bigskip
+
+	\noindent
+	Define the error terms 
+	\[
+	 e_k^i = \nabla f^i(x_{k(i)})-\nabla f^i(x_k) \qquad \mbox{and} \qquad e_k=\frac{1}{{n_k}}\sum_{i=1}^{n_k} e_k^i
+	\]
+	so that we can state 
+	\[
+	 y_k = \frac{1}{{n_k}}\sum_{i=1}^{n_k} (\nabla f^i(x_k)+e_k^i) = \nabla f(x_k) + e_k.
+	\]
+	Note that given $e_{k-1}$ and $x_{k-1}$, we have the conditional expectation 
+	\[
+	 E[\|e_k^i\|] \leq (1-\eta)(\|e_{k-1}^i\| +\| \nabla f_{k-1}^i - \nabla f_k^i\|).
+	\]
+	\[
+	 \leq (1-\eta)(\|e_{k-1}^i\| + L \| x_{k-1} - x_k\|).
+	\]
+	Summing this and using the Hessian bound we have
+
+	 \[
+	 E[\sum_{i\in I_k}{\|e_k^i\|] } \leq(1-\eta) \sum_{i\in I_k}(\|e_{k-1}^i\| + L \| x_{k-1} - x_k\|) 
+	 \]
+	 
+	 % MY STUFF!
+	 
+	 \begin{align*}
+	 E[ \frac{1}{|I_k|}\sum_{i\in I_k}{\|e_k^i\|] } & \leq(1-\eta) \frac{1}{|I_k|} \sum_{i\in I_k}(\|e_{k-1}^i\| + L \| x_{k-1} - x_k\|) \\
+	 & \leq(1-\eta) \frac{\rho}{|I_{k-1}|} \sum_{i\in I_k}(\|e_{k-1}^i\| + L \| x_{k-1} - x_k\|) \\
+	 & =(1-\eta) \frac{\rho}{|I_{k-1}|} \sum_{i\in I_k}(\|e_{k-1}^i\| + L \alpha \|y_{k-1}\|) \\
+	 & =(1-\eta) \frac{\rho}{|I_{k-1}|} \sum_{i\in I_k}(\|e_{k-1}^i\| + L \alpha \| \nabla f_{k-1}+e_{k-1} \|) \\
+	 & =(1-\eta) \frac{\rho}{|I_{k-1}|} \sum_{i\in I_{k-1}}(\|e_{k-1}^i\| + L \alpha \| \nabla f_{k-1}+e_{k-1} \|)\\
+	 & \leq (1-\eta) \frac{\rho}{|I_{k-1}|} \sum_{i\in I_{k-1}}(\|e_{k-1}^i\| + L \alpha \| \nabla f_{k-1}\|+ L \alpha \| e_{k-1} \|)  
+	 \end{align*}
+	 
+	 Then
+	  \begin{align*}
+	 E[ \frac{1}{|I_k|} \sum_{i\in I_k}{\|e_k^i\|] } &\leq  (1-\eta)( \frac{\rho}{|I_{k-1}|} \sum_{i\in I_k} {\|e_{k-1}^i\|  }+ L \| x_{k-1} - x_k\| )\\
+	 &\leq (1-\eta)( \frac{\rho}{|I_{k-1}|} \sum_{i\in I_{k-1}}\|e_{k-1}^i\| + L \alpha \|y_{k-1}\|  ) \\
+	 &\leq (1-\eta) (\frac{\rho}{|I_{k-1}|} \sum_{i\in I_{k-1}}\|e_{k-1}^i\| + L \alpha \| \nabla f_{k-1}+e_{k-1} \|  ) \\
+	 &\leq (1-\eta) (\frac{\rho}{|I_{k-1}|}\sum_{i\in I_{k-1}}(1+\alpha L) \|e_{k-1}^i\| + (1-\eta) L\alpha( L \|x_{k-1}-x_\ast\| +\|\nabla f(x_\ast)\| )\\
+	 &\leq (1-\eta) (\frac{\rho}{|I_{k-1}|}\sum_{i\in I_{k-1}}(1+\alpha L) \|e_{k-1}^i\| + (1-\eta) L\alpha (L \|x_{k-1}-x_\ast\| +\sigma_k  ) 
+	 \end{align*}
+	where we use (\ref{truegrad}) for the last equation.
+ 
+	 Taking expectations on both sides gives
+	 \[
+	 E[ \frac{1}{|I_k|} \sum_{i\in I_k}{\|e_k^i\|] } \leq (1-\eta)(1+\alpha L)\frac{1}{|I_k|} \sum_{i\in I_k}E[\|e_{k-1}^i\|] + (1-\eta) \alpha L^2 E[\|x_{k-1}-x_\ast\|] + (1-\eta)L\alpha \sigma_k
+	 \]
+ 
+ 
+
+	\bigskip
+	%\noindent
+	%Finally, let us define two average Hessian matrices, $H_k$ and $\bar H_k$, for each $k$, such that
+	%\[
+	% \nabla f(x_k) = \nabla f(x_{k-1})+H_k(x_k-x_{k-1}),
+	%\]
+	%\[
+	% \nabla f(x_k) = \bar H_k(x_k-x_\ast),
+	%\]
+	%and assume that 
+	%\[
+	%  \mu I \preceq H_k \preceq L I , \quad \mbox{and} \quad \mu I \preceq \bar H_k \preceq L I,\quad \mbox{for all }k
+	%\]
+	%are satisfied for some $\mu>0$ and $L>1$.
+
+	\bigskip
+
+	\noindent 
+	%Now, we will derive two relations for the change of $e_k$ and  the change of $x_k-x_\ast$, respectively, and then merge the two.
+	% \begin{align*}
+	%  E[e_k] &= (1-\eta)(e_{k-1} + \nabla f_{k-1} - \nabla f_k)\\
+	 % &= (1-\eta)(e_{k-1} - H_k(x_k-x_{k-1}))\\
+	 % &= (1-\eta)(e_{k-1} - H_k(-\alpha y_{k-1}))\\
+	 % &= (1-\eta)\left(e_{k-1} + \alpha H_k (\nabla f_{k-1}+e_{k-1})\right)\\
+	 % &= (1-\eta)\left((I+\alpha H_k)e_{k-1} + \alpha H_k\nabla f_{k-1}\right)\\ 
+	 % &= (1-\eta)(I+\alpha H_k)e_{k-1} + (1-\eta)\alpha H_k\bar H_{k-1}(x_{k-1}-x_\ast),
+	 %\end{align*}
+
+	Now we consider the error in $x$.
+	 \begin{align*}
+	  x_k-x_\ast &= x_{k-1}-x_\ast + (x_k-x_{k-1})\\
+	  &=x_{k-1}-x_\ast -\alpha y_{k-1}\\
+	  &=x_{k-1}-x_\ast -\alpha (\nabla F_{k-1}-\nabla F_{k-1}+\nabla f_{k-1} + e_{k-1})\\
+	  &=x_{k-1}-x_\ast -\alpha\bar H_{k-1}(x_{k-1}-x_\ast) -\alpha e_{k-1} +\alpha (-\nabla F_{k-1}+\nabla f_{k-1})\\
+	  &=(I-\alpha\bar H_{k-1})(x_{k-1}-x_\ast) -\alpha e_{k-1} +\alpha (-\nabla F_{k-1}+\nabla f_{k-1}) 
+	 \end{align*}
+	 where $\bar{H}$ is the average Hessian matrix such that  $\nabla F(x_k) = \bar H_k(x_k-x_\ast)$.
+
+	Then with the triangle inequality
+	\begin{align*}
+	\| x_k-x_\ast \| &\leq (1-\alpha \mu)\|(x_{k-1}-x_\ast)\| +\alpha \|e_{k-1}\| + \alpha \|-\nabla F_{k-1}+\nabla f_{k-1} \| \\
+	&\leq (1-\alpha \mu)\|(x_{k-1}-x_\ast)\| +\alpha  \frac{1}{|I_{k-1}|} \sum_{i\in I_{k-1}}{\|e_{k-1}^i\| }+ \alpha \|-\nabla F_{k-1}+\nabla f_{k-1} \|
+	\end{align*}
+	%Before  we take expectations note that 
+	%\[
+	%E[\|-\nabla F_{k-1}+\nabla f_{k-1} \|] \leq \sqrt {E[\|-\nabla F_{k-1}+\nabla f_{k-1} \|^2] }\leq  \sqrt{\sigma ^2/n_k}
+	%\]
+	%where $\sigma^2$ is a bound on the variance of $\|\nabla f^i(x)\|$. If we define $\sigma_k = \sqrt{\sigma ^2/n_k}$, 
+	%and assume $n_k$ grows geometrically: $ n_k= \rho^{-2} n_{k-1}$ for some $\rho <1$, then we have that 
+	%$\sigma_k = \rho \sigma_{k-1}$.
+
+	Now, taking expectations, and using (\ref{truegrad})
+	\[  
+	E[\| x_k-x_\ast \| ] \leq (1-\alpha \mu)E[\|(x_{k-1}-x_\ast)\| ]+\alpha E[ \frac{1}{|I_{k-1}|} \sum_{i\in I_{k-1}}{\|e_{k-1}^i\|] }+ \alpha \sigma_{k-1}
+	\]
+
+	\bigskip
+
+	\noindent  
+	So, merging the three equations and defining $\delta_k = E[ \frac{1}{|I_{k-1}|} \sum_{i\in I_{k-1}}{\|e_{k-1}^i\|] }$ yields
+	\[
+	 \begin{pmatrix} \displaystyle\frac{1}{L}\delta_k\\ E[\|x_k-x_\ast \|] \\ \sigma_k \end{pmatrix} 
+	\leq M
+	 \begin{pmatrix} \displaystyle\frac{1}{L}\delta_{k-1} \\E [\| x_{k-1}-x_\ast \| ] \\ \sigma_{k-1} \end{pmatrix}  \quad\mbox{for}\quad 
+	 M = \begin{pmatrix} (1-\eta)(I+\alpha L) &  (1-\eta)\alpha L & (1-\eta) \alpha\\  
+	                   \alpha LI  & I-\alpha L  &  \alpha  \\
+	                   0 & 0 &  \rho \end{pmatrix}.                   
+	\]
+
+	\bigskip
+	Since the eigenvalues of this 3 by 3 matrix are $\rho <1$ and the 2 eigenvalues of the upper left 2 by 2 block,
+	we should have all eigenvalues $<1$ under the same conditions derived in the file ssag7.
+	
+\newpage
+
+	\section{Proof}
+    Consider the expectation minimization problem
+	\[
+		\min F(x) = \mathbb{E}_{\mathbf{F} \in \mathcal{D}} [ \mathbf{F}(x) ]
+	\]
+	which we approximate at iteration $k$ by 
+	\[
+		f(x) = \frac{1}{I_k} \sum_{i=1}^{I_k} f^i(x)
+	\]
+	where each $f^i$ is sampled from $\mathcal{D}$. We look at the EGR extension of the SAG algorithm that updates each gradient sample with probability $\eta$ at every iteration. 
+	
+	$\eta$ is not precisely $\frac{s_k+u_k}{I_k}$, because in our algorithm in its current form we \textit{must} update the new indices, because they have to go in the incumbent average. An alternative is, both algorithmically and in the code, to not count and include these new datapoints, but rather store them and use later in the $s_k$ sampling. Then $\eta$ could be computed, it would be uniform over all indices and be equal to $\frac{s_k}{I_k}$.
+	
+	Let 
+	\[
+	x_{k+1} = x_k - \alpha y_k
+	\]
+	and
+	\[
+	y_k = \frac{1}{I_k}  \sum_{i=1}^{I_k} \nabla f^i (x_{k(i)})
+	\]
+	where
+	\[
+		\begin{tabular}{ll}
+			k(i) = k  & \mbox{with probability $\eta$} \\
+			k(i) = [k-1](i) & \mbox{with probability $1-\eta$.}\\
+		\end{tabular}
+	\]
+		
+	The error terms
+	\[
+	e_k^i = \nabla f^i (x_{k(i)}) - \nabla f^i (x_k) \qquad \mbox{ and } \qquad e_k =  \frac{1}{I_k}  \sum_{i=1}^{I_k} e_k^i
+	\]
+	so that we have 
+	\[
+	y_k = \frac{1}{I_k}  \sum_{i=1}^{I_k} e_k^i +  \nabla f^i (x_k)  = \nabla f(x_k) + e_k
+	\]
+		
+   The expected value of $e_i^k$ with respect to the random choice of updating or not updating $k(i)$ (at iteration $k-1$) is 
+   \[
+      \mathbb{E}[e_k^i] = (1-\eta) [ e_{k-1}^i + \nabla f^i(x_{k-1}) - \nabla f^i(x_{k}) ] 
+   \]
+   
+   Assuming these updates are independent for each $i$ (which is different from what we have in the code and the algorithm description), by averaging over all $i$ we have
+
+   \begin{align*}
+      \mathbb{E}[e_k] &= (1-\eta) \frac{1}{I_k}  \sum_{i=1}^{I_k}[ e_{k-1}^i+ \nabla f^i(x_{k-1}) -  \nabla f^i(x_{k}) ] \\
+	  & = (1-\eta) [ e_{k-1} + \nabla f(x_{k-1}) -  \nabla f(x_{k}) ] 
+   \end{align*}
+   where now the expectation is with respect to the choice of updating or not updating for all $i's$. The indepedence assumption is needed to combine all the expectations into one.
+   
+   Taking norms we get, and by triangle inequality, L-gradient continuity, the definition of $y_k$, the defintion of $e_k$, the triangle inequality twice more
+   
+	
+	\begin{align*}
+		\| \mathbb{E}[e_k] \| & \leq  (1-\eta) [ \| e_{k-1}\| + \|\nabla f(x_{k-1}) -  \nabla f(x_{k})\| ] \\ 
+		 &\leq (1-\eta) [ \| e_{k-1} \|+ L \|x_{k-1} - x_k\| ] \\ 
+		 &= (1-\eta) [ \| e_{k-1} \|+ L \alpha\| y_{k-1} \| ] \\ 
+		 &= (1-\eta) [ \| e_{k-1} \|+ L \alpha\| \nabla f(x_{k-1}) + e_{k-1} \| ] \\ 
+		 &\leq (1-\eta)(1+L \alpha)  \| e_{k-1} \|+ (1-\eta) L \alpha\| \nabla f(x_{k-1}) \|  \\ 
+		  &=  (1-\eta)(1+L \alpha)  \| e_{k-1} \|+ (1-\eta) L \alpha\| \nabla F(x_{k-1}) + (\nabla f(x_{k-1}) - \nabla F(x_{k-1})) \|  \\ 
+		& \leq (1-\eta)(1+\alpha L)\|e_{k-1}\| + (1-\eta)\alpha L^2 \|x_{k-1} - x^*\| + (1- \eta)\alpha L \| \nabla f(x_{k-1}) - \nabla F (x_{k-1})\|
+	\end{align*}
+	
+	For the error in $x$, by the defintion of $y_k$, defintion of $e_k$ and Taylor's theorem, we have 
+	\begin{align*}
+		x_k - x^* & = x_{k-1} - x^* + (x_k - x_{k-1})  \\
+		          & = x_{k-1} - x^* - \alpha y_{k-1} \\
+		          & = x_{k-1} - x^* - \alpha ( \nabla F (x_{k-1}) -  \nabla F (x_{k-1})+\nabla f(x_{k-1}) + e_{k-1} ) \\
+		          & = x_{k-1} - x^* - \alpha \bar{H}_{k-1}( x_{k-1} - x^*)-  \alpha( -\nabla F (x_{k-1}) + \nabla f(x_{k-1})) - \alpha e_{k-1}  \\
+		          & = (I -\alpha \bar{H}_{k-1})( x_{k-1} - x^*) -  \alpha( -\nabla F (x_{k-1}) + \nabla f(x_{k-1})) - \alpha e_{k-1}  \\
+	\end{align*} 
+	where $\bar{H}_{k}$ is the average Hessian matrix such that $\nabla F(x_k) =\bar{H}_{k} (x_k - x^*) $
+	
+	Taking norms (and thus replacing $H$ by $\mu$), by the triangle inequality we have 
+	\begin{align*}
+		\|x_k - x^* \|& \leq (1 -\alpha\mu) \|x_{k-1} - x^* \|+   \alpha \| -\nabla F (x_{k-1}) + \nabla f(x_{k-1}) \| +  \alpha \| e_{k-1}  \| \\
+	\end{align*} 
+	
+	Taking the TOTAL expectation as before, we get
+	\begin{align*}
+		\mathbb{E} [\|x_k - x^* \| ]& \leq (1 -\alpha \mu) \mathbb{E} [\|x_{k-1} - x^* \|]+   \alpha \mathbb{E} [\| -\nabla F (x_{k-1}) + \nabla f(x_{k-1}) \| ]+  \alpha \mathbb{E} [ \| e_{k-1}  \|] \\
+	\end{align*}
+	eth
+	Finally, assume that 
+	\begin{equation}
+		\mathbb{E} [\| \nabla f(x_{k}) - \nabla F (x_{k})\| ]\leq \rho \| \nabla f(x_{k-1}) - \nabla F (x_{k-1})\|
+	\end{equation}
+	This is a reasonable assumption, because...
+	
+	Merging the equations, we get 
+	
+	\[
+		\mathbb{E} \left[ \left(  \begin{tabular}{c}
+		$\| e_k \|$\\
+		$\|x_k - x^* \|$\\
+		$\| \nabla f(x_{k}) - \nabla F (x_{k})\|$
+		\end{tabular}
+		\right) \right] \leq M \left(  \begin{tabular}{c}
+		$\|e_{k-1}\|$\\
+		$\|x_{k-1} - x^*\|$\\
+		$\| \nabla f(x_{k-1}) - \nabla F (x_{k-1})\|$
+		\end{tabular}
+		\right) 
+	\]
+	for 
+	\[	M =  	\left(  \begin{tabular}{ccc}
+		$(1-\eta)(1+\alpha L)$ & $(1-\eta)\alpha L^2 $& $(1- \eta)\alpha L$ \\
+		$\alpha$ &$ 1 -\alpha \mu$ & $\alpha$\\
+		0 & 0 & $\rho$
+		\end{tabular} \right)
+	\]
+	
+	Computing the eigenvalues, we need to have
+	\[	det \left(  \begin{tabular}{ccc}
+		$(1-\eta)(1+\alpha L) - \lambda $ & $(1-\eta)\alpha L^2 $& $(1- \eta)\alpha L$ \\
+		$\alpha$ &$ 1 -\alpha \mu- \lambda$ & $\alpha$\\
+		0 & 0 & $\rho- \lambda$
+		\end{tabular} \right) = 0
+	\]
+	
+	or 
+	\begin{equation}
+		((1-\eta)(1+\alpha L) - \lambda)(1 -\alpha \mu- \lambda)(\rho- \lambda) - \alpha(1-\eta)\alpha L^2(\rho- \lambda) = 0
+	\end{equation}
+	
+	The solutions are $\lambda  = \rho$, and
+	
+	 $\lambda  =\frac{1}{2} \left(-\eta \pm \sqrt{\alpha ^2 (\eta -5) (\eta -1) L^2-2 \alpha  (\eta -1) L (\alpha  \mu-\eta )+(\eta -\alpha  \mu)^2}-\alpha  ((\eta -1) L+\mu)+2\right)$
+	
+	For the larger value to be strictly less than 1, we need 
+	\begin{align*}
+	\alpha &< \frac{\eta  \mu}{-\eta  L^2+L^2-\eta  L \mu+L \mu} \\
+	       &= \frac{\mu}{L} \frac{\eta  }{L+ \mu-\eta  L-\eta   \mu} \\
+	       &= \frac{\mu}{L} \frac{\eta  }{(1-\eta)(  L+ \mu)} \\
+	\end{align*}
+	and 
+	$\rho<1$
+	
+\end{document} 
+

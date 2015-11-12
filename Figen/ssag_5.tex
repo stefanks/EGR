@@ -1,0 +1,203 @@
+\documentclass{article}
+\usepackage{amsmath, fullpage}
+
+\newcommand{\grad}{\nabla}
+
+\begin{document}
+ 
+\noindent 
+Consider
+\[
+ M_k = \begin{pmatrix} (1-\eta)(I+\alpha H_k) & \displaystyle\frac{1}{L} (1-\eta)\alpha H_k\bar H_{k-1}\\  
+                   -\alpha LI  & I-\alpha\bar H_{k-1} \end{pmatrix}                  
+\]
+with $\alpha=\displaystyle\frac{\eta}{4L}$; that is
+\[
+ M_k = \begin{pmatrix} (1-\eta)(I+\displaystyle\frac{\eta}{4L} H_k) & (1-\eta)\displaystyle\frac{\eta}{4L^2} H_k\bar H_{k-1}\\  
+ \\
+                   -\displaystyle\frac{\eta}{4} I  & I-\displaystyle\frac{\eta}{4L}\bar H_{k-1} \end{pmatrix}.                  
+\]
+
+% For any vector $y=[y_1; y_2]$, 
+% \begin{align*}
+%  \|M_k y\|^2 &= (1-\eta)^2\|(I+\displaystyle\frac{\eta}{4L} H_k)y_1 + \displaystyle\frac{\eta}{4L^2} H_k\bar H_{k-1}y_2\|^2 + \|-\displaystyle\frac{\eta}{4} y_1 + (I-\displaystyle\frac{\eta}{4L}\bar H_{k-1})y_2\|^2\\
+%  &= 
+% \end{align*}
+
+\bigskip
+The first remark is not needed for the \emph{slowly varying} theorem, but we mention it here for our notes.  The other remarks are about the conditions of the theorem.
+
+\bigskip
+\noindent
+\paragraph{Remark 1.} We have 
+\[
+ (M-M_k)\succ 0 \qquad \mbox{and} \qquad \max(\lambda(M))<1
+\]
+for
+\[
+ M = \begin{pmatrix} (1-\eta)(1+\displaystyle\frac{\eta}{4})I & (1-\eta)\displaystyle\frac{\eta}{4L} \mu I\\  
+ \\
+                   -\displaystyle\frac{\eta}{4} I  & (I-\displaystyle\frac{\eta}{4L}\mu) I \end{pmatrix}.                  
+\]
+
+\bigskip
+
+\paragraph{Remark 2.} $\|M_k\| = 1 + \displaystyle\frac{\eta}{4}\left(1-\frac{\mu}{L}\right)<1.25$. 
+We obtain the bound by using
+\begin{align*}
+ \|M_k\| &\leq \left\|\begin{pmatrix} (1-\eta)(I+\displaystyle\frac{\eta}{4L} H_k) & 0\\  
+ \\
+                   0  & I-\displaystyle\frac{\eta}{4L}\bar H_{k-1} \end{pmatrix}\right\|
+                   +
+                   \left\|\begin{pmatrix} 0 & (1-\eta)\displaystyle\frac{\eta}{4L^2} H_k\bar H_{k-1}\\  
+ \\
+                   -\displaystyle\frac{\eta}{4} I  & 0 \end{pmatrix}\right\| \\
+ \\
+ &\leq \left\|\begin{pmatrix} \|(1-\eta)(I+\displaystyle\frac{\eta}{4L} H_k)\|^2I & 0\\  
+ \\
+                   0  & \|I-\displaystyle\frac{\eta}{4L}\bar H_{k-1}\|^2I \end{pmatrix}\right\|^{1/2}
+                   +
+                   \left\|\begin{pmatrix} \|(1-\eta)\displaystyle\frac{\eta}{4L^2} H_k\bar H_{k-1}\|^2I & 0\\  
+ \\
+                  0 & |-\displaystyle\frac{\eta}{4}|^2 I  \end{pmatrix}\right\|^{1/2} \\
+ \\
+ &\leq \max\left\lbrace(1-\eta)(1+\displaystyle\frac{\eta}{4}),1-\eta\displaystyle\frac{\mu}{4L}\right\rbrace + \max\left\lbrace(1-\eta)\displaystyle\frac{\eta}{4},\displaystyle\frac{\eta}{4}\right\rbrace
+ = 1-\eta\displaystyle\frac{\mu}{4L} + \displaystyle\frac{\eta}{4}.
+\end{align*}
+
+\bigskip
+
+\paragraph{Remark 3.} The spectral radius of $M_k$, $\rho(M_k)$ is in $(1-\eta,1)$.  We repeat our previous argument for the case with $H_k=\bar H_{k-1}=H$ in document \emph{ssag\_4.pdf}.  That yields, if $\lambda$ is an eigenvalue of $M_k$, then 
+$ -(1-\eta-\lambda)(1-\lambda)$ is an eigenvalue of the matrix 
+\[
+ \frac{\eta}{4L}[(1-\lambda)(1-\eta)H_k-(1-\eta-\lambda)\bar H_{k-1}].
+\]
+\begin{itemize}
+\item Let us first consider the region $\lambda<1-\eta$.  In this region, $(1-\lambda)>0$ and $(1-\eta-\lambda)>0$.  Therefore
+\[
+ -(1-\eta-\lambda)(1-\lambda)\geq\frac{\eta\mu}{4L}(1-\lambda)(1-\eta)-\frac{\eta}{4}(1-\eta-\lambda)
+\]
+should hold. That yields the inequality
+\[
+   -(1-\lambda)^2 +\left(\frac{5\eta}{4}-\frac{\eta(1-\eta)\mu}{4L}\right)(1-\lambda)-\frac{\eta^2}{4} \geq 0.
+\]
+The smaller root of the quadratic on the left hand side satisfies 
+  \begin{align*}
+   (1-\lambda)_{s1} &= \frac{5\eta}{8}-\frac{\eta(1-\eta)\mu}{8L}-\frac{1}{2}\sqrt{\left(\frac{5\eta}{4}-\frac{\eta(1-\eta)\mu}{4L}\right)^2-\eta^2}\\ 
+   &> \frac{5\eta}{8}-\frac{\eta(1-\eta)\mu}{8L}-\frac{1}{2}\sqrt{\left(\frac{3\eta}{4}-\frac{\eta(1-\eta)\mu}{4L}\right)^2} = \frac{\eta}{4}.
+  \end{align*}
+ Similarly, for the larger root we have
+  \begin{align*}
+   (1-\lambda)_{l1} &= \frac{5\eta}{8}-\frac{\eta(1-\eta)\mu}{8L}+\frac{1}{2}\sqrt{\left(\frac{5\eta}{4}-\frac{\eta(1-\eta)\mu}{4L}\right)^2-\eta^2}\\ 
+   &< \frac{5\eta}{8}-\frac{\eta(1-\eta)\mu}{8L}+\frac{1}{2}\sqrt{\left(\frac{3\eta}{4}-\frac{\eta(1-\eta)\mu}{4L}\right)^2} = \eta-\frac{\eta(1-\eta)\mu}{4L} = \eta(1-\frac{\mu}{4L}) - \frac{\eta^2\mu}{4L}<\eta(1-\frac{\mu}{4L}).
+  \end{align*}
+ So, such $\lambda$ values are contained in interval $\left(\displaystyle1-\eta + \frac{\eta\mu}{4L} \ , \ 1-\frac{\eta}{4}\right)$, which does not contain $1-\eta$.  Therefore, $\lambda < 1-\eta$ cannot be true. We have $\lambda\geq 1-\eta$ for all eigenvalues of $M_k$. 
+ 
+ \bigskip
+ 
+ \item Now, let us consider the region  $\lambda>1$. In this region, $(1-\lambda)<0$ and $(1-\eta-\lambda)<0$.  So, $\lambda$ values must satisfy 
+ \[
+-(1-\eta-\lambda)(1-\lambda)\geq\frac{\eta}{4}(1-\lambda)(1-\eta)-\frac{\eta\mu}{4L}(1-\eta-\lambda),
+\]
+that is,
+  \[
+   -(1-\lambda)^2+\left(\eta-\frac{\eta(1-\eta)}{4}+\frac{\eta\mu}{4L}\right)(1-\lambda)-\frac{\eta^2\mu}{4L}\geq 0.
+  \]
+\end{itemize}
+Similar to the above discussion we obtain 
+  \begin{align*}
+   (1-\lambda)_{s1} &=\frac{\eta}{2}-\frac{\eta(1-\eta)}{8}+\frac{\eta\mu}{8L} -\frac{1}{2}\sqrt{\left(\eta-\frac{\eta(1-\eta)}{4}+\frac{\eta\mu}{4L}\right)^2-\eta^2\frac{\mu}{L}}\\ 
+   &> \frac{\eta}{2}-\frac{\eta(1-\eta)}{8}+\frac{\eta\mu}{8L}-\frac{1}{2}\sqrt{\eta^2\left(1-\frac{(1-\eta)}{4}-\frac{\mu}{4L}\right)^2} = \frac{\eta\mu}{4L},
+  \end{align*}
+and
+  \begin{align*}
+   (1-\lambda)_{l1} &=\frac{\eta}{2}-\frac{\eta(1-\eta)}{8}+\frac{\eta\mu}{8L} +\frac{1}{2}\sqrt{\left(\eta-\frac{\eta(1-\eta)}{4}+\frac{\eta\mu}{4L}\right)^2-\eta^2\frac{\mu}{L}}\\ 
+   &< \frac{\eta}{2}-\frac{\eta(1-\eta)}{8}+\frac{\eta\mu}{8L}+\frac{1}{2}\sqrt{\eta^2\left(1-\frac{(1-\eta)}{4}-\frac{\mu}{4L}\right)^2} = \eta(\frac{3+\eta}{4})<\eta,
+  \end{align*}
+Then, such $\lambda$ values are contained in interval $\left(\displaystyle 1-\eta , \ 1-\frac{\eta\mu}{4L}\right)$, which is inconsistent with $\lambda>1$.  We conclude that $\lambda\leq 1$ for all eigenvalues of $M_k$.
+ 
+\bigskip
+
+\paragraph{Remark 4.} $\rho(M_k)< 1-\displaystyle\frac{\eta^2\mu}{4L}$. As we showed above that $1-\eta\leq\rho(M_k)\leq 1$, and since $(1-\lambda)>0$ and $(1-\eta-\lambda)<0$ in this region, we require that 
+\[
+-(1-\eta-\lambda)(1-\lambda)\in[\frac{\lambda\eta^2\mu}{4L},\frac{\lambda\eta^2}{4}] 
+\]
+holds.  So, our previous argument in \emph{ssag\_4.pdf} directly applies.
+
+
+\bigskip
+
+\paragraph{Remark 5.} So far, we have obtained requirements (1) and (2) of the \emph{slowly varying} theorem.  We have found that the $M_k$ matrices we have satisfy these conditions with
+\[
+ K = 1 + \displaystyle\frac{\eta}{4}\left(1-\frac{\mu}{L}\right)<1.25
+\]
+and
+\[
+ \beta = 1-\displaystyle\frac{\eta^2\mu}{4L}<1
+\]
+for all $k$.  We are now going to discuss $\epsilon$ values such that
+\[
+ \|M_{k+1}-M_k\| \leq \epsilon.
+\]
+Since the block $(2,1)$ of all matrices are the same, this difference is a block upper triangular matrix. 
+\[
+ \Delta_k = M_{k+1}-M_k = \begin{pmatrix} (1-\eta)\alpha(H_{k+1}-H_k) & \displaystyle\frac{(1-\eta)\alpha}{L}(H_{k+1}\bar H_k-H_k\bar H_{k-1})\\  
+ \\
+                   0  & \alpha(\bar H_{k-1}-\bar H_k) \end{pmatrix}.
+\]
+
+\bigskip
+
+Let us assume that there exists two constants $C$ and $D$ such that 
+\[
+ \|H_{k+1}-H_k\|\leq C\|x_{k+1}-x_k\| \qquad \mbox{ and } \qquad \|\bar H_{k-1}-\bar H_k\|\leq C\|x_k-x_{k-1}\|,
+\]
+and
+\[
+  \|\nabla_i f(x)\|\leq D \qquad \forall x, \quad \forall i\in\{1,\dots,N\}  
+\]
+so that we have $\|x_{k+1}-x_k\|<\alpha D$, for all $k$.
+
+Note that 
+\begin{align*}
+     \frac{(1-\eta)\alpha}{L}\|H_{k+1}\bar H_k-H_k\bar H_{k-1}\| &= \frac{(1-\eta)\alpha}{L}\|(H_{k+1}-H_k)\bar H_{k-1}+H_{k+1}(\bar H_k-\bar H_{k-1})\|\\
+     & \leq 2\alpha^2(1-\eta)C D
+\end{align*}
+
+\[
+ (1-\eta)\alpha\|(H_{k+1}-H_k)\|\leq (1-\eta)\alpha^2CD  \quad \mbox{ and } \quad \alpha\|\bar H_{k-1}-\bar H_k\| \leq \alpha^2CD.
+\]
+
+\bigskip
+
+Overall we have 
+\[
+ \|\Delta_k\| \leq \alpha^2CD(1 + 2(1-\eta)) = \frac{\eta^2(3-2\eta)}{16}\frac{CD}{L^2} = \epsilon
+\]
+for $\alpha = \eta / 4L$.
+
+\bigskip
+
+The convergence requirement of the theorem is 
+\[
+ \rho (\beta^2+\rho q^2 \epsilon^2)^{2q} < 1   \qquad \mbox{for } \rho = \frac{(K+1)^{4n-2}}{(1-\beta)^{4n}}.
+\]
+and for some $q>1$.  In our case,
+\[
+ \rho = \left(\frac{K+1}{1-\beta}\right)^{4n-2}\frac{1}{(1-\beta)^2} = \left(\frac{(8+\eta)L}{\eta^2\mu}-\frac{1}{\eta}\right)^{4n-2}\left(\frac{4L}{\eta^2\mu}\right)^2.
+\]
+For $C=0$ (the quadratic case), the theorem implies $q$-step linear convergence of $\|[\frac{1}{L}e_k; x_k-x_\ast]\|$ for 
+\[
+ q > \frac{-\log\rho}{4\log\beta} > \frac{(2n-1)\log 16 + \log 4}{4\log 0.75} \approx 5n-1.3.
+\]
+This should be a weak result because it does not reduce to the conventional linear convergence result for when $\eta=1$.
+
+\bigskip
+
+It is not possible to find a $q>1$ value which satisfies the convergence requirement of the theorem for any given $\epsilon$.  Therefore, for the non-quadratic case, the theorem works for small enough $C>0$ values only if we want to keep our choice for $\alpha$.  (But it always works as a local convergence result).  
+
+\bigskip
+
+On the other hand, $K$ and $\beta$ values that satisfy the conditions of the theorem can be found for $\alpha=\eta/\tau L$ with $\tau>4$.  So, keeping $\tau$ large enough, a small enough $\epsilon$ can be obtained for any $C<\infty$ which provides $q$-step linear convergence for some $q>1$.
+
+\end{document}

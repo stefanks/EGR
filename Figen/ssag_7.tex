@@ -1,0 +1,118 @@
+\documentclass{article}
+\usepackage{amsmath, fullpage}
+
+\newcommand{\grad}{\nabla}
+
+\begin{document}
+ 
+\noindent
+
+This is a write-up of Prof.Byrd's analysis on matrix $M$, and extends it to derive a convergence rate.
+
+\bigskip
+
+Go back again to the derivation of inter-dependent optimality error and gradient error terms.
+
+We consider the finite sum minimization problem with $N$ data points, and an extension of the SAG algorithm that updates each gradient component with probability $\eta$ at each iteration.
+
+We have 
+\[
+  E[e_k]=(1-\eta)(I+\alpha H_k)e_{k-1} + (1-\eta)\alpha H_k\bar H_{k-1}(x_{k-1}-x_\ast)
+\]
+and
+\[
+x_k-x_\ast=(I-\alpha\bar H_{k-1})(x_{k-1}-x_\ast) -\alpha e_{k-1}.
+\]
+Therefore,
+\[
+  \|E=[e_k]\|\leq(1-\eta)(1+\alpha L)\|e_{k-1}\| + (1-\eta)\alpha L^2\|x_{k-1}-x_\ast\|
+\]
+and
+\[
+\|x_k-x_\ast\|\leq(1-\alpha\mu)\|x_{k-1}-x_\ast\| +\alpha \|e_{k-1}\|.
+\]
+so that we can write
+\[
+ \begin{pmatrix} \displaystyle\frac{1}{L}\|E[e_k]\| \\
+  \|x_k-x_\ast\|
+ \end{pmatrix} \leq 
+ \begin{pmatrix} (1-\eta)(1+\alpha L) & (1-\eta)\alpha L\\  
+                   \alpha L  & 1-\alpha\mu \end{pmatrix}                  
+ \begin{pmatrix} \displaystyle\frac{1}{L}\|e_{k-1}\| \\
+  \|x_{k-1}-x_\ast\|
+ \end{pmatrix}                  
+\]
+
+\bigskip
+Now consider the $2\times 2$ matrix
+\[
+M = \begin{pmatrix} (1-\eta)(1+\alpha L) & (1-\eta)\alpha L\\  
+                   \alpha L  & 1-\alpha\mu \end{pmatrix}.    
+\]
+Let 
+\[
+A = \begin{pmatrix} \alpha L-\alpha\eta L-\eta & (1-\eta)\alpha L\\  
+                   \alpha L  & -\alpha\mu \end{pmatrix}  
+\]
+so that
+\[
+ M = I + A.
+\]
+Suppose $\mu+L>1$.  Set $\alpha = \beta \displaystyle\frac{\eta}{1-\eta}\frac{\mu}{L}\frac{1}{\mu+L}$ for any $\beta\in (0,1)$, and choose \ $\displaystyle\eta<\frac{L}{\mu+L}$ (always satisfied by $\eta<0.5$)\footnote{Note that $\frac{\eta}{1-\eta}=(\frac{1}{\eta}-1)^{-1}$.  If $\eta<\frac{L}{\mu+L}$, then $(\frac{1}{\eta}-1)^{-1}<\frac{L}{\mu}$ providing $\frac{\eta}{1-\eta} \frac{\mu}{L}<1$. }.
+
+Since this choice of $\alpha$ guarantees that 
+\[
+ \alpha < \frac{\eta}{1-\eta}\frac{1}{L},  \quad \mbox{we have} \quad A_{11}=\alpha L-\alpha\eta L-\eta<0.
+\]
+Therefore, $trace(A)<0$.
+Also,
+\begin{align*}
+ \frac{\det(A)}{\alpha} &= -\mu(\alpha L-\alpha\eta L-\eta)-(1-\eta)\alpha L^2 = -\alpha\mu L+\alpha\mu\eta L+\eta\mu-(1-\eta)\alpha L^2\\
+ & =\alpha L(-\mu+\mu\eta-(1-\eta)L)+\eta\mu = \beta \displaystyle\frac{\eta}{1-\eta}\frac{\mu}{\mu+L}(1 -\eta)(\mu-L)+\eta\mu \\
+ & = \eta\mu\left(\frac{\beta(\mu-L)}{\mu+L}+1\right) > \eta\mu\left(\frac{\mu-L}{\mu+L}+1\right)>0.
+\end{align*}
+So, we conclude that $\det(A)>0$ and $trace(A)<0$, implying that both eigenvalues of $A$ are negative.
+
+Since $\det(A)=\lambda(trace(A)-\lambda)$ for the two eigenvalues $\lambda$ of $A$, we get the following concave quadratic for which we know that both roots are negative.
+\[
+ p(\lambda) = -\lambda^2 + \frac{1}{\mu+L}[(\beta-1)\mu\eta-\beta\gamma\mu-\eta L]\lambda - \frac{1}{\mu+L}[\beta(1-\beta)\gamma\eta\mu]
+\]
+where we define $\gamma = \frac{\eta}{1-\eta}\frac{\mu}{L}$.
+
+Note that 
+\[
+ p(0)=-\frac{1}{\mu+L}[\beta(1-\beta)\gamma\eta\mu] < 0 \quad \mbox{and} \quad p^\prime(0) = \frac{1}{\mu+L}[(\beta-1)\mu\eta-\beta\gamma\mu-\eta L] < 0.
+\]
+Clearly, the first order expansion of concave $p(\lambda)$ at zero must take a positive value at $\lambda_{max}$--the larger root of $p(\lambda)$.  That is,
+\[
+ p(0)+p^\prime(0) (\lambda_{max}-0) > p(\lambda_{max})=0. \quad \mbox{Equivalently, } \lambda_{max}<-\frac{p(0)}{p^\prime(0)}<0.
+\]
+Placing values of $p(0)=-\det(A)$, and $p^\prime(0)=trace(A)$ we obtain
+\[
+ 1+\lambda_{max}<1-\frac{p(0)}{p^\prime(0)}<1-\left(\frac{(1-\eta)L}{\beta\eta\mu}+\frac{L}{(1-\beta)\eta}+\frac{L^2(1-\eta)}{\mu^2\eta(1-\beta)\beta}\right)^{-1}.
+\]
+We have 
+\[
+\frac{L^2(1-\eta)}{\mu^2\eta(1-\beta)\beta} > \frac{(1-\eta)L}{\beta\eta\mu}, 
+\ \mbox{and choosing $\beta<\min\{\eta\mu^{-1},1\}$ ensures that } \ \frac{L^2(1-\eta)}{\mu^2\eta(1-\beta)\beta}>\frac{L}{(1-\beta)\eta}.
+\]
+Therefore,
+\[
+ 1+\lambda_{max}<1-\frac{1}{3}\frac{\mu^2\eta(1-\beta)\beta}{L^2(1-\eta)}
+\]
+
+\bigskip
+
+As we assume that the random selection of a subset (with probability $\eta$) is independent at each iteration, we conclude that 
+\[
+ \left\|\begin{pmatrix} \displaystyle\frac{1}{L}\|E[e_k]\| \\
+  \|x_k-x_\ast\|
+ \end{pmatrix}\right\| \leq  \left(1-\frac{1}{3}\frac{\mu^2\eta(1-\beta)\beta}{L^2(1-\eta)}\right)^k               
+  \left\|\begin{pmatrix} \displaystyle\frac{1}{L}\|e_0\| \\
+  \|x_0-x_\ast\|.
+ \end{pmatrix} \right\|,
+\]
+proving R-linear convergence of $\|x_k-x_\ast\|$ to 0.
+
+
+\end{document}

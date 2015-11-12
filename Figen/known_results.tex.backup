@@ -1,0 +1,214 @@
+\documentclass{article}
+
+\usepackage{fullpage}
+
+\begin{document}
+
+\begin{center}
+{\large \textsc{Known Results on Incremental-type First Order Minimization of Strongly Convex Functions}}
+\end{center} 
+ 
+ \section{Finite Sum Minimization}
+  
+  Consider minimization of $f(x)=\frac{1}{n}\sum_{i=1}^n f_i(x)$.  Assume strong convexity of $f(x)$ (with parameter $\mu_f$) and Lipschitz continuity of $\nabla f$ (with parameter $L_f$).  Also assume strong convexity of the component functions $f_i(x)$ and Lipschitz continuity of $\nabla f_i(x)$ for all $i$ with parameters $\mu$ and $L$ respectively.  Let $\kappa_f=\displaystyle\frac{L_f}{\mu_f}$, $\kappa=\displaystyle\frac{L}{\mu_f}$ and $\kappa_c=\displaystyle\frac{L}{\mu}$.  Let $x\in \Re^p$.  A solution $x$ is $\epsilon$-accurate if 
+  \[
+   f(x)-f(x^\ast) \leq \epsilon.
+  \]
+  
+  In stating the below results we use the fact that $f(x)-f(x_\ast)\leq \displaystyle\frac{L_f}{2}\|x-x_\ast\|^2$.
+  
+ \paragraph{Gradient Descent.}  Let steplength $\alpha_k=\displaystyle\frac{2}{\mu_f+L_f}$ for all $k$.  
+ \[
+  \|x_k-x_\ast\| \leq \left(\frac{\kappa_f-1}{\kappa_f+1}\right)^k \|x_0-x_\ast\|,
+ \]
+ \[
+  f(x_k)-f(x_\ast) \leq \frac{L}{2}\left(\frac{\kappa_f-1}{\kappa_f+1}\right)^{2k} \|x_0-x_\ast\|^2 \leq \frac{L_f}{2} \exp\left\lbrace\frac{-4k}{\kappa_f+1}\right\rbrace\|x_0-x_\ast\|^2.
+ \]
+ (Ref1) The number of component function gradients computed at each step is $n$.  Number of component gradient evaluations needed to reach $\epsilon$ accuracy is $kn$ where
+ \[
+  k\leq \frac{\kappa_f+1}{4} \left(\lg\frac{1}{\epsilon}+\lg\frac{L_f\|x_\ast-x_0\|^2}{2}\right)
+  %k\geq \frac{1}{2} \left(\log\left(\frac{\kappa+1}{\kappa-1}\right)\right)^{-1} \log\left(\frac{L\|x_\ast-x_0\|^2}{2\epsilon}\right).
+ \]
+ Memory requirement is $O(p)$.
+ 
+ 
+ \paragraph{Accelerated Gradient Descent} Let parameter $\gamma_0=L_f$.  Then,
+ \[
+  f(x_k)-f(x_\ast) \leq L_f \min\left\lbrace(1-\sqrt{\kappa_f^{-1}})^k, \frac{4}{(k+2)^2}\right\rbrace\|x_0-x_\ast\|^2.
+ \]
+(Ref1) The number of component function gradients computed at each step is $n$.  Number of component gradient evaluations needed to reach $\epsilon$ accuracy is $kn$ where
+ \[
+  k\leq \sqrt{\kappa_f} \left(\lg\frac{1}{\epsilon}+\lg L_f\|x_\ast-x_0\|^2\right)
+ \]
+ Memory requirement is $O(p)$.
+ 
+ \paragraph{IAG (Deterministic)}  Suppose that each component function is sampled at least once every $K$ iterations.  Let $\alpha_k = \displaystyle\frac{4}{25}\frac{1}{\kappa K}\frac{1}{(\mu_f+L)}$.
+ \[
+  \|x_k-x_\ast\|\leq \left(1-\frac{c_K}{(\kappa+1)^2}\right)^k \|x_0-x_\ast\|
+ \]
+\[
+ f(x_k)-f(x_\ast) \leq \frac{L}{2}\left(1-\frac{c_K}{(\kappa+1)^2}\right)^{2k} \|x_0-x_\ast\|^2
+\]
+with $c_K = \frac{2}{25}(K(2K+1))^{-1}$. (Ref3)
+The number of component function gradients computed at each step is $n$.  Number of component gradient evaluations needed to reach $\epsilon$ accuracy is $k$ where
+\[
+ k\leq \frac{(\kappa+1)^2}{2c_K}\left(\lg\frac{1}{\epsilon}+\lg\frac{L\|x_\ast-x_0\|^2}{2}\right)
+\]
+Memory requirement is $O(np)$. (In Ref3, $\sum_i L_i$ is used in above results where $L_i$ are component Lipschitz constants.  However, their component functions correspond to $\frac{1}{n}f_i(x)$ with respect to our notation, so we take $L_i=\frac{1}{n}L$ and $\sum_i L_i=L$).
+
+Let us compare the bounds on computational requirements with the gradient descent algorithm for $K=n$.
+\begin{itemize}
+\item Number of oracle calls by gradient descent is $ O(\displaystyle\frac{(\kappa_f+1)n}{4}\lg\frac{1}{\epsilon}$).
+\item Number of oracle calls by IAG is $O(\displaystyle\frac{25(2n^2+n)(\kappa+1)^2}{4}\lg\frac{1}{\epsilon}$).
+\end{itemize} 
+Moreover, the memory requirement for IAG is $n$ times larger. 
+
+ (Our current bound on SAG gives an $O(\kappa_f^2n^2)$ bound for $\eta=\frac{1}{n}$ if we set $\beta=\frac{1}{n}$.  With appropriate data we can have $n$ instead of $n^2$, but $\kappa_f^2$ stays).
+ 
+ \paragraph{SAG} 
+ \begin{enumerate}
+ \item Let steplength $\alpha_k=\displaystyle\frac{1}{2nL}$ for all $k$.  
+ \[
+  E\|x_k-x_\ast\|^2 \leq \left(1-\frac{1}{8\kappa n}\right)^k\left(3\|x_0-x_\ast\|^2+9\frac{\sigma^2}{4L^2}\right)
+ \]
+ where $\sigma$ is the variance of the component gradient norms at $x_\ast$.
+(Ref4, Proposition 1)
+ The number of component gradient evaluations to achive $\epsilon$ accuracy is $k$ with
+ \[
+  k\leq 8\kappa n \lg\left(\frac{3L\|x_0-x_\ast\|^2}{2\epsilon}+\frac{9\sigma^2}{8L\epsilon}\right)
+ \]
+Memory requirement is $O(np)$.
+ 
+Note that for accelerated gradient descent the above bound is only $O(\sqrt{\kappa}n\lg\frac{1}{\epsilon})$; as well, the memory requirement is $O(p)$.
+
+ \item Consider the special case $n\geq 8\kappa$. Let steplength $\alpha_k=\displaystyle\frac{1}{2n\mu_f}$. Then for $k\geq n$:
+ \[
+  Ef(x_k)-f(x_\ast) \leq \left(1-\frac{1}{8n}\right)^{k}\left(\frac{16L}{3n}\|x_0-x_\ast\|^2+\frac{4\sigma^2}{3n\mu_f} O\left(\lg\frac{\mu_f n}{L}\right)\right)
+ \]
+ (Ref4, Proposition 2)  This assumes that the first $n$ iterations use SG with averaging. Thus the initial point for SAG iterations, $x_n$, satisfy
+ \[
+  Ef(x_n)-f(x_\ast) \leq \frac{2L}{n}\|x_0-x_\ast\|^2 + \frac{4\sigma^2}{n\mu_f}\lg\left(1+\frac{n\mu_f}{4L}\right)
+ \]
+provided that SG is applied with stepsize $\displaystyle\frac{2}{4L+k\mu_f}$ (Section C3 of Supplementary Material for Ref4).  So, for this case the number of oracle calls reduce by a factor of $\kappa$ as compared to the general result above, i.e. it reduces to $O(n\lg \frac{1}{\epsilon})$.
+ \end{enumerate}
+  
+ \paragraph{updated SAG result}  The above results was from the NIPS 2012 paper, we realized that there is a 2013 report with the following updated result for SAG.
+ Let $\alpha_k=\displaystyle\frac{1}{16L}$. For $k\geq 1$:
+ \[
+  Ef(x_k)-f(x_\ast) \leq \left(1-\min\left\lbrace\frac{1}{8n},\frac{1}{16\kappa}\right\rbrace\right)^{k}\left(\frac{4L}{n}\|x_0-x_\ast\|^2+\frac{\sigma^2}{16L}+f(x_0)-f(x_\ast) \right).
+ \]
+(Ref6) The corresponding complexity bound can be stated as $O((\kappa+n)\lg\frac{1}{\epsilon})$, the same order as SAGA as explained below.
+
+
+\paragraph{SAGA} Let steplength $\alpha_k = \displaystyle\frac{1}{2(\mu n+L)}$ for all $k$.
+ \[
+  E\|x_k-x_\ast\|^2 \leq \left(1-\frac{1}{2(n + \kappa_c)}\right)^k \left(\|x_0-x_\ast\|^2 + O\left(\frac{n}{\mu n+L}\right)\right)
+ \]
+ \[
+  Ef(x_k)-f(x_\ast) \leq \frac{L}{2}\left(1-\frac{1}{2(n + \kappa_c)}\right)^k \left(\|x_0-x_\ast\|^2 + O\left(\frac{n}{\mu n+L}\right)\right)
+ \]
+(Ref2) The number of component function gradients computed at each step is $1$.  So, the number of component gradient evaluations needed to reach $\epsilon$ accuracy is $k$ where
+ \[
+  %k\geq \left(\log\left(\frac{2(\kappa+n)}{2(\kappa+n)-1}\right)\right)^{-1} \log\left(\frac{L\|x_\ast-x_0\|}{2\epsilon}+\frac{L}{2\epsilon}O\left(\frac{n}{\mu n+L}\right)\right).
+  k\leq 2(\kappa_c+n)\lg\left(\frac{L\|x_\ast-x_0\|^2}{2\epsilon}+\frac{L}{2\epsilon}O\left(\frac{n}{\mu n+L}\right)\right).
+ \]
+ Note that this bound has the same order as the updated SAG bound (for simplicity say $\mu\approx\mu_f$), and the earlier good-case SAG bound when $n\geq 8\kappa$ -- it is $O(n\lg \frac{1}{\epsilon})$.
+ The memory requirement of the method is $O(np)$.  
+ 
+\paragraph{SVRG}  Recall that this algorithm requires a full gradient computation every $m$ inner iterations.  Let steplenght $\alpha>0$, and suppose $m$ is large enough so that 
+\[
+ \frac{1}{\alpha \mu_f (1-2L\alpha)m } + \frac{2L\alpha}{1-2L\alpha} < 1. 
+\]
+Let $k$ be the outer iteration counter, and $x$ are the inner iterates.
+\[
+ Ef(x_{km})-f(x_\ast) \leq \left( \frac{1}{\alpha \mu_f (1-2L\alpha)m } + \frac{2L\alpha}{1-2L\alpha} \right)^k (f(x_0)-f(x_\ast)).
+\]
+(Ref5)  If we let $\alpha = \frac{\beta}{L}$, to have the above condition $m$ must satisfy $m > \frac{\kappa}{\beta(1-4\beta)} \geq 16\kappa$ (obtained for $\beta=\frac{1}{8}$).  Note that each outer iteration requires $m+n$ component gradient evaluations.  For example, setting $\beta=\frac{1}{8}$ and $m=17\kappa$, this method requires up to $k(m+n)$ component gradient evaluations where 
+\[
+k \leq \frac{51}{2}\left(\lg\frac{1}{\epsilon}+\lg(f(x_0)-f(x_\ast))\right) 
+\]
+So, its complexity is $O((\kappa+n)\lg\frac{1}{\epsilon})$, which has the same order as the bound for SAGA.  However, the memory requirement is only $O(2p)$.
+
+\paragraph{Incremental Gradient} I could not find an analysis of the randomized incremental gradient method for strongly convex functions.  The analysis by Bertsekas assumes only convexity.  However, it is interesting to note that the steplength for the randomized algorithm can be $n$ times larger than the steplength for the cyclic variant.  This suggests that the steplength to choose for SAG might be $n$ times larger than the deterministig IAG steplength?
+
+%\paragraph{Accelerated Incremental Gradient} Exists? 
+
+\paragraph{A Lower Bound} In Ref10, a lower bound on the number of oracle calls for the finite sum problem structure is given as
+\[
+ \Omega\left( n + \sqrt{n(\kappa-1)}\lg\frac{1}{\epsilon}\right).
+\]
+In the same reference, two methods are mentioned with oracle complexity $O\left(\left(n+\sqrt{n(\kappa-1)}\right)\lg\frac{1}{\epsilon}\right)$.
+ 
+ \bigskip\bigskip
+ 
+ \section{Stochastic Optimization}
+ 
+ Consider minimization of $f(x)=E_\xi [F(x;\xi)]$.  Assume strong convexity of $f(x)$ (with parameter $\mu$) and Lipschitz continuity of $\nabla f$ (with parameter $L$).  Define $\kappa=\frac{L}{\mu}$.  Let $g(x)$ denote the stochastic gradient at $x$ such that $E[g(x)]=\nabla f(x)$.  Also assume that $E[\|g(x)\|^2]=\|Eg(x)\|^2+\|Vg(x)\|_\ast \leq M^2$ for all $x$.
+ 
+ \paragraph{Stochastic Gradient}  Let $\alpha_k = \displaystyle\frac{\beta}{k}$ with $\beta > \displaystyle\frac{1}{2\mu}$.
+ \[
+  E\|x_k-x_\ast\|^2 \leq \frac{1}{k}\max\left\lbrace\frac{\beta^2M^2}{2\mu\beta-1},\|x_1-x_\ast\|^2\right\rbrace. 
+ \]
+  \[
+  Ef(x_k)-f(x_\ast) \leq \frac{1}{2k}\max\left\lbrace\frac{L\beta^2M^2}{2\beta\mu-1},\|x_1-x_\ast\|^2\right\rbrace. 
+ \]
+ (Ref7)  Suppose the sample size to compute $g(x)$ is 1.  Also, let us set $\beta = \frac{1}{\mu}$. Then, the number of data points to be seen in order to obtain an $\epsilon$-accurate solution in expectation is $k$ with
+ \[
+    k \leq \frac{1}{\epsilon}\max\left\lbrace\frac{\kappa M^2}{2\mu},\frac{1}{2}\|x_1-x_\ast\|^2\right\rbrace.
+ \]
+ The memory requirement is $O(p)$.  The method can use parallel stochastic gradient evaluations if the sample size for computing $g$ is larger than 1 (which would reduce $M^2$).
+ 
+ \paragraph{Stochastic Gradient with Averaging}  I could not find a result on the global convergence rate of SG with averaging in the Polyak-Juditsky sense.  The weigted-averaging variant of Nemirovsky et al has a global rate result, but this is obtained by removing the assumption of strong convexity, and even smoothness. It only depends on convexity of $f$ and the variance-bound $M$; the obtained bound is $O(\frac{1}{\sqrt{k}})$.  
+
+ \paragraph{Stochastic Dual Averaging} Like SG with averaging, the stochastic dual averaging analysis of Nesterov assumes only convexity and subdifferentiability.  Interestingly, his bound is $O(\frac{1}{k})$.
+ 
+ \paragraph{Dynamic Sample Size} Compute $g(x_k)$ with a sample size $n_k=a^k$ for some $a>1$.  Let $\alpha_k = \displaystyle\frac{1}{L}$.
+ \[
+   Ef(x_k)-f(x_\ast) \leq \max\left\lbrace 1-\frac{\mu}{4L},\frac{1}{a}\right\rbrace^k \max\left\lbrace Ef(x_0)-f(x_\ast), \frac{2M^2}{\mu}\right\rbrace
+ \]
+ (Ref8)
+Choose $a$ small enough.  The number of data points to be seen in order to obtain an $\epsilon$-accurate solution in expectation is 
+\[
+ O\left(\frac{\kappa}{\epsilon}\max\left\lbrace Ef(x_0)-f(x_\ast), \frac{2M^2}{\mu}\right\rbrace\right)
+\]
+(Ref8,Corollary 4.3)  The memory requirement is $O(p)$.  Moreover, this method can take the advantage of parallel stochastic gradient evaluations.
+
+The term $\displaystyle\frac{M^2}{2\mu\epsilon}$ appearing in both SG and DSS bounds is the complexity of the optimal SG algorithm on a quadratic objective function $f$; i.e. when stochastic gradients are scaled with the inverse Hessian.  Also, it is the best bound that can be achieved with an unbiased estimator (see Ref9).
+
+Another interesting point to note is that in DSS algorithm, all observed data are weighted equally in the sense that they are all multiplied with a constant step size of $\frac{1}{L}$.  On the other hand, the SG algorithm multiplies them with $\frac{1}{k}$.  According to the above results, this weighting phenomenon has no significant effect on the constants of the complexity bounds?
+
+ \paragraph{Streaming SVRG}  Recall that this algorithm does a minibatch gradient computation with a sample size of $n_k$ every $m$ inner iterations, $k$ is the outer iteration counter.  Set $p\geq 2$, $b\geq 3$, and the steplength $\alpha_k=\displaystyle\frac{\eta}{L}$ with $\eta=(20b^{p+1})^{-1}$.  Let $\theta>1$ be the smallest value such that $\nabla^2f(x_\ast)\preceq \theta \nabla^2 f(x)$ for all $x$.  Also set $m=\frac{1}{\eta}(20b^{p+1}\kappa)$ and $n_k=20\theta \kappa b^{p+1+k}$.  For $k\geq p^2+6p$:
+ \[
+  Ef(x_k)-f(x_\ast) \leq \left(\left(1+\frac{4}{b}\right)\frac{\sqrt{\theta} M}{\sqrt{N_k\mu}} + \sqrt{\frac{f(x_0)-f(x_\ast)}{N_k^p \theta^{-p} \kappa^{-p}}}\right)^2 = \left(1+\frac{4}{b}\right)^2\frac{\theta M^2}{N_k\mu} + o(\frac{1}{N_k})  
+ \]
+where $N_k = km + \displaystyle\sum_{i=0}^k n_i$ is the number of data points seen up to iteration $k$.  At first glance, it looks like this procedure might have the Polyak-Juditsky-averaging effect in the sense that $\kappa$ has dissapeared from the leading term of the bound.  However, looking carefully at the choices of $m$ and $n_k$, we see that they both linearly grow with $\kappa$.  So, I think I cannot see how a bound on $N_k$ might have sublinear dependence on $\kappa$ when $N_k$ has linear dependence.
+
+The memory requirement of the method is $O(2p)$, and it can also take the advantage of parallel stochastic gradient evaluations.
+ 
+ \bigskip\bigskip
+ 
+ \section{Gathering the Remarks}
+  
+  \begin{itemize}
+   \item The steplength of the updated SAG result does not depend on $n$.  Such choice of $\alpha$ does not work with the error term we use (I tried).  On the other hand, our rate result for SAG is potentially a factor of $n$ better than the deterministic(cyclic) IAG rate; and that is consistent with the Bertsekas analysis on cyclic vs randomized incremental gradient.  In all cases, what IAG has or we currently have does not prove superiority of those methods over gradient descent (but the updated SAG result does so).
+  \end{itemize}
+
+  
+ \bigskip\bigskip
+
+ \paragraph{REFERENCES}
+ \begin{itemize}
+ \item[Ref1] Nesterov, Convex Optimization book.
+ \item[Ref2] SAGA paper. 
+ \item[Ref3] Asu paper. 
+ \item[Ref4] SAG NIPS paper. 
+ \item[Ref5] Jhonson nad Zhang NIPS paper.
+ \item[Ref6] SAG 2013 report.
+ \item[Ref7] Nemirovski et al robust optimization paper
+ \item[Ref8] DSS paper
+ \item[Ref9] SSVRG paper
+ \item[Ref10] Agarwal and Bottou paper
+\end{itemize}
+ 
+ 
+\end{document}

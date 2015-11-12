@@ -1,0 +1,129 @@
+\documentclass{article}
+\usepackage{amsmath, fullpage}
+
+\newcommand{\grad}{\nabla}
+
+\begin{document}
+ 
+\noindent
+
+Another trial to show linear convergence for the general case..
+
+\bigskip
+
+Let us go back to the derivation of inter-dependent optimality error and gradient error terms.
+
+We consider the finite sum minimization problem with $N$ data points, and an extension of the SAG algorithm that updates each gradient component with probability $\eta$ at each iteration.
+
+We previously have seen that
+\[
+  E[e_k]=(1-\eta)(I+\alpha H_k)e_{k-1} + (1-\eta)\alpha H_k\bar H_{k-1}(x_{k-1}-x_\ast)
+\]
+and
+\[
+x_k-x_\ast=(I-\alpha\bar H_{k-1})(x_{k-1}-x_\ast) -\alpha e_{k-1}.
+\]
+Therefore,
+\[
+  \|E=[e_k]\|\leq(1-\eta)(1+\alpha L)\|e_{k-1}\| + (1-\eta)\alpha L^2\|x_{k-1}-x_\ast\|
+\]
+and
+\[
+\|x_k-x_\ast\|\leq(1-\alpha\mu)\|x_{k-1}-x_\ast\| +\alpha \|e_{k-1}\|.
+\]
+so that we can write
+\[
+ \begin{pmatrix} \displaystyle\frac{1}{L}\|E[e_k]\| \\
+  \|x_k-x_\ast\|
+ \end{pmatrix} \leq 
+ \begin{pmatrix} (1-\eta)(1+\alpha L) & (1-\eta)\alpha L\\  
+                   \alpha L  & 1-\alpha\mu \end{pmatrix}                  
+ \begin{pmatrix} \displaystyle\frac{1}{L}\|e_{k-1}\| \\
+  \|x_{k-1}-x_\ast\|
+ \end{pmatrix}                  
+\]
+
+\bigskip
+Now consider the $2\times 2$ matrix
+\[
+M = \begin{pmatrix} (1-\eta)(1+\alpha L) & (1-\eta)\alpha L\\  
+                   \alpha L  & 1-\alpha\mu \end{pmatrix}.    
+\]
+
+The eigenvalues of this matrix is the roots of the polynomial
+\begin{align*}
+p(\lambda) &= \left[(1-\eta)(1+\alpha L)-\lambda\right](1-\alpha\mu-\lambda)-(1-\eta)\alpha^2 L^2\\
+& = \lambda^2 - \left[(1-\eta)(1+\alpha L)+1-\alpha\mu\right]\lambda + (1-\eta)(1+\alpha L)(1-\alpha\mu)-(1-\eta)\alpha^2 L^2.
+\end{align*}
+
+So, 
+\[
+ \lambda_{1,2}=\frac{1}{2}\left((1-\eta)(1+\alpha L)+1-\alpha\mu\mp\sqrt{\Delta}\right)
+\]
+where
+\begin{align*}
+ \Delta &=\left[(1-\eta)(1+\alpha L)+1-\alpha\mu\right]^2-4\left[(1-\eta)(1+\alpha L)(1-\alpha\mu)-(1-\eta)\alpha^2 L^2\right]\\
+ &= \left[(1-\eta)(1+\alpha L)-(1-\alpha\mu)\right]^2+4(1-\eta)\alpha^2 L^2.
+\end{align*}
+
+Therefore,
+\[
+ \left[(1-\eta)(1+\alpha L)-(1-\alpha\mu)\right]^2<\Delta<\left[(1-\eta)(1+\alpha L)-(1-\alpha\mu)-2\sqrt{1-\eta}\alpha L\right]^2
+\]
+provided that
+\begin{equation}
+\label{eq:cond}
+ (1-\eta)(1+\alpha L)-(1-\alpha\mu)\leq 0.
+\end{equation}
+
+\bigskip
+
+Then,
+\[
+ \frac{1}{2}\left((1-\eta)(1+\alpha L)+1-\alpha\mu-\sqrt{\Delta}\right)< 1-\alpha\mu
+\]
+and
+\[
+ \frac{1}{2}\left((1-\eta)(1+\alpha L)+1-\alpha\mu+\sqrt{\Delta}\right)< (1-\eta)(1+\alpha L)-\sqrt{1-\eta}\alpha L.
+\]
+
+By \eqref{eq:cond}, 
+\[
+ 1-\alpha\mu>(1-\eta)(1+\alpha L)-\sqrt{1-\eta}\alpha L;
+\]
+so, $\lambda_{max}(M)<1-\alpha\mu$.
+
+\bigskip
+
+Let us choose $\eta\leq 0.5$, and $\alpha=\displaystyle\frac{\eta}{\mu+(1-\eta)L}$.  First observe that these choices satisfy \eqref{eq:cond}, and ensure that $1-\alpha\mu\in(0,1)$.
+\begin{align*}
+ &(1-\eta)(1+\alpha L)-(1-\alpha\mu)\leq 0 \qquad \Leftrightarrow \qquad  ((1-\eta)L+\mu)\alpha\leq \eta.\\
+ \\
+ &0< \displaystyle\frac{\eta}{\mu+(1-\eta)L}\leq \frac{0.5}{\mu+0.5L} = \frac{1}{L}\left(1+\frac{2\mu}{L}\right)^{-1}<\frac{1}{L}\leq\frac{1}{\mu} \quad \Rightarrow \quad 0< 1-\alpha\mu < 1.
+\end{align*}
+
+
+\bigskip
+
+\noindent
+(Also note that $\lambda_1\lambda_2=(1-\eta)(1+\alpha L)(1-\alpha\mu)>0$ and $\lambda_1+\lambda_2=(1-\eta)(1+\alpha L)+(1-\alpha\mu)>0$ so that $\lambda_1>0$ and $\lambda_2>0$.)
+
+\bigskip
+
+
+As we assume that the random selection of a subset (with probability $\eta$) is independent at each iteration, we conclude that 
+\[
+ \left\|\begin{pmatrix} \displaystyle\frac{1}{L}\|E[e_k]\| \\
+  \|x_k-x_\ast\|
+ \end{pmatrix}\right\| \leq  \left(1-\displaystyle\frac{\eta\mu}{\mu+(1-\eta)L}\right)^k               
+  \left\|\begin{pmatrix} \displaystyle\frac{1}{L}\|e_0\| \\
+  \|x_0-x_\ast\|.
+ \end{pmatrix} \right\|,
+\]
+proving R-linear convergence of $\|x_k-x_\ast\|$ to 0.
+
+\bigskip
+
+For the special case of $\eta=\displaystyle\frac{1}{N}$ the above rate becomes $1-\displaystyle\frac{1}{N+(N-1)\kappa}$, and for $\eta=0.5$ it becomes $1-\displaystyle\frac{1}{2+\kappa}$, where $\kappa=\displaystyle\frac{L}{\mu}$.
+
+\end{document}

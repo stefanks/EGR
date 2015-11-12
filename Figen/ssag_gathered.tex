@@ -1,0 +1,396 @@
+\documentclass{article}
+\usepackage{amsmath, fullpage, graphicx}
+
+\newcommand{\grad}{\nabla}
+
+\begin{document}
+
+\begin{center}
+{\large \textsc{Convergence of Randomized-IAG (SAG) for Strongly Convex Functions}}
+\end{center} 
+ 
+\noindent 
+Consider the finite sum minimization problem with $N$ data points, 
+\[
+ F(x) = \frac{1}{N}\sum_{i=1}^N f_i(x),
+\]
+and an extension of the SAG algorithm that updates each gradient component with probability $\eta$ at each iteration.  Let 
+\[
+ x_{k+1} = x_k -\alpha y_k
+\]
+and
+\[
+ y_k = \frac{1}{N}\sum_{i=1}^N \nabla f_i(x_{k(i)}) 
+\]
+where
+\[
+ \begin{cases}
+  k(i) = k  & \mbox{ with probability }\eta,\\
+  k(i) = [k-1](i) & \mbox{ with probability }1-\eta.
+ \end{cases}
+\]
+
+\bigskip
+
+\noindent
+Define error terms 
+\[
+ e_k^i = \nabla f_i(x_{k(i)})-\nabla f_i(x_k) \qquad \mbox{and} \qquad e_k=\frac{1}{N}\sum_{i=1}^N e_k^i
+\]
+so that we can state 
+\[
+ y_k = \frac{1}{N}\sum_{i=1}^N (\nabla f_i(x_k)+e_k^i) = \nabla f(x_k) + e_k.
+\]
+Note that given $e_{k-1}$ and $x_{k-1}$, we have the conditional expectation 
+\[
+ E[e_k^i] = (1-\eta)(e_{k-1}^i + \nabla f_{k-1}^i - \nabla f_k^i).
+\]
+
+\bigskip
+\noindent
+Finally, let us define two average Hessian matrices, $H_k$ and $\bar H_k$, for each $k$, such that
+\[
+ \nabla f(x_k) = \nabla f(x_{k-1})+H_k(x_k-x_{k-1}),
+\]
+\[
+ \nabla f(x_k) = \bar H_k(x_k-x_\ast),
+\]
+and assume that 
+\[
+  \mu I \preceq H_k \preceq L I , \quad \mbox{and} \quad \mu I \preceq \bar H_k \preceq L I,\quad \mbox{for all }k
+\]
+are satisfied for some $\mu>0$ and $L>1$.
+
+\bigskip
+
+\noindent 
+Now, we will write two relations on the change of $e_k$ and on the change of $x_k-x_\ast$, respectively, and then merge the two.
+ \begin{align*}
+  E[e_k] &= (1-\eta)(e_{k-1} + \nabla f_{k-1} - \nabla f_k)\\
+  &= (1-\eta)(e_{k-1} - H_k(x_k-x_{k-1}))\\
+  &= (1-\eta)(e_{k-1} - H_k(-\alpha y_{k-1}))\\
+  &= (1-\eta)\left(e_{k-1} + \alpha H_k (\nabla f_{k-1}+e_{k-1})\right)\\
+  &= (1-\eta)\left((I+\alpha H_k)e_{k-1} + \alpha H_k\nabla f_{k-1}\right)\\ 
+  &= (1-\eta)(I+\alpha H_k)e_{k-1} + (1-\eta)\alpha H_k\bar H_{k-1}(x_{k-1}-x_\ast),
+ \end{align*}
+and
+ \begin{align*}
+  x_k-x_\ast &= x_{k-1}-x_\ast + (x_k-x_{k-1})\\
+  &=x_{k-1}-x_\ast -\alpha y_{k-1}\\
+  &=x_{k-1}-x_\ast -\alpha (\nabla f_{k-1} + e_{k-1})\\
+  &=x_{k-1}-x_\ast -\alpha\bar H_{k-1}(x_{k-1}-x_\ast) -\alpha e_{k-1}\\
+  &=(I-\alpha\bar H_{k-1})(x_{k-1}-x_\ast) -\alpha e_{k-1}.
+ \end{align*}
+ 
+\bigskip
+
+\noindent  
+So, merging the two equations yields,
+\[
+ \begin{pmatrix} \displaystyle\frac{1}{L}E[e_k] \\ x_k-x_\ast \end{pmatrix} 
+= M_k
+ \begin{pmatrix} \displaystyle\frac{1}{L}e_{k-1} \\ x_{k-1}-x_\ast \end{pmatrix}  \quad\mbox{for}\quad 
+ M_k = \begin{pmatrix} (1-\eta)(I+\alpha H_k) & \displaystyle\frac{1}{L} (1-\eta)\alpha H_k\bar H_{k-1}\\  
+                   -\alpha LI  & I-\alpha\bar H_{k-1} \end{pmatrix}.                   
+\]
+
+\bigskip\bigskip
+
+\section{Quadratic Case}
+
+Consider the case where $F$ is a quadratic function; i.e. $\bar H_{k-1}=H_k=H$.  So, $M_k$ becomes
+\[
+M = \begin{pmatrix} (1-\eta)(I+\alpha H) & \displaystyle\frac{1}{L}(1-\eta) \alpha HH\\ 
+ \\
+                   -\alpha LI  & I-\alpha H \end{pmatrix}.                  
+\]
+Each eigenvalue $\lambda$ of $M$ by definition satisfies $\det(M-\lambda I)=0$.  Therefore,
+\[
+ \det \begin{pmatrix} (1-\eta)(I+\alpha H)-\lambda I & \displaystyle\frac{1}{L}(1-\eta) \alpha HH\\ 
+ \\
+                    -\alpha LI   & I-\alpha H -\lambda I  \end{pmatrix}=0
+\]
+
+Since blocks $M_{21}$ and $M_{22}$ commute we have
+\[
+ \det\left(\left[(1-\eta)(I+\alpha H)-\lambda I\right](I-\alpha H -\lambda I) + (1-\eta)\alpha^2 HH \right)=0.
+\]
+
+With some algebra, this statement simplifies to 
+\[
+ \det\left((1-\lambda)(1-\lambda-\eta)I + \eta \lambda \alpha H \right)=0.
+\]
+
+Then, $-(1-\lambda)(1-\lambda-\eta)$ is an eigenvalue of the matrix $\eta \lambda \alpha H$; so,
+\begin{equation}
+ -(1-\lambda)(1-\lambda-\eta) \in \eta \lambda \alpha \left[\mu,L\right]
+ \label{eq:p}
+\end{equation}
+should hold.
+
+Let $0<\alpha<\frac{1}{L}$.  The concave function $p(\lambda)= -(1-\lambda)(1-\lambda-\eta)$ has two roots at $\lambda=1$ and at $\lambda=1-\eta$.  Then, $p(\lambda)\leq0$ for $\lambda\geq1$ and for $\lambda\leq1-\eta$.  \eqref{eq:p} cannot hold for $\lambda < 0$ as 
+\[
+p(\lambda)<p(0)+p^\prime(0)\lambda=\eta-1+(2-\eta)\lambda=(1-\eta)(\lambda-1)+\lambda<\lambda<\eta\lambda<\eta\lambda\alpha L\leq\eta\lambda\alpha \mu \quad \mbox{if }\lambda<0. 
+\]
+So, \eqref{eq:p} can hold for $ \lambda \in (1-\eta,1)$ only, implying that all eigenvalues of $M$ are in $(1-\eta,1)$.
+
+To guarantee that $\lambda\in (1-\eta,1)$ satisfying \eqref{eq:p} exist, we need to choose $\alpha$ such that $p(\lambda)$ intersects with the line $l_\mu(\lambda)=\eta\mu\alpha\lambda$ in this range.  This is provided if $\underset{\lambda}{\max} \ p(\lambda) = \displaystyle \frac{\eta^2}{4} > l_\mu(\lambda)$, which is obtained by choosing
+\[
+  \alpha < \min\left\lbrace \frac{1}{L}, \frac{\eta}{2\mu(2-\eta)} \right\rbrace; \quad \mbox{e.g. } \alpha = \frac{1}{2}\min\left\lbrace \frac{1}{L}, \frac{\eta}{2\mu(2-\eta)} \right\rbrace.
+\]
+This choice also ensures that $p^\prime(\lambda)<0$ at the larger intersection point of $p(\lambda)$ and $l_\mu(\lambda)$ (see the picture; the blue line is $l_\mu(\lambda)$).
+\begin{center}
+\includegraphics[width=0.5\textwidth]{ssag_quad_figure}
+\end{center}
+Now consider the line $p(1)+p^\prime(1)(\lambda-1)$ (the dashed line in the picture).  Its intersection with $l_\mu(\lambda)$ is an upper bound for the largest eigenvalue of $M$.  Let $\bar \lambda$ denote this intersection point,
+\[
+ p(1)+p^\prime(1)(\bar\lambda-1) = \eta\bar\lambda\mu\alpha \quad \Rightarrow \quad \bar\lambda = \frac{1}{1+\alpha\mu} = 1 - \min \left\lbrace \frac{1}{2\kappa +1}, \frac{\eta}{8-3\eta} \right\rbrace.
+\]
+The second term becomes $\displaystyle\frac{1}{8n-3}$ for $\eta =\displaystyle \frac{1}{n}$.  
+
+\bigskip\noindent
+
+This proves $(M)^k \rightarrow 0$ at rate $\bar \lambda^k$ in the worst case; thus R-linear convergence of $x_k-x_\ast$ to 0 at that rate.
+
+\bigskip\bigskip
+
+\section{General Case}
+
+Our findings for the quadratic case implies convergence for the general convex case by using the \emph{slowly varying} theorem for appropriate choies of $\alpha$(see ssag\_5.pdf).  However, a better rate result is obtained by the following argument.
+
+\bigskip
+
+\noindent
+Recall that we have
+\[
+  \|E[e_k]\|\leq(1-\eta)(1+\alpha L)\|e_{k-1}\| + (1-\eta)\alpha L^2\|x_{k-1}-x_\ast\|
+\]
+and
+\[
+\|x_k-x_\ast\|\leq(1-\alpha\mu)\|x_{k-1}-x_\ast\| +\alpha \|e_{k-1}\|,
+\]
+we can write
+\[
+ \begin{pmatrix} \displaystyle\frac{1}{L}\|E[e_k]\| \\
+  \|x_k-x_\ast\|
+ \end{pmatrix} \leq 
+ \begin{pmatrix} (1-\eta)(1+\alpha L) & (1-\eta)\alpha L\\  
+                   \alpha L  & 1-\alpha\mu \end{pmatrix}                  
+ \begin{pmatrix} \displaystyle\frac{1}{L}\|e_{k-1}\| \\
+  \|x_{k-1}-x_\ast\|
+ \end{pmatrix}                  
+\]
+
+\bigskip
+Now consider the $2\times 2$ matrix
+\[
+M = \begin{pmatrix} (1-\eta)(1+\alpha L) & (1-\eta)\alpha L\\  
+                   \alpha L  & 1-\alpha\mu \end{pmatrix}.    
+\]
+Let 
+\[
+A = \begin{pmatrix} \alpha L-\alpha\eta L-\eta & (1-\eta)\alpha L\\  
+                   \alpha L  & -\alpha\mu \end{pmatrix}  
+\]
+so that
+\[
+ M = I + A.
+\]
+Suppose $\mu+L>1$.  Set $\alpha = \beta \displaystyle\frac{\eta}{1-\eta}\frac{\mu}{L}\frac{1}{\mu+L}$ for any $\beta\in (0,1)$, and choose \ $\displaystyle\eta<\frac{L}{\mu+L}$ (always satisfied by $\eta<0.5$)\footnote{Note that $\frac{\eta}{1-\eta}=(\frac{1}{\eta}-1)^{-1}$.  If $\eta<\frac{L}{\mu+L}$, then $(\frac{1}{\eta}-1)^{-1}<\frac{L}{\mu}$ providing $\frac{\eta}{1-\eta} \frac{\mu}{L}<1$. }.
+
+Since this choice of $\alpha$ guarantees that 
+\[
+ \alpha < \frac{\eta}{1-\eta}\frac{1}{L},  \quad \mbox{we have} \quad A_{11}=\alpha L-\alpha\eta L-\eta<0.
+\]
+Therefore, $trace(A)<0$.
+Also,
+\begin{align*}
+ \frac{\det(A)}{\alpha} &= -\mu(\alpha L-\alpha\eta L-\eta)-(1-\eta)\alpha L^2 = -\alpha\mu L+\alpha\mu\eta L+\eta\mu-(1-\eta)\alpha L^2\\
+ & =\alpha L(-\mu+\mu\eta-(1-\eta)L)+\eta\mu = \beta \displaystyle\frac{\eta}{1-\eta}\frac{\mu}{\mu+L}(1 -\eta)(\mu-L)+\eta\mu \\
+ & = \eta\mu\left(\frac{\beta(\mu-L)}{\mu+L}+1\right) > \eta\mu\left(\frac{\mu-L}{\mu+L}+1\right)>0.
+\end{align*}
+So, we conclude that $\det(A)>0$ and $trace(A)<0$, implying that both eigenvalues of $A$ are negative.  We should note at this point that the condition number in $\alpha$ is needed to ensure $\det(A)>0$.  That is, if we consider choosing $\alpha=\displaystyle\frac{\theta}{L+\mu}$, then $\det(A)=\alpha(-\theta(1-\eta)L+\eta\mu)>0$ if $\theta<\displaystyle\frac{\eta\mu}{(1-\eta)L}$, yielding the above choice of $\alpha$. 
+
+Now, since $\det(A)=\lambda(trace(A)-\lambda)$ for the two eigenvalues $\lambda$ of $A$, we get the following concave quadratic for which we know that both roots are negative.
+\[
+ p(\lambda) = -\lambda^2 + \frac{1}{\mu+L}[(\beta-1)\mu\eta-\beta\gamma\mu-\eta L]\lambda - \frac{1}{\mu+L}[\beta(1-\beta)\gamma\eta\mu]
+\]
+where we define $\gamma = \frac{\eta}{1-\eta}\frac{\mu}{L}$.
+
+Note that 
+\[
+ p(0)=-\frac{1}{\mu+L}[\beta(1-\beta)\gamma\eta\mu] < 0 \quad \mbox{and} \quad p^\prime(0) = \frac{1}{\mu+L}[(\beta-1)\mu\eta-\beta\gamma\mu-\eta L] < 0.
+\]
+Clearly, the first order expansion of concave $p(\lambda)$ at zero must take a positive value at $\lambda_{max}$--the larger root of $p(\lambda)$.  That is,
+\[
+ p(0)+p^\prime(0) (\lambda_{max}-0) > p(\lambda_{max})=0. \quad \mbox{Equivalently, } \lambda_{max}<-\frac{p(0)}{p^\prime(0)}<0.
+\]
+Placing values of $p(0)=-\det(A)$, and $p^\prime(0)=trace(A)$ we obtain
+\[
+ 1+\lambda_{max}<1-\frac{p(0)}{p^\prime(0)}<1-\left(\frac{(1-\eta)L}{\beta\eta\mu}+\frac{L}{(1-\beta)\eta}+\frac{L^2(1-\eta)}{\mu^2\eta(1-\beta)\beta}\right)^{-1}.
+\]
+We have 
+\[
+\frac{L^2(1-\eta)}{\mu^2\eta(1-\beta)\beta} > \frac{(1-\eta)L}{\beta\eta\mu}, 
+\ \mbox{and choosing $\beta<\min\{\eta\mu^{-1},1\}$ ensures that } \ \frac{L^2(1-\eta)}{\mu^2\eta(1-\beta)\beta}>\frac{L}{(1-\beta)\eta}.
+\]
+Therefore,
+\[
+ 1+\lambda_{max}<1-\frac{1}{3}\frac{\mu^2\eta(1-\beta)\beta}{L^2(1-\eta)}
+\]
+
+\bigskip
+
+As we assume that the random selection of a subset (with probability $\eta$) is independent at each iteration, we conclude that 
+\[
+ \begin{pmatrix} \displaystyle\frac{1}{L}\|E[e_k]\| \\
+  \|x_k-x_\ast\|
+ \end{pmatrix} \rightarrow 0 \quad \mbox{at a rate no worse than} \quad \left(1-\frac{1}{3}\frac{\mu^2\eta(1-\beta)\beta}{L^2(1-\eta)}\right)^k,
+\]
+proving R-linear convergence of $\|x_k-x_\ast\|$ to 0 at that rate.
+
+\bigskip\bigskip
+
+\section{Stochastic Case}
+
+Consider the stochastic-optimization extension of a finite-sum algorithm, in which the \emph{sum} is increased by $u_k$ component functions at iteration $k$.  $I_k$ contains the indices of all visited data points up to iteration $k$.  At iteration $k$, $\nabla_i f(x_k)$ is computed for $i \in S_k = s_k\cup u_k$, where $s_k\subset I_k$.  The overall number of observed component functions is $|I_{k+1}|=N_k=\sum_{i=0}^k |u_i|$.  The ERG step (the SAG-extension version) is defined as 
+ \[
+  x_{k+1} = x_k - \frac{\alpha}{N_k}[\sum_{i\in u_k} \nabla f_i (x_k) + \sum_{i\in s_k} \nabla f_i (x_k) + \sum_{i\in I_k-s_k} \nabla f_i (x_{k(i)}) ].
+ \]
+for some constant steplength $\alpha$.  Here, $k(i)$ is the latest iterate where $\nabla f_i $ has been evaluated for the corresponding index $i\in I_k-s_k$.
+
+Let $x_\ast^k$ denote the minimizer of the sum of the sample at iteration $k$, and $x_\ast$ be the solution of the stochastic problem.  Recall the following relationship between $F(x_\ast)$ and $F(x_\ast^{N_k})$, which is obtained by expanding $F$ around $x_\ast$:
+\[
+ E[F(x_\ast^k)] = F(x_\ast) + \frac{1}{2N_k}trace\left(Var[\nabla f(x_\ast)]\nabla^2F(x_\ast)\right) + o\left(\frac{1}{N_k}\right).
+\]
+Let $trace\left(Var[\nabla f(x_\ast)]\nabla^2F(x_\ast)\right)\leq B$.  
+% Since $\frac{\mu}{2}\|x-x_\ast\|^2 \leq F(x)-F(x_\ast)$,
+%  \[
+%   E\left[\|x_\ast^k-x_\ast\|^2\right] \leq \frac{B}{N_k\mu} + o\left(\frac{1}{N_k}\right).
+%  \]
+Note that both $x_\ast^k$ and $x_k$ depent on the current sample of size $N_k$.
+\[
+   E[F(x_k) - F(x_\ast)] =  E[F(x_k)-F(x_\ast^k)] + \frac{B}{2N_k} + o\left(\frac{1}{N_k}\right) 
+\]
+The problem with this approach is that we cannot directly base the convergence of $E[F(x_k)-F(x_\ast^k)]$ to the finite analysis because the finite method is not applied to a fixed sample of size $N_k$ during all $k$ iterations.  However, from this expression we can roughly see that an exponential increase in $u_k$ will be needed if linear convergence of $E[F(x_k) - F(x_\ast)]$ is desired.
+
+\bigskip
+
+On the other hand, an approach similar to SG or DSS analysis will be problematic here because the samples used in computing the steps taken at consecutive iterations are not independent in ERG.  Therefore, we can instead try to establish an error bound as in stochastic dual averaging analysis.  To start, let us ignore the resampling from the observed data set.  That is, set $s_k=\emptyset$, and consider steps
+\[
+ x_{k+1} = x_k - \frac{\alpha}{N_k}[\sum_{i\in u_k} \nabla f_i (x_k) + \sum_{i\in I_k} \nabla f_i (x_{k(i)}) ].
+\]
+Now, consider single data point $j\in I_{k+1}$.  In $k$ iterations of the algorithm, the gradient $\nabla f_j (x_{k(j)})$ appears $k-k(j)+1$ times, and its appearance at iteration $t\in [1,k]$ is weighted with $\frac{\alpha}{N_t}$.  Therefore, we can write 
+\[
+ x_{k+1} = x_0 -\alpha \left[ \left(\sum_{j=0}^k \frac{1}{N_j}\right)\sum_{i\in u_0} \nabla f_i (x_0) +  \left(\sum_{j=1}^k \frac{1}{N_j}\right)\sum_{i\in u_1} \nabla f_i (x_1) + \dots + \frac{1}{N_k}\sum_{i\in u_k} \nabla f_i (x_k)\right].
+\]
+Let $w_t = |u_t|\displaystyle\sum_{j=t}^k \frac{1}{N_j}$. Then, 
+\small
+\[
+ x_{k+1} = \underset{x}{arg\min} \ \ q_k(x) = \frac{w_0}{|u_0|}\sum_{i\in u_0} [f_i(x_0) + \nabla f_i (x_0)^T(x-x_0)] \ + \dots + \ \frac{w_k}{|u_k|}\sum_{i\in u_k} [f_i(x_k) + \nabla f_i (x_k)^T(x-x_k)] + \frac{1}{2\alpha}\|x-x_0\|^2.
+\]
+\normalsize
+The nice thing about this approach is that each step adds a new term to this quadratic model function, and the last added term depends only on the last sample $u_k$.
+
+% The sum of sample gradient errors at $x_k$ does not change by the newly added $n_k$ data points because those components are evaluated at $x_k$; only the average error changes by a factor of $\frac{N_k}{N_{k+1}}$.
+% \[
+% \sum_{i=1}^{N_k} e_k^i = \sum_{i=1}^{N_{k+1}} e_k^i.
+% \]
+%In the finite case we examined the relationship in between quantities $\|x_{k-1}-x_\ast^k\|$ and $\|x_{k}-x_\ast^k\|$.  Now, we need to consider the relationship of $\|x_{k-1}-x_\ast^k\|$ and $E\|x_k-x_\ast^{k+1}\|$.
+
+\bigskip
+
+For any choice of $|u_t|$, the sum $W_k = \sum_{t=0}^k w_i = k+1$.  Also, for appropriate choices of $\alpha$, we should be able to ensure that $E[\min_x  \frac{1}{W_k}q_k(x)]$ is a lower bound for $F(x)$.  Then, 
+ \[
+  F\left(\frac{1}{W_k}\sum_{t=0}^k w_t x_t\right) - F(x_\ast) \leq \frac{1}{W_k}\left(\sum_{t=0}^k w_t F(x_t) - E[\min_x \ q_k(x)] \right).
+ \]
+Note that 
+ \begin{align*}
+ E[\min_x \ q_k(x)]= & E\left[\min_x \ \sum_{t=0}^k \frac{w_t}{|u_t|} \sum_{i\in u_t} [f_i(x_t) + \nabla f_i (x_t)^T(x-x_t)] + \frac{1}{2\alpha}\|x-x_0\|^2 \right] \\
+    = & \sum_{t=0}^k \frac{w_t}{|u_t|} E\left[\sum_{i\in u_t}f_i(x_t)\right] + E\left[\min_x \ \left\lbrace \sum_{t=0}^k \frac{w_t}{|u_t|}\sum_{i\in u_t} \nabla f_i (x_t)^T(x-x_t) + \frac{1}{2\alpha}\|x-x_0\|^2 \right\rbrace\right] \\
+   = & \sum_{t=0}^k w_t F(x_t) + E\left[\min_x \ \left\lbrace \sum_{t=0}^k \frac{w_t}{|u_t|} \sum_{i\in u_t} \nabla f_i (x_t)^T(x-x_t) + \frac{1}{2\alpha}\|x-x_0\|^2\right\rbrace\right].
+\end{align*}
+Since the minimizer is $x_{k+1}$, 
+ \begin{align*}
+  \sum_{t=0}^k w_t F(x_t) - E[\min_x \ q_k(x)] &= E\left[-\sum_{t=0}^k \frac{w_t}{|u_t|} \sum_{i\in u_t} \nabla f_i (x_t)^T(x_{k+1}-x_t) - \frac{1}{2\alpha}\|x_{k+1}-x_0\|^2\right]\\
+  &= E\left[\alpha\sum_{t=0}^k \frac{w_t}{|u_t|} \sum_{j=t}^k \frac{w_j}{|u_j|} \nabla f_{u_t}(x_t)^T\nabla f_{u_j}(x_j) - \frac{\alpha}{2}\|\sum_{t=0}^k \frac{w_t}{|u_t|} \nabla f_{u_t}(x_t) \|^2\right]\\
+  &= E\left[\frac{\alpha}{2}\sum_{t=0}^k w_t^2 \| \frac{1}{|u_t|} \nabla f_{u_t}(x_t) \|^2\right] = \frac{\alpha}{2}\sum_{t=0}^k w_t^2 \left(Var\left[\frac{1}{|u_t|} \nabla f_{u_t}(x_t)\right]+\|\nabla F(x_t)\|^2\right)
+ \end{align*}
+ where we define $\nabla f_{u_t}(x_t)= \sum_{i\in u_t} \nabla f_i(x_t)$.  
+ %Now, if we assume that there exists a finite value $M$ such that $E\left[\|\nabla_i f(x_t)\|^2\right]\leq M^2$ and $\|\nabla F(x_t)^T\nabla F(x_j)\|\leq M^2$ hold, the convergence will depend on quantities $w_j^2$ and $w_jw_t$.
+
+ \paragraph{Prof.Byrd's approach.} 
+ \[
+ x_{k+1} = x_k - \frac{\alpha}{N_k}[\sum_{i\in u_k} \nabla f_i (x_k) + \sum_{i\in I_k} \nabla f_i (x_{k(i)}) ].
+ \]
+\[
+ \begin{cases}
+  k(i) = k  & \mbox{ with probability }\eta,\\
+  k(i) = [k-1](i) & \mbox{ with probability }1-\eta.
+ \end{cases}
+\]
+
+\bigskip
+
+So, now there are two random events at each iteration $k$:
+\begin{itemize}
+ \item Choosing $S_k\subset I_k$,
+ \item Choosing $U_k$ from the whole population.
+\end{itemize}
+
+Let 
+\[
+ e_k^i = \nabla f_i(x_{k(i)})-\nabla f_i(x_k) \qquad \mbox{and} \qquad e_k=\frac{1}{N_k}\sum_{i\in I_k} \|e_k^i\|.
+\]
+
+For $i\in U_k$, we have $e_k^i=0$.  For $i\in I_k$,
+\[
+\|e_k^i\| =
+ \begin{cases}
+  0  & \mbox{ with probability }\eta,\\
+  \|e_{k-1}^i + \nabla f_{k-1}^i - \nabla f_k^i\| & \mbox{ with probability }1-\eta.
+ \end{cases}
+\]
+\[
+ E[\|e_k^i\|] = (1-\eta)\|e_{k-1}^i + \nabla f_{k-1}^i - \nabla f_k^i\| \leq (1-\eta)\|e_{k-1}^i\| + (1-\eta)L_i \|x_{k-1} - x_k\|.
+\]
+
+\bigskip
+
+Also note that,
+\[
+  \sum_{i\in I_{k+1}} E[\|e_k^i\|] = \sum_{i\in I_k} E[\|e_k^i\|], \ \mbox{ as } e_k^i=0 \mbox{ for } i\in U_k.
+\]
+
+\bigskip
+
+Consider taking expectation with respect to the events of choosing $S_k$ and $U_{k-1}$ given $x_{k-1}$, $e_{k-1}$, and $I_{k-1}$.
+\small
+\begin{align*}
+ \frac{1}{N_k}\sum_{i\in I_k} E[\|e_k^i\|] & \leq  \frac{1}{N_k}\sum_{i\in I_k} \left[ (1-\eta)\|e_{k-1}^i\| + (1-\eta)L_i E\|x_{k-1} - x_k\| \right]\\
+ & = (1-\eta)\frac{1}{N_k}\left(\sum_{i\in I_k}\|e_{k-1}^i\|\right) + (1-\eta)\frac{1}{N_k}\left(\sum_{i\in I_k}L_i\right) E\left\| \frac{\alpha}{N_{k-1}}[\sum_{i\in u_{k-1}} \nabla f_i (x_{k-1}) + \sum_{i\in I_{k-1}} \nabla f_i (x_{k(i)}) ] \right\| \\
+ & = (1-\eta)\frac{1}{N_k}\left(\sum_{i\in I_k}\|e_{k-1}^i\|\right) + (1-\eta)\frac{1}{N_k}\left(\sum_{i\in I_k}L_i\right) \frac{\alpha}{N_{k-1}}E\left\|\sum_{i\in I_k} \nabla f_i (x_{k-1}) + \sum_{i\in I_{k-1}} e_{k-1}^i \right\| \\
+ & \leq (1-\eta)\frac{N_{k-1}}{N_k}\left(1 + L\alpha \right)e_{k-1} + (1-\eta)\alpha L\frac{N_{k-1}}{N_k}E\left\|\frac{1}{N_{k-1}}\sum_{i\in I_k} \nabla f_i (x_{k-1})\right\|\\
+ & = (1-\eta)\frac{N_{k-1}}{N_k}\left(1 + L\alpha \right)e_{k-1} + (1-\eta)\alpha L \frac{N_{k-1}}{N_k}E\left\|\left(\frac{1}{N_{k-1}}\sum_{i\in I_k} \nabla f_i (x_{k-1})\right)-\nabla F(x_{k-1})+\nabla F(x_{k-1})-\nabla F(x_\ast)\right\|\\
+ & \leq (1-\eta)\frac{N_{k-1}}{N_k}\left(1 + L\alpha \right)e_{k-1} + (1-\eta)\alpha L \frac{N_{k-1}}{N_k}\sigma_k + (1-\eta)\alpha L \frac{N_{k-1}}{N_k}\|\nabla F(x_{k-1})-\nabla F(x_\ast)\|\\
+ & \leq (1-\eta)\frac{N_{k-1}}{N_k}\left(1 + L\alpha \right)e_{k-1} + (1-\eta)\frac{N_{k-1}}{N_k}\alpha L \sigma_k + (1-\eta)\frac{N_{k-1}}{N_k}\alpha L \bar L \|x_{k-1}- x_\ast\|
+\end{align*}
+\normalsize
+provided that 
+\[
+ \frac{1}{N_{k-1}}\left(\sum_{i\in I_k}L_i\right) \leq L,
+\ \mbox{ and } \
+ E\left\|\left(\frac{1}{N_{k-1}}\sum_{i\in I_k} \nabla f_i (x_{k-1})\right)-\nabla F(x_{k-1})\right\| \leq \sigma_k.
+\]
+
+\bigskip
+
+% Consider
+% \small
+% \begin{align*}
+%  E\left\|\left(\frac{1}{N_{k-1}}\sum_{i\in I_k} \nabla f_i (x_{k-1})\right)-\nabla F(x_{k-1})\right\| &= E\left\|\frac{1}{N_{k-1}}\sum_{i\in u_{k-1}} \nabla f_i (x_{k-1}) -\nabla F(x_{k-1}) + \frac{1}{N_{k-1}}\sum_{i\in I_{k-1}} \nabla f_i (x_{k(i)})\right\|\\
+%  & \leq E\left\|\frac{|U_{k-1}|}{N_{k-1}}\left(\frac{1}{|U_{k-1}|}\sum_{i\in u_{k-1}} \nabla f_i (x_{k-1})\right) -\nabla F(x_{k-1})\right\| + \left\|\frac{1}{N_{k-1}}\sum_{i\in I_{k-1}} \nabla f_i (x_{k(i)})\right\|
+% \end{align*}
+% \normalsize
+ 
+\end{document}

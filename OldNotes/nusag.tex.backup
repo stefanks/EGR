@@ -1,0 +1,189 @@
+
+\documentclass{article}
+\usepackage{amsmath,color}
+
+
+ 
+ \newcommand{\grad}{\nabla}
+ 
+ \begin{document}
+
+\noindent 
+Consider the expectation minimization problem 
+\[
+ F(x) = E[ f_i(x) ]
+\]
+which we approximate at iteration $k$ by
+\[
+  \frac{1}{I_k}\sum_{i\in I_k} f^i(x),
+\]
+and the EGR extension of the SAG algorithm that updates each previous gradient component with probability $\eta$ at each iteration.
+At each iteration we increase $I_k$ so that $I_k=I_{k-1} \cup U_k$, where $U_k$ is a randomly chosen set large enough that 
+\begin{equation}   \label{Igrowth}
+ I_k \geq \frac{1}{\rho^2} I_{k-1} 
+ \end{equation}
+ for some $\rho \in( 0,1)$.
+
+The algorithm sets.
+\[
+ x_{k+1} = x_k -\alpha y_k
+\]
+and
+\[
+ y_k = \frac{1}{I_k}\sum_{i\in I_k}  \nabla f^i(x_{k(i)}) 
+\]
+where
+\[
+ \begin{cases}
+  k(i)=k &\mbox{ if } k\in U_k \\
+  k(i) = k  & \mbox{ if } i \in I_k \setminus U_k \mbox{  with probability }\eta,\\
+  k(i) = [k-1](i) &\mbox{ if } i \in I_k \setminus U_k \mbox{ with probability }1-\eta.
+ \end{cases}
+\]
+
+We first consider the error in the sample gradient, $\nabla f_k = \frac{1}{I_k}\sum_{i\in I_k}(\nabla f^i(x_k))$.
+By Jensen's inequality
+\[
+(\mathbf{E}[\|-\nabla F_{k}+\nabla f_{k} \|])^2 \leq \mathbf{E}[\|-\nabla F_{k}+\nabla f_{k} \|^2] 
+\]
+where $\mathbf{E}$ is the total expectation. It follows that 
+\begin{equation}  \label{truegrad}
+\mathbf{E}[\|-\nabla F_{k}+\nabla f_{k} \|] \leq \sqrt {\mathbf{E}[\|-\nabla F_{k}+\nabla f_{k} \|^2] }\leq  \sqrt{\sigma ^2/I_k} \equiv \sigma_k ,
+\end{equation}
+where $\sigma^2$ is a bound on the variance of $\|\nabla f^i(x)\|$. We have defined $\sigma_k = \sqrt{\sigma ^2I_k}$, 
+and if  we assume $I_k$ grows geometrically: $| I_k|= \rho^{-2} I_{k-1}$ for some $\rho <1$, then we have that 
+$\sigma_k = \rho \sigma_{k-1}$.
+
+\bigskip
+
+\noindent
+Define the error terms 
+\[
+ e_k^i =
+ \begin{cases}
+  \nabla f^i(x_{k(i)})-\nabla f^i(x_k) &\mbox{ if } i \in I_k \\
+  0 & \mbox{ otherwise } \\
+ \end{cases}
+\qquad \mbox{and} \qquad e_k=\frac{1}{{I_k}}\sum_{i\in I_k} e_k^i
+\]
+The error $e_k^i$ has the property that $e_k^i = 0 $ when $i \in U_k$. Now we can state 
+\[
+ y_k = \frac{1}{{I_k}}\sum_{i\in I_k} (\nabla f^i(x_k)+e_k^i) = \nabla f(x_k) + e_k.
+\]
+Note that given $e_{k-1}$ and $x_{k-1}$, we have the conditional expectation 
+
+\begin{align*}
+\mathbf{E_{k}}[\|e_k^i\|] &\leq (1-\eta)\left(\|e_{k-1}^i\| +\| \nabla f_{k-1}^i - \nabla f_k^i\|\right)\\
+                          &\leq (1-\eta)\left(\|e_{k-1}^i\| + L \| x_{k-1} - x_k\|\right).
+\end{align*}
+This expression is true for all $i \in I_k$.
+Summing and averaging we get
+
+ \begin{align*}
+ \mathbf{E_k}[ \frac{1}{I_k}\sum_{i\in I_k}{\|e_k^i\|] } &\leq(1-\eta) \frac{1}{I_k}\sum_{i\in I_k}\|e_{k-1}^i\| + (1-\eta)  L \| x_{k-1} - x_k\| \\ 
+ & = (1-\eta) \frac{1}{I_k}\sum_{i\in I_{k-1}}\|e_{k-1}^i\| + (1-\eta)  L \| x_{k-1} - x_k\| \\
+ & \leq (1-\eta) \frac{\rho^2}{I_{k-1}}\sum_{i\in I_{k-1}}\|e_{k-1}^i\| + (1-\eta)  L \| x_{k-1} - x_k\| \\
+ & = (1-\eta) \frac{\rho^2}{I_{k-1}}\sum_{i\in I_{k-1}}\|e_{k-1}^i\| + (1-\eta) \alpha  L \| y_k\| \\
+ & = (1-\eta) \frac{\rho^2}{I_{k-1}}\sum_{i\in I_{k-1}}\|e_{k-1}^i\| + (1-\eta) \alpha  L \| \nabla f_{k-1}+e_{k-1} \| \\
+ & \leq (1-\eta) \frac{\rho^2}{I_{k-1}}\sum_{i\in I_{k-1}}\|e_{k-1}^i\| + (1-\eta) \alpha  L \| \nabla f_{k-1} \|+ (1-\eta) \alpha  L \| e_{k-1} \| \\
+& = (1-\eta) \frac{\rho^2}{I_{k-1}}\sum_{i\in I_{k-1}}\|e_{k-1}^i\| + (1-\eta) \alpha  L \| \nabla f_{k-1} \|+ (1-\eta) \alpha  L \| \frac{1}{{I_{k-1}}}\sum_{i\in I_{k-1}} e_{k-1}^i \| \\
+& \leq(1-\eta) \frac{\rho^2}{I_{k-1}}\sum_{i\in I_{k-1}}\|e_{k-1}^i\| + (1-\eta) \alpha  L \| \nabla f_{k-1} \|+ (1-\eta) \alpha  L \frac{1}{I_{k-1}}\sum_{i\in I_{k-1}}\|  e_{k-1}^i \| \\
+& =(1-\eta)(\rho^2+\alpha  L) \frac{1}{I_{k-1}}\sum_{i\in I_{k-1}}\|e_{k-1}^i\| + (1-\eta) \alpha  L \| \nabla f_{k-1} \| \\
+& =(1-\eta)(\rho^2+\alpha  L) \frac{1}{I_{k-1}}\sum_{i\in I_{k-1}}\|e_{k-1}^i\| + (1-\eta) \alpha  L \| \nabla f_{k-1}+ \nabla f(x^*)  - \nabla f(x^*)  \| \\
+& \leq (1-\eta)(\rho^2+\alpha  L) \frac{1}{I_{k-1}}\sum_{i\in I_{k-1}}\|e_{k-1}^i\| + (1-\eta) \alpha  L \| \nabla f_{k-1}  - \nabla f(x^*)  \|  + (1-\eta) \alpha  L \|  \nabla f(x^*)   \| \\
+& \leq (1-\eta)(\rho^2+\alpha  L) \frac{1}{I_{k-1}}\sum_{i\in I_{k-1}}\|e_{k-1}^i\| + (1-\eta) \alpha  L^2 \|  x_{k-1}  -x^*  \|  + (1-\eta) \alpha  L \|  \nabla f(x^*)   \| \\
+& \leq (1-\eta)(\rho^2+\alpha  L) \frac{1}{I_{k-1}}\sum_{i\in I_{k-1}}\|e_{k-1}^i\| + (1-\eta) \alpha  L^2 \|  x_{k-1}  -x^*  \|  + (1-\eta) \alpha  L\sigma_k \\
+ \end{align*}
+where we use (\ref{truegrad}) for the last equation.
+ 
+ Taking (total) expectations on both sides gives
+ \[
+\mathbf{E}[ \frac{1}{I_k} \sum_{i\in I_k}{\|e_k^i\|] } \leq q (1-\eta)(\rho^2+\alpha  L) \frac{1}{I_{k-1}}\sum_{i\in I_{k-1}}\mathbf{E}\|e_{k-1}^i\| + (1-\eta) \alpha  L^2 \mathbf{E}\|  x_{k-1}  -x^*  \|  + (1-\eta) \alpha  L\sigma_k
+ \]
+ 
+ 
+
+\bigskip
+%\noindent
+%Finally, let us define two average Hessian matrices, $H_k$ and $\bar H_k$, for each $k$, such that
+%\[
+% \nabla f(x_k) = \nabla f(x_{k-1})+H_k(x_k-x_{k-1}),
+%\]
+%\[
+% \nabla f(x_k) = \bar H_k(x_k-x_\ast),
+%\]
+%and assume that 
+%\[
+%  \mu I \preceq H_k \preceq L I , \quad \mbox{and} \quad \mu I \preceq \bar H_k \preceq L I,\quad \mbox{for all }k
+%\]
+%are satisfied for some $\mu>0$ and $L>1$.
+
+\bigskip
+
+\noindent 
+%Now, we will derive two relations for the change of $e_k$ and  the change of $x_k-x_\ast$, respectively, and then merge the two.
+% \begin{align*}
+%  E[e_k] &= (1-\eta)(e_{k-1} + \nabla f_{k-1} - \nabla f_k)\\
+ % &= (1-\eta)(e_{k-1} - H_k(x_k-x_{k-1}))\\
+ % &= (1-\eta)(e_{k-1} - H_k(-\alpha y_{k-1}))\\
+ % &= (1-\eta)\left(e_{k-1} + \alpha H_k (\nabla f_{k-1}+e_{k-1})\right)\\
+ % &= (1-\eta)\left((I+\alpha H_k)e_{k-1} + \alpha H_k\nabla f_{k-1}\right)\\ 
+ % &= (1-\eta)(I+\alpha H_k)e_{k-1} + (1-\eta)\alpha H_k\bar H_{k-1}(x_{k-1}-x_\ast),
+ %\end{align*}
+
+Now we consider the error in $x$.
+ \begin{align*}
+  x_k-x_\ast &= x_{k-1}-x_\ast + (x_k-x_{k-1})\\
+  &=x_{k-1}-x_\ast -\alpha y_{k-1}\\
+  &=x_{k-1}-x_\ast -\alpha (\nabla F_{k-1}-\nabla F_{k-1}+\nabla f_{k-1} + e_{k-1})\\
+  &=x_{k-1}-x_\ast -\alpha\bar H_{k-1}(x_{k-1}-x_\ast) -\alpha e_{k-1} +\alpha (-\nabla F_{k-1}+\nabla f_{k-1})\\
+  &=(I-\alpha\bar H_{k-1})(x_{k-1}-x_\ast) -\alpha e_{k-1} +\alpha (-\nabla F_{k-1}+\nabla f_{k-1}) 
+ \end{align*}
+ where $\bar{H}$ is the average Hessian matrix such that  $\nabla F(x_k) = \bar H_k(x_k-x_\ast)$.
+
+Then with the triangle inequality
+\begin{align*}
+\| x_k-x_\ast \| &\leq (1-\alpha \mu)\|(x_{k-1}-x_\ast)\| +\alpha \|e_{k-1}\| + \alpha \|-\nabla F_{k-1}+\nabla f_{k-1} \| \\
+&\leq (1-\alpha \mu)\|(x_{k-1}-x_\ast)\| +\alpha  \frac{1}{I_{k-1}} \sum_{i\in I_{k-1}}{\|e_{k-1}^i\| }+ \alpha \|-\nabla F_{k-1}+\nabla f_{k-1} \|
+\end{align*}
+%Before  we take expectations note that 
+%\[
+%E[\|-\nabla F_{k-1}+\nabla f_{k-1} \|] \leq \sqrt {E[\|-\nabla F_{k-1}+\nabla f_{k-1} \|^2] }\leq  \sqrt{\sigma ^2/n_k}
+%\]
+%where $\sigma^2$ is a bound on the variance of $\|\nabla f^i(x)\|$. If we define $\sigma_k = \sqrt{\sigma ^2/n_k}$, 
+%and assume $n_k$ grows geometrically: $ n_k= \rho^{-2} n_{k-1}$ for some $\rho <1$, then we have that 
+%$\sigma_k = \rho \sigma_{k-1}$.
+
+Now, taking expectations, and using (\ref{truegrad})
+\[  
+\mathbf{E}[\| x_k-x_\ast \| ] \leq (1-\alpha \mu)\mathbf{E}[\|(x_{k-1}-x_\ast)\| ]+\alpha \mathbf{E}[ \frac{1}{I_{k-1}} \sum_{i\in I_{k-1}}{\|e_{k-1}^i\|] }+ \alpha \sigma_{k-1}
+\]
+
+\bigskip
+
+\noindent  
+So, merging the three equations and defining $\delta_k = \mathbf{E}[ \frac{1}{I_{k-1}} \sum_{i\in I_{k-1}}{\|e_{k-1}^i\|] }$ yields
+\[
+ \begin{pmatrix} \displaystyle\frac{1}{L}\delta_k\\ \mathbf{E}[\|x_k-x_\ast \|] \\ \sigma_k \end{pmatrix} 
+\leq M
+ \begin{pmatrix} \displaystyle\frac{1}{L}\delta_{k-1} \\\mathbf{E} [\| x_{k-1}-x_\ast \| ] \\ \sigma_{k-1} \end{pmatrix}  \quad\mbox{for}\quad 
+ M = \begin{pmatrix} (1-\eta)(I+\alpha L) &  (1-\eta)\alpha L & (1-\eta) \alpha\\  
+                   \alpha LI  & I-\alpha L  &  \alpha  \\
+                   0 & 0 &  \rho \end{pmatrix}.                   
+\]
+
+\bigskip
+Since the eigenvalues of this 3 by 3 matrix are $\rho <1$ and the 2 eigenvalues of the upper left 2 by 2 block,
+we should have all eigenvalues $<1$ under the same conditions derived in the file ssag7.
+
+
+\textcolor{blue}
+{
+\paragraph{Computational note.}  The current bounds on the eigenvalues indicate that we need
+\[
+ \lg(\frac{L}{\epsilon})\max\left(\frac{(1-\eta)L}{\beta\eta\mu}+\frac{L}{(1-\beta)\eta}+\frac{L^2(1-\eta)}{\mu^2\eta(1-\beta)\beta},\frac{1}{\rho}\right)
+\]
+iterations to have $\epsilon$ error in objective value.
+}
+
+\end{document}

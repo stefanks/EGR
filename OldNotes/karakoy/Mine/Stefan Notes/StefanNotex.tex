@@ -1,0 +1,543 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage[margin=1in]{geometry}
+\usepackage[usenames,dvipsnames]{pstricks}
+\usepackage{epsfig}
+\usepackage{epstopdf}
+\usepackage{pst-grad}
+\usepackage{pst-plot}
+\usepackage{fancyhdr}
+\usepackage{algorithm} 
+\usepackage{algorithmic}
+\usepackage{amsthm}
+\usepackage{hyperref}
+\pagestyle{fancy}
+\fancyhead{}
+\fancyfoot{} 
+\lhead{Stefan Solntsev\\ \large Notes }
+\rfoot{\thepage}
+
+\newtheorem{defn}{Definition}[section]
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{prop}{Proposition}
+
+
+\begin{document}
+	
+\section*{optimal batches and stepsizes}
+\subsection{rcv1}
+gradientBatchSize: 256
+stepsizeinit: 8
+\subsection{yoram}
+gradientBatchSize: 32
+stepsizeinit: 4
+\subsection{speech}
+gradientBatchSize: 1024
+stepsizeinit: 16
+\subsection{rcv1tfdf - 4}  
+gradientBatchSize: 512
+         stepsizeinit: 4	
+\subsection{rcv1tfdf - 1}  
+gradientBatchSize:
+\section*{NJLS paper}
+
+We consider the problem
+ \[
+  \boxed{\min_{\theta \in\Re^n} \ \ F(\theta) := E[f(\theta;\xi)].}
+ \]
+
+Here, $F$ is a convex function, $\theta\in\Re^n$ are the parameters of $F$, $\xi$ is a random vector.
+ 
+Assume that
+
+\[
+ E[f(\theta;\xi)] = \int_{\xi} f(\theta;\xi) dP(\xi)
+\]
+
+is well-defined, but it cannot be computed to a high accuracy. 
+
+An SAA framework would work on the problem
+\[
+	min \frac{1}{N} \sum_{j=1}^{N} f(\theta, \xi_j)
+\]
+where $\xi_j$ are fixed random samples. 
+
+We will focus on stochastic gradient algorithms of the form
+\begin{equation}
+ \boxed{\theta_{k+1} = \theta_k - \alpha_k H_k\hat{\nabla F}(\theta_k,  \xi_k),}
+ \label{eq:iter}
+\end{equation}
+where  $\alpha_k$ is a scalar steplength, and $G$ is a stochastic subgradient of $f$. Let $G(\theta) = E[g(\theta, \xi)]$, then $G(\theta) \in \partial F(\theta)$. In this case, each $\xi_k$ is and iid sample of $\xi$.
+
+
+Let us assume that $F$ is strongly convex with a constant $\mu>0$, and $\nabla F$ is Lipschitz continuous with constant $L>0$; i.e.
+% \[
+%  F(\theta_k) \geq F(\theta) + (\theta_k-\theta)^T\nabla F(\theta) + \frac{1}{2}\mu\|\theta_k-\theta\|^2 
+% \]
+\begin{equation}
+(\theta_k - \theta)^T(\nabla F(\theta_k) - \nabla F(\theta)) \geq \mu\|\theta_k-\theta\|^2,
+\label{eq:nest1}
+\end{equation}
+and
+\begin{equation}
+ F(\theta_k) \leq F(\theta) + (\theta_k-\theta)^T\nabla F(\theta) + \frac{1}{2}L\|\theta_k-\theta\|^2 .
+\label{eq:nest2}
+\end{equation}
+
+\noindent
+Also assume that $E [\| H_k \hat{\nabla F}(\theta)\|^2  ] \leq M^2$ at all $\theta$.\\  
+Since
+\begin{align*}
+ \frac{1}{2}\|\theta_{k+1}-\theta_\ast\|^2 &= \frac{1}{2}\|\theta_k-\alpha_k H_k \hat{\nabla F}(\theta_k)-\theta_\ast\|^2\\
+ &=\frac{1}{2}\|\theta_k-\theta_\ast\|^2 + \alpha_k^2\|H_k\hat{\nabla F}(\theta_k)\|^2 -\alpha_k(\theta_k-\theta_\ast)^T H_k\hat{\nabla F}(\theta_k),
+\end{align*}
+and
+\begin{align*}
+ E[(\theta_k-\theta_\ast)^T H_k\hat{\nabla F}(\theta_k)] &= E[E[(\theta_k-\theta_\ast)^T H_k\hat{\nabla F}(\theta_k) | \xi_{k-1}]]\\
+ &= E[(\theta_k-\theta_\ast)^T H_kE[\hat{\nabla F}(\theta_k) | \xi_{k-1}]]\\
+ &= E[(\theta_k-\theta_\ast)^T H_k{\nabla F}(\theta_k)]\\
+\end{align*}
+we get 
+\begin{align*}
+ r_{k+1} \ := \ \frac{1}{2}E[\|\theta_{k+1}-\theta_\ast\|^2] & \leq  \frac{1}{2}E[\|\theta_k-\theta_\ast\|^2] -\alpha_k E[(\theta_k-\theta_\ast)^T H_k\nabla F(\theta_k)] + \frac{1}{2}\alpha_k^2M^2 \\
+  &= r_k -\alpha_k E[(\theta_k-\theta_\ast)^T  H_k \nabla F(\theta_k)] + \frac{1}{2}\alpha_k^2M^2.
+\end{align*}
+
+\noindent
+By \eqref{eq:nest1}, the unique minimizer $\theta_\ast$ satisfies
+\[
+ (\theta_k - \theta_\ast)^T\nabla F(\theta_k) \geq \mu\|\theta_k - \theta_\ast\|^2.
+\]
+Then,
+\[
+ E[(\theta_k-\theta_\ast)^T\nabla F(\theta_k)] \geq \mu E[\|\theta_k - \theta_\ast\|^2] = 2\mu r_k;
+\]
+so,
+\[
+ r_{k+1} \leq (1-2\alpha_k\mu)r_k + \frac{1}{2}\alpha_k^2M^2.
+\]
+Now, suppose $\alpha_k = \dfrac{\eta}{k}$ for some constant $\eta > \dfrac{1}{2\mu}$. 
+\[
+ r_{k+1} \leq (1-2\mu\frac{\eta}{k})r_k + \frac{1}{2}\frac{\eta^2}{k^2}M^2.
+\]
+Moreover, 
+\begin{equation}
+r_k\leq \frac{1}{2k}B(\eta) \qquad\mbox{for} \quad B(\eta)=\max\left\lbrace\frac{\eta^2M^2}{2\mu\eta-1},\|\theta_1-\theta_\ast\|^2\right\rbrace.
+\label{eq:nest3}
+\end{equation}
+For simplicity, let us say, $\|\theta_1-\theta_\ast\|^2 \geq \frac{\eta^2M^2}{2\mu\eta-1}$ so that the above bound becomes $r_k\leq \frac{1}{2k}\|\theta_1-\theta_\ast\|^2$.  Suppose \eqref{eq:nest3} holds for $k$.  Then,
+\begin{align*}
+ r_{k+1} &\leq (1-2\frac{1}{k}\eta\mu)r_k + \frac{1}{2}\frac{1}{k^2}\eta^2M^2 \leq (1-2\frac{1}{k}\eta\mu)\frac{1}{2k}\|\theta_1-\theta_\ast\|^2 + \frac{1}{2}\frac{1}{k^2}\eta^2M^2 \\
+ &\leq \frac{1}{2}\left[(1-2\frac{1}{k}\eta\mu)\frac{1}{k}-(2\mu\eta-1)\frac{1}{k^2}\right]\|\theta_1-\theta_\ast\|^2 = \frac{1}{2}\frac{k-1}{k^2}\|\theta_1-\theta_\ast\|^2 \\
+ &\leq \frac{1}{2} \frac{k-1}{k^2-1} \|\theta_1-\theta_\ast\|^2 = \frac{1}{2} \frac{1}{k+1} \|\theta_1-\theta_\ast\|^2.
+\end{align*}
+So, \eqref{eq:nest3} holds for $k\geq 2$ by induction.  
+
+\noindent
+Finally, we compute expectations of the both sides of \eqref{eq:nest2}, and place the bound \eqref{eq:nest3} in.
+\[
+ E[F(\theta_k)] \leq F(\theta_\ast) + L\frac{1}{2}E[\|\theta_k-\theta_\ast\|^2] \ \Rightarrow \ E[F(\theta_k)] - F(\theta_\ast) \leq L \frac{1}{2k}B(\eta).
+\]
+
+So, for $\alpha_k \geq \frac{1}{ 2 \mu  k }$,  expected error in objective value is of the order $O(T^{-1})$, and expected error in distance to solution is $O(t^{-1/2})$.
+
+For overestimated $\mu$, we have a problem. Let $F(X) = \frac{x^2}{10}$. Take $\alpha_k = \frac{1}{k}$ (this would be fine if $\mu=1$, but we have $\mu = 0.2$).
+The algorithm becomes 
+\[
+	x_{j+1} = (1- \frac{1}{5j} ) x_{j}
+\]
+After some algebra, we arrive at $x_j \geq 0.8 j ^{-1/5}$.
+
+So for steplengths that are too short, convergence rate can become extremely slow.
+
+Furthermore, $O(1/k)$ steplengths might be unacceptable for non-strongly convex functions $F$. For $F(x)= x^4$, $|x{j}| \geq O(ln(j+1)^{-1/2})$.
+
+A conclusion: to make SA robust to non-strongly convex problems, should make steplengths longer. But this creates noise, so averaging should be used to suppress it. 
+
+\newpage
+ 
+\section*{General AdaGrad idea}
+Consider a composite mirror descent iteration of the form
+\begin{equation}
+x_{t+1} = \arg \min_{x \in X} \{ \eta \langle g_t,x \rangle + B_{\psi_t} (x,x_t)\}
+\end{equation}
+where
+\begin{equation}
+B_{\psi} (x,y) = \psi(x) - \psi(y)  - \langle \nabla \psi(y), x - y \rangle
+\end{equation}
+If $\psi_t = \frac{1}{2} \langle x, H_t x \rangle$, then we can write
+\begin{align}
+x_{t+1} &= \arg \min_{x \in X} \{ \eta \langle g_t,x \rangle + \frac{1}{2} \langle x, H_t x \rangle - \frac{1}{2} \langle x_t, H_t x_t \rangle  - \langle H_t x_t , x -x_t \rangle \} \\ 
+\label{minequation}
+&= \arg \min_{x \in X} \{ \eta g_t^T x  +  \frac{1}{2}  x^T H_t x    - x^T H_t x_t\} \\
+&=x_t - \eta H^{-1}_t g_t
+\end{align}
+
+Since $x_{t+1}$ is the minimizer in \eqref{minequation}, for any $x \in X$, we have
+\begin{equation}
+\langle x - x_{t+1} , \eta g_t + H_t x_{t+1} - H_t x_t \rangle \geq 0
+\end{equation}
+
+We have by convexity, 
+\begin{align*}
+\eta (f_t(x_t) - f_t(x^*) )&\leq \eta \langle x_t - x^*, f'_t(x_t) \rangle \\
+                            &= \eta \langle x_{t+1} - x^*, f'_t(x_t) \rangle + \eta \langle x_t - x_{t+1}, f'_t(x_t) \rangle \\
+                            & =\langle x^* - x_{t+1} , H_t x_{t} - H_t x_{t+1}-\eta f'_t(x_t) \rangle + \langle x^* - x_{t+1} , H_t x_{t+1} - H_t x_{t}  \rangle + \eta \langle x_t - x_{t+1}, f'_t(x_t) \rangle  \\
+                            & = \langle x^* - x_{t+1} , H_t x_{t+1} - H_t x_{t}  \rangle + \eta \langle x_t - x_{t+1}, f'_t(x_t) \rangle \\
+                            &= \langle x^* - x_{t+1} , H_t x_{t+1} - H_t x_{t}  \rangle + \eta \langle  \eta^{-\frac{1}{2}}(x_t - x_{t+1}), \eta^{\frac{1}{2}} f'_t(x_t) \rangle  \\
+                           & \leq \langle x^* - x_{t+1} , H_t x_{t+1} - H_t x_{t}  \rangle +\frac{1}{2} (x_t - x_{t+1})^T H_t(x_t - x_{t+1}) + \frac{\eta^2}{2} (f'_t(x_t))^T H_t^{-1} f'_t(x_t) \\
+                           & = \frac{1}{2} x_t H_t x_t - x_tH_t x^* - \frac{1}{2} x_{t+1} H_t x_{t+1}  + x_{t+1}H_t x^*  + \frac{\eta^2}{2} (f'_t(x_t))^T H_t^{-1} f'_t(x_t) 
+\end{align*}
+Where we use the facts that $x_{t+1}$ is a minimizer in the third line, and the dual norm definition in the second to last line. Finally, we have, by summing
+\begin{align*}
+\sum_{t=1}^T (f_t(x_t) - f_t(x^*) ) \leq &\frac{1}{\eta }\sum_{t=1}^T \left[ \frac{1}{2 } x_t H_t x_t - x_tH_t x^* - \frac{1}{2 } x_{t+1} H_t x_{t+1}  + x_{t+1}H_t x^*\right] + \frac{\eta}{2} \sum_{t=1}^T (f'_t(x_t))^T H_t^{-1} f'_t(x_t)                                   \\
+  =& \frac{1}{\eta} \left[ \frac{1}{2 } x_1 H_1 x_1 - x_1H_1 x^* \right] + \frac{1}{\eta }\sum_{t=1}^{T-1}  \left[  \frac{1}{2 } x_{t+1} H_{t+1} x_{t+1} - x_{t+1}H_{t+1} x^* - \frac{1}{2 } x_{t+1} H_t x_{t+1}  + x_{t+1}H_t x^*\right]\\
+ &-\frac{1}{\eta} \left[ \frac{1}{2 } x_T H_T x_T - x_TH_T x^* \right]+ \frac{\eta}{2} \sum_{t=1}^T (f'_t(x_t))^T H_t^{-1} f'_t(x_t)     \\                   
+  =& \frac{1}{\eta} \left[ \frac{1}{2 } x_1 H_1 x_1 - x_1H_1 x^*  +x^* H_1x^* \right] \\&+ 
+  \frac{1}{\eta }\sum_{t=1}^{T-1}  \left[  \frac{1}{2 } x_{t+1} H_{t+1} x_{t+1} - x_{t+1}H_{t+1} x^* - \frac{1}{2 } x_{t+1} H_t x_{t+1}  + x_{t+1}H_t x^* - x^* H_tx^* + x^* H_{t+1}x^* \right]\\
+ &-\frac{1}{\eta} \left[ \frac{1}{2 } x_T H_T x_T - x_TH_T x^* +x^* H_{T}x^*\right]\\ &+ \frac{\eta}{2} \sum_{t=1}^T (f'_t(x_t))^T H_t^{-1} f'_t(x_t)     \\ 
+  =& \frac{1}{\eta} \left[ \frac{1}{2 } x_1 H_1 x_1 - x_1H_1 x^*  +x^* H_1x^* \right] \\&+ 
+  \frac{1}{\eta }\sum_{t=1}^{T-1}   \frac{1}{2}\langle x^* - x_{t+1} , (H_{t+1}-H_t ) (x^* - x_{t+1}) \rangle\\
+ &-\frac{1}{\eta} \left[ \frac{1}{2 } x_T H_T x_T - x_TH_T x^* +x^* H_{T}x^*\right]\\ &+ \frac{\eta}{2} \sum_{t=1}^T (f'_t(x_t))^T H_t^{-1} f'_t(x_t)     \\ 
+\end{align*}
+
+\subsection{Ht to be the diagonal matrix in AdaGrad}
+
+Let $s_{t,i} = \|g_{1:t,i} \|_2$ and $H_t = diag (s_t)$
+ 
+Then, in the summation above,
+\begin{align*}
+ \frac{1}{2 } \langle x^* - x_{t+1} , (H_{t+1}-H_t ) (x^* - x_{t+1}) \rangle \leq  \frac{1}{2 } \max_i (x_i^*- x_{t+1,i})^2 \| s_{t+1} -s_t \|_1
+\end{align*}
+
+\subsection{Choose Ht to be the full matrix in AdaGrad}
+
+Let $G_t = \sum_{\tau = 1}^t g_{\tau} g_{\tau}^T$, and $H_t = G_T^{\frac{1}{2}}$
+
+\subsection{Choose Ht to be constant}
+
+If $H_t = H$
+\begin{align*}
+\sum_{t=1}^T (f_t(x_t) - f_t(x^*) ) \leq & \frac{1}{\eta} \left[ \frac{1}{2 } x_1 H x_1 - x_1H x^*  +x^* Hx^* \right] \\
+ &-\frac{1}{\eta} \left[ \frac{1}{2 } x_T H x_T - x_TH x^* +x^* Hx^*\right]\\ &+ \frac{\eta}{2} \sum_{t=1}^T (f'_t(x_t))^T H^{-1} f'_t(x_t)     \\ 
+ = & \frac{1}{\eta} \left[ \frac{1}{2 } x_1 H x_1 - x_1H x^*  \right] -\frac{1}{\eta} \left[ \frac{1}{2 } x_T H x_T - x_TH x^* \right]+ \frac{\eta}{2} \sum_{t=1}^T (f'_t(x_t))^T H^{-1} f'_t(x_t)     \\ 
+\end{align*}
+
+
+
+
+\newpage
+
+
+Then, for any $x^* \in X$, 
+\begin{equation}
+R(T) \leq \frac{1}{\eta} B_{\psi_1} (x^*, x_1) + \frac{1}{\eta} \sum_{t=1}^{T-1} [B_{\psi_{t+1}}(x^*, x_{t+1})-B_{\psi_t}(x^*, x_{t+1})] + \frac{\eta}{2} \sum_{t=1}^T \|f'_t(x_t)\|^2_{\psi^*_t}
+\end{equation} 
+Substituting the $B$ definition gives
+\begin{align*}
+R(T) \leq &\frac{1}{\eta} (\psi_1(x^*) - \psi_1(x_1)  - \langle \nabla \psi_1(x^*), x^* - x_1 \rangle) \\
+ &+\frac{1}{\eta} \sum_{t=1}^{T-1} [\psi_{t+1}(x^*) - \psi_{t+1}(x_{t+1})  - \langle \nabla \psi_{t+1}(x^*), x^* - x_{t+1} \rangle-(\psi_{t}(x^*) - \psi_{t}(x_{t+1})  - \langle \nabla \psi_{t}(x^*), x^* - x_{t+1} \rangle)] \\
+ &+ \frac{\eta}{2} \sum_{t=1}^T \|f'_t(x_t)\|^2_{\psi^*_t}
+\end{align*}
+Substituting the $\psi$ defintion
+\begin{align*}
+R(T) \leq &\frac{1}{\eta} (\frac{1}{2}  (x^*)^T H_1 x^* - \psi_1(x_1)  - \langle \nabla \psi_1(x^*), x^* - x_1 \rangle) \\
+ &+\frac{1}{\eta} \sum_{t=1}^{T-1} [\psi_{t+1}(x^*) - \psi_{t+1}(x_{t+1})  - \langle \nabla \psi_{t+1}(x^*), x^* - x_{t+1} \rangle-(\psi_{t}(x^*) - \psi_{t}(x_{t+1})  - \langle \nabla \psi_{t}(x^*), x^* - x_{t+1} \rangle)] \\
+ &+ \frac{\eta}{2} \sum_{t=1}^T \|f'_t(x_t)\|^2_{\psi^*_t}
+\end{align*}
+The proof is given in Duchi et al 2010a - the long version of the adagrad paper. It is not clear how tight this bound is. 
+ 
+\section*{Nedic Results}
+Assumption 1: set $X$ is closed and convex. Each $f_i$ is convex.
+
+Assumption 2:
+
+
+\section*{Fishing Idea}
+
+Polyak-Rupert gives sequences of $x_1, x_2, \ldots x_k$ and $g_1, g_2, \ldots g_k$. Each $g_i$ is $\nabla f(x_i) + \epsilon_i$, where $\epsilon_i$ is an error. Define 
+\begin{equation}
+\bar{x} = \frac{1}{k} \sum_{i=1}^k x_i
+\end{equation}
+Now we will try to estimate $\nabla^2 f(\bar{x})$ using the information at hand. 
+\subsection{Assume have $\nabla f(\bar{x})$}
+\subsection{Assume have $\nabla f(\bar{x})$ and arbitrary  $\nabla^2 f(\bar{x}) v$}
+\subsection{Assume have nothing}
+
+\newpage
+
+\section*{BM tests}
+
+The precise commands to run the bach-moulines tests are:
+\begin{verbatim}
+alg_BachMoulinesNoHessian(thefunc, 'gamma', 0.0001, 'maxIters', 191607*20+1);
+alg_BachMoulines(thefunc, 'gamma', 0.0001, 'maxIters', 191607*20+1);
+alg_BachMoulinesOriginal(thefunc, 'gamma', 0.0001, 'n', 191607*20+1);
+
+alg_BachMoulinesNoHessian(thefunc, 'gamma', 0.001, 'maxIters', 191607*20+1);
+alg_BachMoulines(thefunc, 'gamma', 0.001, 'maxIters', 191607*20+1);
+alg_BachMoulinesOriginal(thefunc, 'gamma', 0.001, 'n', 191607*20+1);
+
+alg_BachMoulinesNoHessian(thefunc, 'gamma', 0.01, 'maxIters', 191607*20+1);
+alg_BachMoulines(thefunc, 'gamma', 0.01, 'maxIters', 191607*20+1);
+alg_BachMoulinesOriginal(thefunc, 'gamma', 0.01, 'n', 191607*20+1);
+\end{verbatim}
+
+So 9 total test runs have been made.
+
+
+\section*{Problems}
+The methods need to be passed an object of the class SAAfunction. It is an implementation of a function 
+\begin{align*}
+\frac{1}{m} \sum_{h=1}^m f_h(x)
+\end{align*}
+with the following methods exposed
+\begin{verbatim}
+        [f,g] = getRandomBatchFandGradient(x, BatchSize)
+        [f,g,indexOfTheRandomSample] = getRandomSingleIndexFandGradient(x)
+\end{verbatim}
+It must have these variables:
+\begin{verbatim}
+        numVariables
+        numTrainingPoints
+        shortname
+\end{verbatim}
+\section*{Bach Mouline Method}
+
+\begin{algorithm}[H]
+\caption{Bach Mouline}
+\label{alg1}
+\begin{algorithmic}[1]
+\REQUIRE  $\gamma$, $x^0$, oracles to compute gradients and HV products at each datapoint
+\STATE  $k=0$
+\STATE  $\bar{x}^0 = x^0$
+\WHILE{$x^k$ doesn't satisfy stopping condition  }   
+\STATE Choose a random $h$, a datapoint
+\STATE $x^{k+1} = x^k - \gamma (\nabla f_h(\bar{x}^k) + \nabla^2 f_h(\bar{x}^k) (x^k - \bar{x}^k))$
+\STATE $\bar{x}^{k+1} = \frac{k\bar{x}^k +  x^{k+1}}{k+1}$
+\STATE $k=k+1$
+\ENDWHILE
+\end{algorithmic}
+\end{algorithm}
+
+\section*{Methods}
+
+
+
+\begin{itemize}
+\item \textbf{SDA} Simple dual averaging by Nesterov. \url{http://ium.mccme.ru/postscript/s12/GS-Nesterov%20Primal-dual.pdf} \\
+\item \textbf{SGD} Stochastic Gradient Descent \\
+\begin{itemize}
+\item \textbf{batch size} Tried 1, 100, 1000, full batch. \\
+\item \textbf{stepsize rule} Tried $c$, $ \frac{c}{k}$ , $\frac{c}{\sqrt{k}}$ \\
+\item \textbf{starting stepsize} Tried $c=10$, $c=1$, $c=1e-1$, $c=1e-2$, $c=1e-3$, $c=1e-4$ \\
+\end{itemize}
+\item \textbf{SAG} Stochastic Average Gradient (keep memory of last gradient at each observed datapoint, step in average direction with constant stepsize). \url{http://books.nips.cc/papers/files/nips25/NIPS2012_1246.pdf}\\
+\begin{itemize}
+\item \textbf{stepsize} Tried  $c=1e-2$, $c=1e-3$, $c=1e-4$ \\
+\end{itemize}
+\item \textbf{PJ} Polyak-Juditsky (Like SGD - Report average iterate)\\
+\item \textbf{BM} Bach-Moulines method\\
+\end{itemize}
+
+
+\section*{Speech problem vs Logistic Regression}
+
+Logistic regression in the Yoram code:
+\begin{align*}
+f(x) =\frac{1}{m}\sum_{h=1}^m \log(1 + e^{-Y * W X}  
+\end{align*}
+
+
+\section*{Methods to implement}
+
+\begin{itemize}
+\item \textbf{CD}  Coordinate Descent -not yet implemented\url{http://www.csie.ntu.edu.tw/~cjlin/papers/maxent_dual.pdf} \\
+\end{itemize} 
+
+
+\section*{Plots}
+
+
+\begin{center}
+\includegraphics[scale=0.9]{figures/fvals-10-06.eps} 
+\end{center}
+
+\begin{center}
+\includegraphics[scale=1]{figures/gvals-10-06.eps} 
+\end{center}
+
+
+
+\newpage
+
+\section*{No memory required for SAG}
+
+According to Gillian's paper, the gradient component of an individual $f_h$ corresponding to class $i$ and feature $j$ is
+\begin{align*}
+\frac{\exp(w_i^Tx_h)}{\sum_{c \in C} \exp(w_c^T x_h)} x_h(j) - I(i = y_h) x_h(j)
+\end{align*}
+
+To fully restore the gradient, it's just needed to store the dot products.
+
+\section*{Dual of the speech problem}
+
+We write the original problem as the following constrained optimization problem 
+\begin{align*}
+\min & \; \frac{1}{m} (  \sum_{h=1}^m \log ( \sum_{i \in C} \exp (\xi_{i,h})) -  \sum_{h=1}^m (w_{y_h}^T x_h) ) \\
+s.t. & \;  w_i^T x_h = \xi_{ih}
+\end{align*}
+The Lagrangian is 
+\begin{align*}
+L(w, \xi, \alpha) &= \frac{1}{m} (  \sum_{h=1}^m \log ( \sum_{i \in C} \exp (\xi_{ih})) -  \sum_{h=1}^m (w_{y_h}^T x_h) )  - \sum_i \sum_h \alpha_{ih}( \xi_{ih}-w_i^T x_h  )  \\
+& =L^*(w,\alpha) + \sum_{h} L_{h}(\xi_h, \alpha_h)
+\end{align*}
+where
+\begin{align*}
+L^*(w,\alpha) &= \sum_i \sum_h \alpha_{ih}(w_i^T x_h  )  - \frac{1}{m} \sum_{h=1}^m (w_{y_h}^T x_h) \\
+L_{h}(\xi_h, \alpha_h) &= \frac{1}{m} ( \log ( \sum_{i \in C} \exp (\xi_{ih}))- \sum_i  \alpha_{ih}( \xi_{ih}) 
+\end{align*}
+The dual problem is therefore
+\begin{align*}
+\max_\alpha ( \inf_w L^*(w,\alpha) + \sum_h \inf_{\xi_h} L_{h}(\xi_h, \alpha_h))
+\end{align*}
+The first function only has a minimum if all coefficients of $w$ are equal to zero. So $\alpha$ must be such that, for any class $i$
+\begin{align*}
+\sum_h \alpha_{ih} = \frac{\mbox{count} (y_h=i)}{m} 
+\end{align*}
+
+The second function is minimized when the gradients are equal to zero. For each component $i$ of $\xi$
+\begin{align*}
+\frac{1}{m} \frac{\exp (\xi_{ih}^*) }{\sum_{c \in C} \exp (\xi_{ch}^*)}- \alpha_{ih} =0  
+\end{align*}
+Solving for $\xi_{ih}^*$
+\begin{align*}
+\log (\frac{- m\alpha_{ih} (\sum_{c:c \neq i} \exp (\xi_{ch}))}{m\alpha_{ih} -1 }) 
+\end{align*}
+Plugging in, we get 
+\begin{align*}
+\frac{1}{m} ( \log ( \sum_{i \in C} \exp (\log (\frac{- m\alpha_{ih} (\sum_{c:c \neq i} \exp (\xi_{ch}))}{m\alpha_{ih} -1 }) ))- \sum_i  \alpha_{ih}( \log (\frac{- m\alpha_{ih} (\sum_{c:c \neq i} \exp (\xi_{ch}))}{m\alpha_{ih} -1 }) )  \\
+= \frac{1}{m} ( \log ( \sum_{i \in C} \frac{- m\alpha_{ih} (\sum_{c:c \neq i} \exp (\xi_{ch}))}{m\alpha_{ih} -1 })- \sum_i  \alpha_{ih}( \log (\frac{- m\alpha_{ih} (\sum_{c:c \neq i} \exp (\xi_{ch}))}{m\alpha_{ih} -1 }) ) 
+\end{align*}
+
+\section*{Fast Natural Newton}
+
+Le Roux, in his fast natural Newton method, claims that using Bayesian analysis, the direction of the maximum expected gain on the true, full, function (not the sample approximation), can be computed by 
+\begin{align*}
+[ I + \frac{\hat{C}}{n \sigma^2}^{-1} \hat{g}
+\end{align*}
+Where $\hat{g}$ is the empirical gradient, $\hat{C}$ is an estimate of the true covariance matrix of the gradients. $n$ is the number of variables, and $\sigma$ is the only quantity which doesn't have a good approximation. The above formula is only true if an isotropic gaussian prior with variance $\sigma^2$ is assumed on $g$.
+
+If the function is locally quadratic, then 
+\begin{align*}
+g = H(\theta - \theta^*)
+\end{align*} 
+where $\theta^*$ is a minimizer of the local quadratic model of $f$. Therefore, since $g$ is clearly influenced by $H$, we assume an isotropic prior on $\theta - \theta^*$ instead. Resulting prior distribution of $g$ is 
+\begin{align*}
+g \sim N(0, \sigma^2 H^2)
+\end{align*}
+
+This gives two modifications to the step: 
+a)new posterior distribution of $g$
+b)A modified direction, since the mean of $g$ is now multiplied by $H^{-1}$.
+
+Therefore, the mean of $H^{-1} g$ is
+\begin{align*}
+(I + \frac{H^{-1} \hat{C} H^{-1}}{1})
+\end{align*}
+
+
+
+\end{document}
+
+\subsection{adagrad}
+
+\begin{verbatim}
+	f =
+
+	  Columns 1 through 9
+
+	       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN
+	       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN
+	       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN
+	    1.8521    1.8548       NaN       NaN       NaN       NaN       NaN       NaN       NaN
+	    1.8248    1.8246    1.8249       NaN       NaN       NaN       NaN       NaN       NaN
+	    1.8329    1.8321       NaN       NaN       NaN       NaN       NaN       NaN       NaN
+	       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN
+	       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN
+	       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN
+	       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN
+	       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN
+	       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN
+	       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN
+	       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN
+	       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN
+	       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN
+	       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN
+	       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN
+	       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN
+
+	  Columns 10 through 17
+
+	       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN
+	       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN
+	       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN
+	       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN
+	       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN
+	       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN
+	       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN
+	       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN
+	       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN
+	       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN
+	       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN
+	       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN
+	       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN
+	       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN
+	       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN
+	       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN
+	       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN
+	       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN
+	       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN
+
+
+	optsGG = 
+
+	      globalSeed: 1
+	            init: [30315x1 double]
+	    stepsizepowk: 1
+	           delta: 1.0000e-06
+	         maxwork: 718530
+	       batchSize: 2
+	    stepsizeinit: 0.0312
+	\end{verbatim}
+\begin{center}
+\includegraphics[scale=0.8]{fvalues-4pass-9-27.eps} 
+\end{center}
+
+
+\begin{center}
+\includegraphics[scale=0.9]{fvals-9-27.eps} 
+\end{center}
+
+\begin{center}
+\includegraphics[scale=1]{gvals-9-27.eps} 
+\end{center}
+\includegraphics[scale=1]{fvals-9-26.eps} 
+
+\includegraphics[scale=1]{gvals-9-26.eps} 
+\begin{center}
+\includegraphics[scale=0.8]{9-26-fvalues-general.eps} 
+\end{center}
+
+\begin{center}
+\includegraphics[scale=0.8]{9-26-gvalues-general.eps} 
+\end{center}
+
+
+\includegraphics[scale=1]{fvals_zoom.eps} 
+
+\includegraphics[scale=0.8]{normg.eps} 
+
+\includegraphics[scale=1]{g_zoom.eps} 

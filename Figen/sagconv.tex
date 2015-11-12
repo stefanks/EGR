@@ -1,0 +1,91 @@
+\documentclass{article}
+\usepackage{amsmath, fullpage}
+
+\newcommand{\grad}{\nabla}
+
+\begin{document}
+ 
+\noindent
+
+Another trial to show linear convergence for the general case..
+
+\bigskip
+
+Let us go back to the derivation of inter-dependent optimality error and gradient error terms.
+
+We consider the finite sum minimization problem with $N$ data points, and an extension of the SAG algorithm that updates each gradient component with probability $\eta$ at each iteration.
+
+We previously have seen that
+\[
+  E[e_k]=(1-\eta)(I+\alpha H_k)e_{k-1} + (1-\eta)\alpha H_k\bar H_{k-1}(x_{k-1}-x_\ast)
+\]
+and
+\[
+x_k-x_\ast=(I-\alpha\bar H_{k-1})(x_{k-1}-x_\ast) -\alpha e_{k-1}.
+\]
+Therefore,
+\[
+  \|E[e_k]\|\leq(1-\eta)(1+\alpha L)\|e_{k-1}\| + (1-\eta)\alpha L^2\|x_{k-1}-x_\ast\|
+\]
+and
+\[
+\|x_k-x_\ast\|\leq(1-\alpha\mu)\|x_{k-1}-x_\ast\| +\alpha \|e_{k-1}\|.
+\]
+so that we can write
+\[
+ \begin{bmatrix} \displaystyle\frac{1}{L}\|E[e_k]\| \\
+  \|x_k-x_\ast\|
+ \end{bmatrix} \leq
+ \begin{bmatrix} (1-\eta)(1+\alpha L) & (1-\eta)\alpha L\\  
+                   \alpha L  & 1-\alpha\mu \end{bmatrix}                  
+ \begin{bmatrix} \displaystyle\frac{1}{L}\|e_{k-1}\| \\
+  \|x_{k-1}-x_\ast\|
+ \end{bmatrix}                  
+\]bmat
+
+\bigskip
+Now consider the $2\times 2$ matrix
+\[
+M = \begin{bmatrix} (1-\eta)(1+\alpha L) & (1-\eta)\alpha L   \\
+                   \alpha L  & 1-\alpha\mu \end{bmatrix}  =I+A.    
+\]
+where
+\[
+A= \begin{bmatrix} -\eta(1+\alpha L) + \alpha L& (1-\eta)\alpha L\\     
+                   \alpha L  & -\alpha\mu \end{bmatrix}.    
+\]                   
+Note that since $M$ has positive elements, its largest eigenvalue is  positive and real. It follows that the eigenvalues of $M$ and $A$
+are real.  
+Now, if $\alpha$ is chosen small enough  that $\alpha L     <\eta (1 + \alpha L) $            
+it follows that
+\[ 
+{\rm trace}(A)= -\eta(1+\alpha L)  +\alpha L - \alpha \mu <0.
+\]
+Thus $A$ has at least one negative eigenvalue. If ${\rm det}(A) >0$, both are negative.  Now
+\[
+{\rm det}(A)  = (\eta(1+\alpha L)  -\alpha L)\alpha \mu -(1-\eta)(\alpha L)^2
+\]
+Thus if we choose $\alpha$ small enough to satisfy
+\[
+	\alpha < \frac{ (\eta(1+\alpha L)  -\alpha L) \mu}{ (1-\eta) L^2}
+\]
+
+\bigskip
+
+
+As we assume that the random selection of a subset (with probability $\eta$) is independent at each iteration, we conclude that 
+\[
+ \left\|\begin{pmatrix} \displaystyle\frac{1}{L}\|E[e_k]\| \\
+  \|x_k-x_\ast\|
+ \end{pmatrix}\right\| \leq  \left(1-\displaystyle\frac{\eta\mu}{\mu+(1-\eta)L}\right)^k               
+  \left\|\begin{pmatrix} \displaystyle\frac{1}{L}\|e_0\| \\
+  \|x_0-x_\ast\|.
+ \end{pmatrix} \right\|,
+\]
+proving R-linear convergence of $\|x_k-x_\ast\|$ to 0.
+
+\bigskip
+
+For the special case of $\eta=\displaystyle\frac{1}{N}$ the above rate becomes $1-\displaystyle\frac{1}{N+(N-1)\kappa}$, and for $\eta=0.5$ it becomes $1-\displaystyle\frac{1}{2+\kappa}$, where $\kappa=\displaystyle\frac{L}{\mu}$.
+
+\end{document}

@@ -1,0 +1,92 @@
+\begin{thebibliography}{10}
+
+\bibitem{bottou-bousquet-2008b}
+L\'{e}on Bottou and Olivier Bousquet.
+\newblock Learning using large datasets.
+\newblock In {\em {Mining Massive DataSets for Security}}, {NATO} {ASI}
+  Workshop Series. {IOS} {Press}, Amsterdam, 2008.
+\newblock to appear.
+
+\bibitem{dss}
+R.~H. Byrd, G.~M. Chin, J.~Nocedal, and Y.~Wu.
+\newblock Sample size selection in optimization methods for machine learning.
+\newblock {\em Mathematical Programming}, 134(1):127--155, 2012.
+
+\bibitem{NIPS2014_5258}
+Aaron Defazio, Francis Bach, and Simon Lacoste-Julien.
+\newblock Saga: A fast incremental gradient method with support for
+  non-strongly convex composite objectives.
+\newblock In Z.~Ghahramani, M.~Welling, C.~Cortes, N.D. Lawrence, and K.Q.
+  Weinberger, editors, {\em Advances in Neural Information Processing Systems
+  27}, pages 1646--1654. Curran Associates, Inc., 2014.
+
+\bibitem{FS2011}
+M.P. Friedlander and M.~Schmidt.
+\newblock Hybrid deterministic-stochastic methods for data fitting.
+\newblock {\em Arxiv preprint arXiv:1104.2373}, 2011.
+
+\bibitem{Frostig:2014aa}
+Roy Frostig, Rong Ge, Sham~M. Kakade, and Aaron Sidford.
+\newblock Competing with the empirical risk minimizer in a single pass.
+\newblock 12 2014.
+
+\bibitem{johnson2013accelerating}
+Rie Johnson and Tong Zhang.
+\newblock Accelerating stochastic gradient descent using predictive variance
+  reduction.
+\newblock In {\em Advances in Neural Information Processing Systems}, pages
+  315--323, 2013.
+
+\bibitem{Kim:2015aa}
+S.~Kim, R.~Pasupathy, and S.~Henderson.
+\newblock {\em A Guide to Sample Average Approximation}, volume 216, pages
+  207--243.
+\newblock Springer New York, 2015.
+
+\bibitem{nedic2001convergence}
+Angelia Nedi{\'c} and Dimitri Bertsekas.
+\newblock Convergence rate of incremental subgradient algorithms.
+\newblock In {\em Stochastic optimization: algorithms and applications}, pages
+  223--264. Springer, 2001.
+
+\bibitem{Nesterov:09}
+Yurii Nesterov.
+\newblock Primal-dual subgradient methods for convex problems.
+\newblock {\em Math. Program.}, 120(1):221--259, 2009.
+
+\bibitem{2014pasglyetal}
+R.~Pasupathy, P.~W. Glynn, S.~Ghosh, and F.~Hahemi.
+\newblock How much to sample in simulation-based stochastic recursions?
+\newblock 2014.
+\newblock Under Review.
+
+\bibitem{RobMon51}
+H.~Robbins and S.~Monro.
+\newblock A stochastic approximation method.
+\newblock {\em The Annals of Mathematical Statistics}, pages 400--407, 1951.
+
+\bibitem{roux2012stochastic}
+Nicolas~L Roux, Mark Schmidt, and Francis~R Bach.
+\newblock A stochastic gradient method with an exponential convergence rate for
+  finite training sets.
+\newblock In {\em Advances in Neural Information Processing Systems}, pages
+  2663--2671, 2012.
+
+\bibitem{royset2013optimal}
+Johannes~O Royset and Roberto Szechtman.
+\newblock Optimal budget allocation for sample average approximation.
+\newblock {\em Operations Research}, 61(3):762--776, 2013.
+
+\bibitem{ruppert1988efficient}
+David Ruppert.
+\newblock Efficient estimations from a slowly convergent robbins-monro process.
+\newblock Technical report, Cornell University Operations Research and
+  Industrial Engineering, 1988.
+
+\bibitem{wang2013variance}
+Chong Wang, Xi~Chen, Alex~J Smola, and Eric~P Xing.
+\newblock Variance reduction for stochastic gradient optimization.
+\newblock In {\em Advances in Neural Information Processing Systems}, pages
+  181--189, 2013.
+
+\end{thebibliography}

@@ -1,0 +1,751 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage{hyperref}
+\usepackage{fullpage}
+\usepackage{empheq}
+
+\begin{document}
+
+\newcommand{\tr}{\mbox{tr}}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\begin{titlepage}
+ 
+\hrule
+\begin{center}
+\large
+\textsc{Notes on Second Order Stochastic Approximation}\\
+\end{center}
+\hrule
+\normalsize
+
+\bigskip\bigskip
+
+%\centering{\texttt{Figen@NU}}\\
+\centering\today
+
+\bigskip\bigskip
+
+\tableofcontents
+
+\end{titlepage}
+
+\newpage%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+
+\subsection{Definitions}
+\paragraph{Problem definition.} 
+
+We consider the learning problem
+ \[
+  \boxed{\min_{\theta\in\Re^m} \ \ F(\theta) := E^z[f(\theta;z)].}
+ \]
+
+Here, $f$ is a (twice differentiable) loss function, $\theta\in\Re^m$ are the parameters of $f$, and $z=(x,y)\in Z \subseteq \Re^{r+s}$ denotes the input-output data pairs.  We will assume that $f$ is strongly convex; therefore the above problem has a unique solution.
+ 
+\bigskip
+
+\footnotesize
+\begin{quote}
+\textsc{Remark.} We do not restrict $Z$ to be a finite set; so we will call $F$ as the generalization error (or expected risk).  When $Z$ is finite, $F$ is the so-called \emph{training} error (or empirical risk). This special case is subject to a discussion on the balance of the optimization performance (i.e.the magnitude of the training error) and the approximation performance (i.e.the size of the training set)\cite{Bottou:2007}. 
+\end{quote}
+\normalsize
+
+\paragraph{More definitions.}
+\begin{itemize}
+\item $p(z)$ is the (unknown) probability distribution of the data points $z\in Z$, and $E^z$ is the expectation with respect to $z$; so, 
+\[
+ F(\theta) =  E^z[f(\theta;z)] = \int_{z\in Z} f(\theta;z)p(z)dz.
+\]
+
+% \[
+%  \nabla_\theta F(\theta) = \int_{z\in Z} \nabla_\theta f(\theta;z)p(z)dz.
+% \]
+
+\item $\theta_k$ is the $k^{th}$ iterate, which is a random variable (with probability distribution $q_k(\theta_k)$).  $E\theta_k$ is the expected value of $\theta_k$, i.e. 
+\[
+ E\theta_k = E^{\theta_k}[\theta_k] = \int_{\theta_k\in\Re^m} \theta_kq_k(\theta_k),
+\]
+and $V_k$ is the variance 
+\[
+  V\theta_k = E^{\theta_k}[(\theta_k-E\theta_k)(\theta_k-E\theta_k)^T].
+\]
+\item The minimizer of $F$ will be denoted by $\theta_\ast$, and $Q_\ast$ is Hessian of $F$ at $\theta_\ast$
+\[
+ \theta_\ast = \mbox{arg min}_{\theta\in\Re^m} \ \ F(\theta) \qquad\qquad  Q_\ast := \nabla^2F(\theta_\ast).
+\]
+
+\item $\hat{\nabla F}(\theta)$ is an estimate of $\nabla F(\theta)$ with random noise, e.g. $\hat{\nabla F}(\theta) = \nabla f(\theta;z_i)$. We always will ensure 
+\[
+ E^z[\hat{\nabla F}(\theta)]=\nabla F(\theta).\quad\mbox{Also, let} \ G(\theta) := E^z[\hat{\nabla F}(\theta)\hat{\nabla F}(\theta)^T].
+\]
+\end{itemize}
+
+\bigskip
+
+\subsection{Algorithms}
+We will focus on (second order) stochastic gradient algorithms of the form
+\begin{equation}
+ \boxed{\theta_{k+1} = \theta_k - \alpha_k H_k \hat{\nabla F}(\theta_k),}
+ \label{eq:iter}
+\end{equation}
+where $H_k$ is a bounded symmetric positive definite scaling matrix and $\alpha_k$ is a scalar steplength.
+
+
+\newpage%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Asymptotic Analysis}
+\subsection{Basic asymptotic analysis by Murata\cite{murata:1998}}
+Murata\cite{murata:1998} gives an analysis for the behavior of $E\theta_k$ and $V\theta_k$ close to $\theta_\ast$ for iterations \eqref{eq:iter} with the estimate $\hat{\nabla F}(\theta_k)=\nabla f(\theta_k;z_{k+1})$. So,
+\[
+ E^z[\hat{\nabla F}(\theta)] = E^z[\nabla_\theta f(\theta;z)] = \nabla_\theta E^z[f(\theta;z)]=\nabla F(\theta).
+\]
+The following result is important to relate the expectation $E^{\theta_k}$ to $E^{\theta_{k+1}}$, while carrying a function from $\theta_k$ to $\theta_{k+1}$.
+
+\begin{lemma}
+\label{lemm:murat1}
+Suppose $h:\Re^m\rightarrow \Re$ is a twice differentiable function. Then,
+\begin{equation}
+\begin{array}{rl}
+  E^{\theta_{k+1}}[h(\theta_{k+1})] =& E^{\theta_k}[h(\theta_k)]-\alpha_kE^{\theta_k}[\nabla h(\theta_k)^TH_k\nabla F(\theta_k)]
+  +\dfrac{\alpha_k^2}{2}\tr(E^{\theta_k}[H_kG(\theta_k)H_k\nabla^2h(\theta_k)])\\ 
+  &+ o(\alpha_k^2\tr(E^{\theta_k}[H_kG(\theta_k)H_k])). 
+\end{array}
+\label{eq:exp}
+\end{equation}
+%The error term is $o(\alpha_k^2)$ if $\tr(E^{\theta_k}[H_kG(\theta_k)H_k])$ is not increasing in the order of $\alpha_k$.  
+\end{lemma}
+\footnotesize
+\begin{quote}
+\textsc{Proof.} Let $\theta=\theta_k$, $\theta^\prime=\theta_{k+1}$, and $z^\prime=z_{k+1}$.  $\theta^\prime = \theta^\prime(\theta,z^\prime)$ is a function of two random variables $\theta$ and $z^\prime$ as defined by \eqref{eq:iter}.  For a fixed $\theta$ and $z^\prime$, \eqref{eq:iter} is deterministic; i.e.
+\[
+q^\prime(\theta^\prime|\theta,z^\prime)=1. \qquad \mbox{So, } \ q^\prime(\theta^\prime) = q(\theta)p(z^\prime).
+\]
+Therefore,
+\begin{align*}
+ E^{\theta^\prime}[h(\theta^\prime)] &= \int_{\theta^\prime\in\Re^m} h(\theta^\prime)q^\prime(\theta^\prime)d\theta^\prime 
+ = \int_{\theta\in\Re^m}\int_{z^\prime\in Z} h(\theta^\prime(\theta;z^\prime))p(z^\prime)q(\theta)dz^\prime d\theta\\
+ &= E^{\theta}[E^{z^\prime}[h(\theta^\prime(\theta,z^\prime))]].
+\end{align*}
+Now, consider
+\begin{align*}
+ E^{z^\prime}[h(\theta^\prime(\theta,z^\prime))] &= E^{z^\prime}[h(\theta-\alpha H \hat{\nabla F}(\theta))]\\	
+ &=E^{z^\prime}\left[ h(\theta)-\alpha H \nabla h(\theta)^T\hat{\nabla F}(\theta)+\frac{\alpha^2}{2}\hat{\nabla F}(\theta)^TH\nabla^2h(\theta)H\hat{\nabla F}(\theta) + o(\|\alpha H \hat{\nabla F}(\theta)\|^2)\right]\\
+ &= h(\theta)-\alpha H \nabla h(\theta)^TE^{z^\prime}[\hat{\nabla F}(\theta)]+\frac{\alpha^2}{2}\tr(H\nabla^2h(\theta)HE^{z^\prime}[\hat{\nabla F}(\theta)\hat{\nabla F}(\theta)^T]) + o(E^{z^\prime}[\|\alpha H \hat{\nabla F}(\theta)\|^2])\\
+ &=h(\theta)-\alpha H \nabla h(\theta)^T\nabla F(\theta)+\frac{\alpha^2}{2}\tr(H\nabla^2h(\theta)HG(\theta))+o(\alpha^2\tr(HG(\theta)H))
+\end{align*}
+So,
+\[
+ E^{\theta^\prime}[h(\theta^\prime)] = E^{\theta}\left[h(\theta)-\alpha H \nabla h(\theta)^T\nabla F(\theta)+\frac{\alpha^2}{2}\tr(HG(\theta)H\nabla^2h(\theta))+o(\alpha^2\tr(HG(\theta)H))\right].
+\]
+\begin{flushright}$\square$\end{flushright}
+\end{quote}
+\normalsize
+
+\bigskip
+
+\noindent
+Let us define $\epsilon_k = \tr(E^{\theta_k}[H_kG(\theta_k)H_k])$ so that the error term in Lemma~\eqref{lemm:murat1} is $o(\alpha_k^2\epsilon_k)$.  Note that $\epsilon_k=1$ if $H_k=\frac{1}{\sqrt{n}}E^{\theta_k}[G(\theta_k)]^{1/2}$.  The next lemma provides a statement about the mean $E\theta_k$ and the variance $V\theta_k$ of the stochastic iterates $\theta_k$ without specifying the choices of $\alpha_k$ or $H_k$.
+\begin{lemma}
+\label{lemm:murat2}
+Consider a close neighborhood $\mathcal{N}(\theta_\ast)$ of $\theta_\ast$ where the quadratic expansion of $F$ at $\theta_\ast$,
+\[
+ F(\theta) \approx F(\theta_\ast) + \frac{1}{2}(\theta-\theta_\ast)^TQ_\ast(\theta-\theta_\ast),%+o(\|\theta-\theta_\ast\|^2),
+\]
+is a good approximation (the first order term dissapears as $DF(\theta_\ast)=0$).  
+Assume $\theta_k\in\mathcal{N}(\theta_\ast)$ so that $E^{\theta_k}[\|\theta_k-\theta_\ast\|]=
+o(\alpha_k\epsilon_k)$.  Then we have
+\[
+ E\theta_{k+1} = E\theta_k - \alpha_k H_k Q_\ast (E\theta_k - \theta_\ast) + o(\alpha_k^2\epsilon_k).
+\]
+and
+\begin{align*}
+ V\theta_{k+1} = & V\theta_k - \alpha_k (H_kQ_\ast V\theta_k + V\theta_kQ_\ast H_k) + \alpha_k^2H_kG(\theta_\ast)H_k\\ 
+                       & \qquad\qquad -\alpha_k^2H_kQ_\ast(E\theta_k-\theta_\ast)(E\theta_k-\theta_\ast)^TQ_\ast H_k + o(\alpha_k^2\epsilon_k))+ o(\alpha_k^3\epsilon_k).
+\end{align*}
+\end{lemma}
+\footnotesize
+\begin{quote}
+\textsc{Proof.} Let $e_i$ denote the $i^{th}$ standard coordinate vector.
+Set $h(\theta)=\theta^i$, the $i^{th}$ element of $\theta$; so, $\nabla h(\theta) = e_i$, $\nabla^2 h(\theta)=0$.  Then \eqref{eq:exp} implies 
+\[
+ E^{\theta_{k+1}}[\theta_{k+1}^i] = E^{\theta_k}[\theta_k^i] - \alpha_k E^{\theta_k}[e_i^TH_k\nabla F(\theta_k)] + o(\alpha_k^2\epsilon_k).
+\]
+Since $\nabla F(\theta_k) = Q_\ast(\theta_k-\theta_\ast) + O(\|\theta_k-\theta_\ast\|)$, and we assume $E^{\theta_k}[\|\theta_k-\theta_\ast\|]= o(\alpha_k\epsilon_k)$,
+\[
+E\theta_{k+1}^i = E\theta_k^i - \alpha_k [H_k Q_\ast(E\theta_k-\theta_\ast)]^i + o(\alpha_k^2\epsilon_k).
+\]
+Repeating this argument for all $i\in\{1,\dots,m\}$ proves the result on the mean.
+
+To prove the variance result, note that the $ij^{th}$ element of $V\theta_{k+1}^{ij}$ is
+\begin{align*}
+ V\theta_{k+1}^{ij} &= E^{\theta_{k+1}}[\theta_{k+1}^i\theta_{k+1}^j] - E\theta_{k+1}^iE\theta_{k+1}^j\\
+ &= V\theta_k^{ij} + E^{\theta_{k+1}}[\theta_{k+1}^i\theta_{k+1}^j] - E^{\theta_k}[\theta_k^i\theta_k^j] + E\theta_k^iE\theta_k^j - E\theta_{k+1}^iE\theta_{k+1}^j.
+\end{align*}
+
+Using the result we have obtained for $E\theta_{k+1}$ we get
+\begin{align*}
+  E\theta_k^iE\theta_k^j- E\theta_{k+1}^iE\theta_{k+1}^j &= E\theta_k^iE\theta_k^j-[E\theta_k - \alpha_k H_k Q_\ast (E\theta_k - \theta_\ast)]^i[E\theta_k - \alpha_k H_k Q_\ast (E\theta_k - \theta_\ast)]^j + o(\alpha_k^2\epsilon_k)\\
+  &= - \alpha_k^2 [H_k Q_\ast (E\theta_k - \theta_\ast)]^i[H_k Q_\ast (E\theta_k - \theta_\ast)]^j + \alpha_kE\theta_k^i[H_k Q_\ast (E\theta_k - \theta_\ast)]^j\\
+  & \qquad\qquad\qquad\qquad\qquad\qquad\qquad\qquad\qquad +\alpha_kE\theta_k^j[H_k Q_\ast (E\theta_k - \theta_\ast)]^i+o(\alpha_k^2\epsilon_k).
+\end{align*}
+
+Now, set $h(\theta)=\theta^i\theta^j$ in \eqref{eq:exp}. We have $\nabla h(\theta) = \theta^je_i + \theta^ie_j$, $\nabla^2 h(\theta)=e_ie_j^T+e_je_i^T$, and this implies
+\[
+  E^{\theta_{k+1}}[\theta_{k+1}^i\theta_{k+1}^j] - E^{\theta_k}[\theta_k^i\theta_k^j] = -\alpha_kE^{\theta_k}[(\theta_k^je_i + \theta_k^ie_j)^TH_k\nabla F(\theta_k)]+\dfrac{\alpha_k^2}{2}\tr(E^{\theta_k}[H_kG(\theta_k)H_k(e_ie_j^T+e_je_i^T)])
+  + o(\alpha_k^2\epsilon_k)). 
+\]
+Note that 
+\begin{align*}
+ \alpha_k^2\tr(E^{\theta_k}[H_kG(\theta_k)H_k(e_ie_j^T+e_je_i^T)]) &= \alpha_k^2[H_kG(\theta_k)H_k]^{ij}+\alpha_k^2[H_kG(\theta_k)^TH_k]^{ij} \\
+ &= \alpha_k^2[H_kG(\theta_\ast)H_k]^{ij}+\alpha_k^2[H_kG(\theta_\ast)^TH_k]^{ij} + \alpha_k^2O(E^{\theta_k}[\|\theta_k-\theta_\ast\|])\\
+ &= 2\alpha_k^2[H_kG(\theta_\ast)H_k]^{ij} + o(\alpha_k^3\epsilon_k).
+\end{align*}
+Also note
+\begin{align*}
+ -\alpha_kE^{\theta_k}[(\theta_k^je_i + \theta_k^ie_j)^TH_k\nabla F(\theta_k)] &= -\alpha_kE^{\theta_k}[(\theta_k^je_i + \theta_k^ie_j)^TH_kQ_\ast(\theta_k-\theta_\ast)] + o(\alpha_k^2\epsilon_k)\\
+ &= -\alpha_kE^{\theta_k}[\theta_k^j[H_kQ_\ast(\theta_k-\theta_\ast)]^i] + -\alpha_kE^{\theta_k}[\theta_k^i[H_kQ_\ast(\theta_k-\theta_\ast)]^j]+ o(\alpha_k^2\epsilon_k)
+ \end{align*}
+and
+\begin{align*}
+ \alpha_kE\theta_k^i[H_k Q_\ast (E\theta_k - \theta_\ast)]^j-\alpha_kE^{\theta_k}[\theta_k^i[H_kQ_\ast(\theta_k-\theta_\ast)]^j] 
+ &= \alpha_kE\theta_k^i[H_k Q_\ast E\theta_k]^j - \alpha_kE\theta_k^i[H_k Q_\ast\theta_\ast)]^j\\
+ &\qquad\qquad-\alpha_kE^{\theta_k}[\theta_k^i[H_kQ_\ast\theta_k]^j-\alpha_kE^{\theta_k}[\theta_k^i[H_kQ_\ast\theta_\ast)]^j]\\ 
+ &=\alpha_kE\theta_k^i[H_k Q_\ast E\theta_k]^j -\alpha_kE^{\theta_k}[\theta_k^i[H_kQ_\ast\theta_k]^j]\\
+ &=-\alpha_k[V\theta_kQ_\ast H_k]^{ij}.
+\end{align*}
+So, gathering all components we get
+\begin{align*}
+ V\theta_{k+1}^{ij} &= V\theta_k^{ij} -\alpha_k[V\theta_kQ_\ast H_k+H_kQ\ast V\theta_k]^{ij} + \alpha_k^2[H_kG(\theta_\ast)H_k]^{ij} \\
+ &\qquad\qquad- \alpha_k^2 [H_k Q_\ast (E\theta_k - \theta_\ast)(E\theta_k - \theta_\ast)^TQ_\ast H_k]^{ij} 
+ + o(\alpha_k^2\epsilon_k))+ o(\alpha_k^3\epsilon_k).
+\end{align*}
+Repeating the argument for all $(i,j)$ proves the result on the variance.
+\begin{flushright}$\square$\end{flushright}
+\end{quote}
+\normalsize
+
+% \footnotesize
+% \begin{quote}
+% \textsc{Remark.} Note that in Lemma~\eqref{lemm:murat2} we required the noisy estimates $\theta_k$ to be close to $\theta_\ast$, which implicitly requires $\tr(V\theta_k)$ to be sufficiently small.
+% \end{quote}
+% \normalsize
+
+\noindent
+Next lemma gives an expression for the so-called \emph{learning curve.} 
+\begin{lemma}
+\label{lemm:murat3}
+Consider $\theta_k\in\mathcal{N}(\theta_\ast)$ with 
+%$E^{\theta_k}[\|\theta_k-\theta_\ast\|]=o(\alpha_k\epsilon_k)$; and also assume $\tr(V\theta_k)=o(\alpha_k^2\epsilon_k)$ so that 
+$E^{\theta_k}[\|\theta_k-\theta_\ast\|^2]=\tr(V\theta_k)+\|E\theta_k-\theta_\ast\|^2=o(\alpha_k^2\epsilon_k)$. The expectation of the generalization error is given by
+\[
+ E^{\theta_k}[F(\theta_k)] = F(\theta_\ast) + \frac{1}{2}\tr(Q_\ast V\theta_k) + \frac{1}{2}\tr(Q_\ast(E\theta_k-\theta_\ast)(E\theta_k-\theta_\ast)^T)+o(\alpha_k^2\epsilon_k).
+\]
+\end{lemma}
+
+\footnotesize
+\begin{quote}
+\textsc{Proof.} Consider again the quadratic expansion of $F$ at $\theta_\ast$
+\begin{align*}
+ E^{\theta_k}[F(\theta_k)] &= F(\theta_\ast) + E^{\theta_k}[(\theta_k-\theta_\ast)^TQ_\ast(\theta_k-\theta_\ast)] + O(E^{\theta_k}[\|\theta_k-\theta_\ast\|^2])\\
+ &=F(\theta_\ast) + E^{\theta_k}[(\theta_k-E\theta_k)^TQ_\ast(\theta_k-E\theta_k)+(E\theta_k-\theta_\ast)^TQ_\ast(E\theta_k-\theta_\ast)]\\
+ &\qquad\qquad\qquad+2E^{\theta_k}[(\theta_k-E\theta_k)^TQ_\ast(E\theta_k-\theta_\ast)]+o(\alpha_k^2\epsilon_k)\\
+ &=F(\theta_\ast) + \tr(Q_\ast V\theta_k)+\tr(Q_\ast(E\theta_k-\theta_\ast)(E\theta_k-\theta_\ast)^T)+o(\alpha_k^2\epsilon_k).
+\end{align*}
+\begin{flushright}$\square$\end{flushright}
+\end{quote}
+\normalsize
+
+
+\bigskip
+
+\subsection{Extension to a general noisy gradient}
+
+Replace $\hat{\nabla F}(\theta) = \nabla f(\theta;z_i)$ with $\hat{\nabla F}(\theta) = \nabla F(\theta) + \xi$ such that 
+\[
+ E^z(\xi) = 0 \quad \Rightarrow \quad E^z[\hat{\nabla F}(\theta)] = \nabla F(\theta).
+\]
+
+\bigskip
+
+\subsection{Special cases}
+
+Before we move onto different specifications of $\alpha_k$ and $H_k$, let us rewrite the recursive expressions in Lemma~\ref{lemm:murat2} and Lemma~\ref{lemm:murat3} by ignoring the error terms.  For the mean we have,
+\begin{equation}
+ E\theta_{k+1} - \theta_\ast = (I-\alpha_kH_kQ_\ast)(E\theta_k-\theta_\ast) = S_k (E\theta_0-\theta_\ast) \qquad\mbox{with}\quad S_k = \prod_{i=1}^k (I-\alpha_kH_kQ_\ast).
+ \label{eq:rmean}
+\end{equation}
+
+\noindent
+Following \cite{murata:1998}, let us define the operators 
+\[
+\Phi_AB = AB+BA  \qquad\mbox{ and }\qquad \Omega_AB = ABA^T
+\]
+for matrices of consistent sizes.  Also define the fixed matrix 
+\[
+V_\ast = Q_\ast^{-1}G(\theta_\ast)Q_\ast^{-1},
+\]
+and $Y_k =(E\theta_k-\theta_\ast)(E\theta_k-\theta_\ast)^T$.  So, \eqref{eq:rmean} implies
+\[
+ Y_k = (I-\alpha_kH_kQ_\ast)Y_{k-1}(I-\alpha_kH_kQ_\ast)^T = \left(\prod_{i=k}^1 \Omega_{(I-\alpha_iH_iQ_\ast)}\right)Y_0.
+\]
+Then, for the variance expression we get
+\begin{align}
+\begin{split}
+ V\theta_{k+1} &= (I-\alpha_k\Phi_{H_kQ_\ast})V\theta_k + \alpha_k^2H_kQ_\ast V_\ast Q_\ast H_k - \alpha_k^2H_kQ_\ast Y_k Q_\ast H_k\\
+ &=(I-\Phi_{\alpha_kH_kQ_\ast})V\theta_k + \Omega_{\alpha_kH_kQ_\ast} V_\ast - \Omega_{\alpha_kH_kQ_\ast} Y_k\\
+ &=\left(\prod_{i=k}^1 (I-\Phi_{\alpha_iH_iQ_\ast})\right)V\theta_0 
+ + \left(\sum_{i=1}^k \left(\prod_{j=k}^{i+1} (I-\Phi_{\alpha_jH_jQ_\ast})\right)\Omega_{\alpha_iH_iQ_\ast}\right) V_\ast \\
+ &\qquad\qquad - \left(\sum_{i=1}^k \left(\prod_{j=k}^{i+1} (I-\Phi_{\alpha_jH_jQ_\ast})\right)\Omega_{\alpha_iH_iQ_\ast}\left(\prod_{t=i}^1 \Omega_{(I-\alpha_tH_tQ_\ast)}\right)\right) Y_0. 
+\end{split}
+\label{eq:rvar}
+\end{align}
+
+
+ \paragraph{Fixed $\alpha_k$ and fixed $H_k$.} Suppose $\alpha_k = \alpha$ and $H_k=H$ at all iterations $k=1,2,\cdots$. Then, the mean and the variance of the estimators $\theta_k$ converge at a linear rate to $\theta_\ast$ and to a nonzero variance term, respectively.
+  \[
+   S_k = (I-\alpha H Q_\ast)^k \qquad \Rightarrow \qquad \boxed{E\theta_{k+1} = \theta_\ast + (I-\alpha H Q_\ast)^k (E\theta_0-\theta_\ast)}
+  \]
+So, provided that for the maximum eigenvalue of $I-\alpha H Q_\ast$ we have $|\lambda_{\max}(I-\alpha H Q_\ast)|<1$, or equivalently
+\[
+ (I-\alpha H Q_\ast)^k\rightarrow 0  \qquad\mbox{as}\quad k\rightarrow\infty, 
+\]
+we get convergence of $E\theta_k$ to $\theta_\ast$.  As for the variance, the above general equation becomes
+  \[
+   V\theta_{k+1} = (I-\Phi_{\alpha HQ_\ast})^kV\theta_0 + \sum_{i=1}^k (I-\Phi_{\alpha HQ_\ast})^{k-i}\Omega_{\alpha HQ_\ast}V_\ast - \sum_{i=1}^k (I-\Phi_{\alpha HQ_\ast})^{k-i}(\Omega_{(I-\alpha HQ_\ast)})^i \Omega_{\alpha HQ_\ast} Y_0.
+  \]
+(Note that $\Omega_{(I-\alpha HQ_\ast)}\Omega_{\alpha HQ_\ast} A= \Omega_{\alpha HQ_\ast}\Omega_{(I-\alpha HQ_\ast)}A$).  Since the second and the third terms are geometric sums, we get
+\[
+ \sum_{i=1}^k (I-\Phi_{\alpha HQ_\ast})^{k-i} = \Phi_{\alpha HQ_\ast}^{-1}(I-(I-\Phi_{\alpha HQ_\ast})^k)
+\]
+and
+\begin{align*}
+ \sum_{i=1}^k (I-\Phi_{\alpha HQ_\ast})^{k-i}(\Omega_{(I-\alpha HQ_\ast)})^i 
+ &= \left(\sum_{i=1}^k (I-\Phi_{\alpha HQ_\ast})^{k-i}(\Omega_{(I-\alpha HQ_\ast)}^{-1})^{k-i}\right)(\Omega_{(I-\alpha HQ_\ast)})^k\\
+ &=(I-(I-\Phi_{\alpha HQ_\ast})\Omega_{(I-\alpha HQ_\ast)}^{-1})^{-1}((\Omega_{(I-\alpha HQ_\ast)})^k-(I-\Phi_{\alpha HQ_\ast})^k).
+\end{align*}
+Therefore,
+  \begin{empheq}[box=\fbox]{align*}
+    V\theta_{k+1} =& (I-\Phi_{\alpha HQ_\ast})^kV\theta_0 + \Phi_{\alpha HQ_\ast}^{-1}(I-(I-\Phi_{\alpha HQ_\ast})^k)\Omega_{\alpha HQ_\ast}V_\ast\\
+    & \qquad -(I-(I-\Phi_{\alpha HQ_\ast})\Omega_{(I-\alpha HQ_\ast)}^{-1})^{-1}((\Omega_{(I-\alpha HQ_\ast)})^k-(I-\Phi_{\alpha HQ_\ast})^k)\Omega_{\alpha HQ_\ast} Y_0.
+  \end{empheq}
+Note that for the convergence of the two geometric series above, we need that
+\[
+ (I-\Phi_{\alpha HQ_\ast})^k \rightarrow 0 \quad \mbox{and} \quad (I-\Phi_{\alpha HQ_\ast})^k(\Omega_{(I-\alpha HQ_\ast)}^{-1})^k \rightarrow 0
+\]
+holds as $k\rightarrow\infty$.  And if these series are convergent, then we get $V\theta_k\rightarrow \Phi_{\alpha HQ_\ast}^{-1}\Omega_{\alpha HQ_\ast}V_\ast$ as $k\rightarrow\infty$.
+
+  \paragraph{Diminishing $\alpha_k$ and fixed $H_k$.}  Suppose $\alpha_k = \frac{1}{k}$, and $H_k = H$ such that $HQ_\ast$ is symmetric.
+  \[
+   E\theta_{k+1} = \theta_\ast + S_k (E\theta_0-\theta_\ast) \qquad\mbox{ with }\quad S_k = \prod_{i=1}^k(I-\frac{1}{i} H Q_\ast).
+  \]
+Consider
+  \[
+   \|I-\frac{1}{i} H Q_\ast\| = 1-\frac{1}{i}\lambda_{\min}(H Q_\ast),
+  \]
+and
+  \begin{align*}
+   \|\prod_{i=1}^k(I-\frac{1}{i} H Q_\ast)\| &\leq \prod_{i=1}^k\|(I-\frac{1}{i} H Q_\ast)\| = \exp\left(\sum_{i=1}^k\log(1-\frac{1}{i}\lambda_{\min}(H Q_\ast))\right)\\
+   & \leq \exp\left(-\sum_{i=1}^k(\frac{1}{i}\lambda_{\min}(H Q_\ast))\right) = \exp\left(-\lambda_{\min}(H Q_\ast)(\log k+c)\right)\\
+   & = k^{-\lambda_{\min}(HQ_\ast)}\exp(c) = O(k^{-\lambda_{\min}(HQ_\ast)}).
+  \end{align*}
+So,
+  \[
+    \boxed{\|E\theta_{k+1} - \theta_\ast\| = O\left(\frac{1}{k^{\lambda_{\min}(HQ_\ast)}}\right)\|E\theta_0-\theta_\ast\|.}
+  \]
+
+\bigskip
+
+\noindent
+For the variance expression, note that 
+\[
+ \|(I - \Phi_A)B\| =  \|B-BA-AB\| \leq (1-2\lambda_{\min}(A))\|B\|.
+\]
+So, following the same lines as the derivation of the bound for $\|S_t\|$, we can get
+\[
+ \|\prod_{i=1}^k(I-\frac{1}{i} \Phi_{H Q_\ast})\| = O(\frac{1}{k}) \quad \mbox{provided that } 2\lambda_{\min}(H Q_\ast)>1.
+\]
+However, employing this bound in expression \eqref{eq:rvar} directly, we could derive a worse bound for $\|V\theta_{k+1}\|$ than $O(\frac{1}{k})$ (because of the second term).  An induction argument very similar to the one in \cite{nemirovski:2009} (see Section 2.5) can prove the $O(\frac{1}{k})$ bound.
+
+% Note also that $\Omega_{(I-A)}B = (I-\Phi_A+\Omega_A)B$.  Then,
+% \begin{align*}
+%  V\theta_{k+1}&=\left(\prod_{i=k}^1 (I-\frac{1}{i}\Phi_{HQ_\ast})\right)V\theta_0 
+%  + \left(\sum_{i=1}^k \left(\prod_{j=k}^{i+1} (I-\frac{1}{j}\Phi_{HQ_\ast})\right)\frac{1}{i^2}\Omega_{HQ_\ast}\right) V_\ast \\
+%  &\qquad\qquad - \left(\sum_{i=1}^k \left(\prod_{j=k}^{i+1} (I-\frac{1}{j}\Phi_{HQ_\ast})\right)\frac{1}{i^2}\Omega_{HQ_\ast}\left(\prod_{t=i}^1 I-\frac{1}{t}\Phi_{HQ_\ast}+\frac{1}{t^2}\Omega_{HQ_\ast}\right)\right) Y_0.
+% \end{align*}
+% This suggests
+% \begin{align*}
+%  \|V\theta_{k+1}\| &\leq \frac{1}{k}\|V\theta_0\| + \left( \sum_{i=1}^k \frac{i}{k} \frac{1}{i^2}\right) \|\Omega_{HQ_\ast} (V_\ast - Y_0)\| + o(\frac{1}{k})\\
+%  & \leq \frac{1}{k}\|V\theta_0\| + \frac{\log k + c}{k} \|\Omega_{HQ_\ast} (V_\ast - Y_0)\| + o(\frac{1}{k}).
+% \end{align*}
+% So,
+% \[
+%  \boxed{\|V\theta_{k+1}\|\leq \frac{1}{k}(\|V\theta_0\|+c) + \frac{\log k}{k} \|\Omega_{HQ_\ast} (V_\ast - Y_0)\| + o(\frac{1}{k}).}
+% \]
+% According to this result, we achieve the optimal $O(\frac{1}{k})$ convergence rate when $Y_0=V_\ast$. \textcolor{red}{(Very suspicious!)}
+ \bigskip
+
+\noindent
+For completeness, let us include here the derivation by Murata\cite{murata:1998}:
+Consider only the leading term in the variance expression, i.e. $\prod_{i=1}^k(I-\frac{1}{i} \Phi_{H Q_\ast})V\theta_0$, and step sizes $\alpha_k=\frac{1}{k+1}$.  Then we conclude that 
+\[
+ V_{k+1} = O(\frac{1}{k}) \qquad \mbox{provided that} \quad \lambda_{\min}(HQ_\ast) > \frac{1}{2}.
+\]
+Next, consider only the first two terms in the variance expression provided in Lemma~\ref{lemm:murat2}, and place $V_k = \frac{1}{k}V$ for a fixed matrix $V$.  So,
+\[
+V\theta_{k+1} =  \frac{1}{k+1}V = \frac{1}{k}V - \frac{1}{k+1}(HQ_\ast V+VQ\ast H) + \frac{1}{(k+1)^2}HQ_\ast V_\ast Q_\ast H 
+\]
+\[
+ \Rightarrow V\theta_k = \frac{1}{k} V = \frac{1}{k+1} (\Phi_{HQ_\ast}-I)^{-1}HQ_\ast V_\ast Q_\ast H = \frac{1}{k+1}(\Phi_{HQ_\ast}-I)^{-1}H G(\theta_\ast)H.  
+\]
+
+%  \paragraph{Scaling with $H_k=Q_\ast^{-1}$.} 
+  
+%  \paragraph{Scaling with $H_k=\eta I$.}
+
+\bigskip
+
+\subsection{Bottou\&Bousquet result}
+Bottou\&Bousquet\cite{Bottou:2007} use the above mentioned Murata result for the variance $V\theta_k$.  To obtain their result, first consider the inverse of the operator $(\Phi_A - I)$,
+\begin{align*}
+ &C = (\Phi_A-I)^{-1}B \ \Rightarrow \ AC+CA-C = B \\
+ \Rightarrow &\|B\| = \|AC+CA-C\| \geq \|AC+CA\|-\|C\| \geq (2\lambda_{\min}(A)-1)\|C\| \ \Rightarrow \|C\| \leq \frac{1}{2\lambda_{\min}(A)-1} \|B\|.
+\end{align*}
+Also note that for positive definite symmetric $A$ and $B$,
+\[
+ \lambda_{min}(A)\tr(B) \leq \tr(AB) \leq \lambda_{max}(A)\tr(B).
+\]
+Now, consider the expected value of the generalization error $E^{\theta_k}[F(\theta_k)]$ around $\theta_\ast$ stated in Lemma~\ref{lemm:murat3} for $\alpha_k = \frac{1}{k}$ and $H_k = \eta I$. Recall that $S_k = O(\frac{1}{k})$.
+\begin{align*}
+ E^{\theta_k}[F(\theta_k)] &= F(\theta_\ast) + \frac{1}{2}\tr(Q_\ast V\theta_k) + \frac{1}{2}\tr(Q_\ast(E\theta_k-\theta_\ast)(E\theta_k-\theta_\ast)^T)+o(\alpha_k^2\epsilon_k)\\
+ & \leq F(\theta_\ast) + \frac{1}{2}\frac{1}{k+1}\tr(Q_\ast(\Phi_{\eta Q_\ast}-I)^{-1} \eta^2 G(\theta_\ast)) + \frac{1}{2}\tr(Q_\ast S_{k-1}Y_0 S_{k-1}^T)+o(\frac{1}{k})\\
+ & \leq F(\theta_\ast) + \frac{1}{2}\frac{1}{k+1}\frac{\eta^2\lambda_{\max}(Q_\ast)^2 }{2\eta\lambda_{\min}(Q_\ast)-1}\tr(G(\theta_\ast)Q_\ast^{-1}) 
+ +\frac{1}{2}\|S_{k-1}\|^2O(Q_\ast Y_0) +o(\frac{1}{k})
+\end{align*}
+Choosing $\eta = \dfrac{1}{\lambda_{\min}(Q_\ast)}$, they ensure that $\lambda_{\min}(HQ_\ast) = \eta \lambda_{\min}(Q_\ast) > 1/2$ so that the analysis of the previous section applies.  It also provides $\|S_t\|^2 = O(\frac{1}{k^{2}})$.  With this choice of $\eta$, the above statement implies,
+\[
+ E^{\theta_k}[F(\theta_k)] - F(\theta_\ast) = O\left(\frac{1}{k}\frac{\lambda_{\max}(Q_\ast)^2}{\lambda_{\min}(Q_\ast)^2}\tr(G(\theta_\ast)Q_\ast^{-1})\right) + o(\frac{1}{k}).
+\]
+
+\bigskip
+
+\subsection{Bottou\&Le Cun result}
+
+In \cite{bottoulecun:2004}, Bottou and Le Cun show the result 
+\[
+ E^{\theta_k}[\|\theta_k-\theta_\ast\|^2] = \frac{1}{k}tr(Q_\ast^{-1}G(\theta_\ast)Q_\ast^{-1})+o(\frac{1}{k})
+\]
+by assuming 
+\[
+  H_k = Q_\ast^{-1} + \xi_k , \ \mbox{and}  \ \ P\{|\xi_k|<c\}>1-\epsilon, \ \forall c,\forall\epsilon \ \ \mbox{holds for large enough }k.
+\]
+
+The proof in \cite{bottoulecun:2004} does not follow exactly the same lines as the above analysis by Murata.  However, note that the above assumption on $H_k$ implies $E[H_k] = Q_\ast^{-1} + o(1)$ for $k$ large enough.  Consequently, the above result by Bottou\&Le Cun exactly matches the result derived by Murata for $H_k=Q_\ast^{-1}$ (see Corollary 3, equation (2.32) on page 10 of \cite{murata:1998}, and recall that $E[\|\theta_k-\theta_\ast\|^2] = V\theta_k + \|E\theta_k - \theta_\ast\|^2$).
+
+\medskip\noindent\emph{email discussion} FO: `` I added the Bottou-LeCun paper to my notes (it is section 2.5 in the updated stochastic.pdf file).  I went over the analysis in that paper; it is not identical to the Murata analysis, perhaps their Lemma 1 may help improving the variance derivation of Murata in the diminishing stepsize case.  Their asymptotic result exactly matches the result by Murata for $H_k=Q*^{-1}. $ ''
+
+FO:``I was considering the special case H=G.  In this case, 
+\[
+     trace(H^{-1} G H^{-1}) < dimension*eigen-max(G).
+ \]  So, the upper bound $M^2/c^2$  may not be very strict. ''
+
+RB: ``Yes, when H=G, it does appear that Bottou and LeCun's Newton bound looks better. In that case it looks like
+the Nemirovsky et al bound looks like condition number squared. However, Nemirovsky's analysis is not very sharp and might give give a better bound with more effort. 
+In the case where H is different from G, the comparision is not so clear. ''
+
+\bigskip
+\newpage%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Non-asymptotic Analysis}
+
+\subsection{SA analysis of Nemirovski et al\cite{nemirovski:2009}}
+
+Let us assume that $F$ is strongly convex with a constant $\mu>0$, and $\nabla F$ is Lipschitz continuous with constant $L>0$; i.e.
+% \[
+%  F(\theta_k) \geq F(\theta) + (\theta_k-\theta)^T\nabla F(\theta) + \frac{1}{2}\mu\|\theta_k-\theta\|^2 
+% \]
+\begin{equation}
+(\theta_k - \theta)^T(\nabla F(\theta_k) - \nabla F(\theta)) \geq \mu\|\theta_k-\theta\|^2,
+\label{eq:nest1}
+\end{equation}
+and
+\begin{equation}
+ F(\theta_k) \leq F(\theta) + (\theta_k-\theta)^T\nabla F(\theta) + \frac{1}{2}L\|\theta_k-\theta\|^2 .
+\label{eq:nest2}
+\end{equation}
+
+\noindent
+Also assume that $\|\hat{\nabla F}(\theta_k)\|^2\leq M^2$ at all $\theta_k$.\\  
+Since
+\begin{align*}
+ \frac{1}{2}\|\theta_{k+1}-\theta_\ast\|^2 &= \frac{1}{2}\|\theta_k-\alpha_k\hat{\nabla F}(\theta_k)-\theta_\ast\|^2\\
+ &=\frac{1}{2}\|\theta_k-\theta_\ast\|^2 + \alpha_k^2\|\hat{\nabla F}(\theta_k)\|^2 -\alpha_k(\theta_k-\theta_\ast)^T \hat{\nabla F}(\theta_k),
+\end{align*}
+and
+\begin{align*}
+ E^{\theta_{k+1}}[(\theta_k-\theta_\ast)^T \hat{\nabla F}(\theta_k)] &= E^{\theta_k}[E^{z_{k+1}}[(\theta_k-\theta_\ast)^T \hat{\nabla F}(\theta_k)]]\\
+ &=E^{\theta_k}[(\theta_k-\theta_\ast)^T E^{z_{k+1}}[\hat{\nabla F}(\theta_k)]] = E^{\theta_k}[(\theta_k-\theta_\ast)^T\nabla F(\theta_k)],
+\end{align*}
+we get 
+\begin{align*}
+ r_{k+1} \ := \ \frac{1}{2}E^{\theta_{k+1}}[\|\theta_{k+1}-\theta_\ast\|^2] &\leq \frac{1}{2}E^{\theta_k}[\|\theta_k-\theta_\ast\|^2] -\alpha_k E^{\theta_k}[(\theta_k-\theta_\ast)^T\nabla F(\theta_k)] + \frac{1}{2}\alpha_k^2M^2 \\
+  &= r_k -\alpha_k E^{\theta_k}[(\theta_k-\theta_\ast)^T\nabla F(\theta_k)] + \frac{1}{2}\alpha_k^2M^2.
+\end{align*}
+
+\noindent
+By \eqref{eq:nest1}, the unique minimizer $\theta_\ast$ satisfies
+\[
+ (\theta_k - \theta_\ast)^T\nabla F(\theta_k) \geq \mu\|\theta_k - \theta_\ast\|^2.
+\]
+Then,
+\[
+ E^{\theta_k}[(\theta_k-\theta_\ast)^T\nabla F(\theta_k)] \geq \mu E^{\theta_k}[\|\theta_k - \theta_\ast\|^2] = 2\mu r_k;
+\]
+so,
+\[
+ r_{k+1} \leq (1-2\alpha_k\mu)r_k + \frac{1}{2}\alpha_k^2M^2.
+\]
+Now, suppose $\alpha_k = \dfrac{\eta}{k}$ for some constant $\eta > \dfrac{1}{2\mu}$. 
+\[
+ r_{k+1} \leq (1-2\mu\frac{\eta}{k})r_k + \frac{1}{2}\frac{\eta^2}{k^2}M^2.
+\]
+Moreover, 
+\begin{equation}
+r_k\leq \frac{1}{2k}B(\eta) \qquad\mbox{for} \quad B(\eta)=\max\left\lbrace\frac{\eta^2M^2}{2\mu\eta-1},\|\theta_1-\theta_\ast\|^2\right\rbrace.
+\label{eq:nest3}
+\end{equation}
+For simplicity, let us say, $\|\theta_1-\theta_\ast\|^2 \geq \frac{\eta^2M^2}{2\mu\eta-1}$ so that the above bound becomes $r_k\leq \frac{1}{2k}\|\theta_1-\theta_\ast\|^2$.  Suppose \eqref{eq:nest3} holds for $k$.  Then,
+\begin{align*}
+ r_{k+1} &\leq (1-2\frac{1}{k}\eta\mu)r_k + \frac{1}{2}\frac{1}{k^2}\eta^2M^2 \leq (1-2\frac{1}{k}\eta\mu)\frac{1}{2k}\|\theta_1-\theta_\ast\|^2 + \frac{1}{2}\frac{1}{k^2}\eta^2M^2 \\
+ &\leq \frac{1}{2}\left[(1-2\frac{1}{k}\eta\mu)\frac{1}{k}-(2\mu\eta-1)\frac{1}{k^2}\right]\|\theta_1-\theta_\ast\|^2 = \frac{1}{2}\frac{k-1}{k^2}\|\theta_1-\theta_\ast\|^2 \\
+ &\leq \frac{1}{2} \frac{k-1}{k^2-1} \|\theta_1-\theta_\ast\|^2 = \frac{1}{2} \frac{1}{k+1} \|\theta_1-\theta_\ast\|^2.
+\end{align*}
+So, \eqref{eq:nest3} holds for $k\geq 2$ by induction.  
+
+\noindent
+Finally, we compute expectations of the both sides of \eqref{eq:nest2}, and place the bound \eqref{eq:nest3} in.
+\[
+ E^{\theta_k}[F(\theta_k)] \leq F(\theta_\ast) + L\frac{1}{2}E^{\theta_k}[\|\theta_k-\theta_\ast\|^2] \ \Rightarrow \ E^{\theta_k}[F(\theta_k)] \leq F(\theta_\ast) \leq L \frac{1}{2k}B(\eta).
+\]
+\bigskip
+
+We summarize the results as follows \textcolor{blue}{(added by Jorge)}:
+\begin{theorem}
+Consider the iteration
+\[    \theta_{k+1}= \theta_k - \frac{\eta}{k} \hat \nabla F(\theta_k)\]
+where $\eta > 1/2\mu$, and $\mu$ is the strong convexity constant. Then
+\[
+   \mathbb{E}[F(\theta_k) - F(\theta_*)] \leq \frac{1}{2} L \mathbb{E}[ \| \theta_k - \theta_* \|_2^2 
+   \leq \frac{1}{2 k} B(\eta)
+   \]
+   with
+   \[
+   B(\eta)=\max\left\lbrace\frac{\eta^2M^2}{2\mu\eta-1},\|\theta_1-\theta_\ast\|^2\right\rbrace.
+   \]
+\end{theorem}
+\medskip
+
+Now, the choice $\eta= 1/\mu$ minimizes $B(\eta)$. Using this value, we have that the first term in square brackets becomes $B(\eta^*)=  M^2/\mu^2$.
+
+
+\bigskip
+
+\subsection{Nemirovski et al\cite{nemirovski:2009} result without a strong convexity parameter}
+
+Recall from the previous section that
+\[
+ r_{k+1} \leq r_k -\alpha_k E^{\theta_k}[(\theta_k-\theta_\ast)^T\nabla F(\theta_k)] + \frac{1}{2}\alpha_k^2M^2.
+\]
+
+Convexity of $F$ implies
+\[
+ F(\theta_\ast) \geq F(\theta_k) + (\theta_\ast-\theta_k)^T\nabla F(\theta_k);
+\]
+so,
+\[
+ E[F(\theta_k)-F(\theta_\ast)] \leq  E[(\theta_k-\theta_\ast)^T\nabla F(\theta_k)] \leq \frac{1}{\alpha_k}\left(r_k-r_{k+1}+\frac{1}{2}M^2\alpha_k^2\right).
+\]
+
+\bigskip
+
+Now, summing up those inequalities for $k=1,\dots,N$ we get
+\[
+ \sum_{k=1}^N \alpha_k E[F(\theta_k)-F(\theta_\ast)] \leq r_1 - r_{N+1} + \frac{1}{2}M^2\sum_{k=1}^N\alpha_k^2 \leq r_1 + \frac{1}{2}M^2\sum_{k=1}^N\alpha_k^2.
+\]
+
+Then, defining $\displaystyle\beta_k=\frac{\alpha_k}{\sum_{j=1}^N\alpha_j}$ and the convexity of $F$ yields
+\[
+ E\left[F\left(\sum_{k=1}^N\beta_k\theta_k\right)-F(\theta_\ast)\right] \leq \sum_{k=1}^N E[\beta_kF(\theta_k)-F(\theta_\ast)] \leq \frac{1}{\sum_{k=1}^{N}\alpha_k}\left(r_1+\frac{1}{2}M^2 \sum_{k=1}^{N}\alpha_k^2\right)
+\]
+    
+For $\alpha_k = \alpha$, the right hand side becomes $\frac{1}{N\alpha}\left(r_1+\frac{1}{2}M^2 N\alpha_k^2\right)$, which is minimized for $\alpha = \displaystyle\frac{2r_1}{M\sqrt{N}}$.  For this optimal choice of $\alpha$, the bound becomes $\displaystyle\frac{2r_1M}{\sqrt{N}}$.
+
+         
+\bigskip
+
+\subsection{Hogwild steplength strategy \cite{hogwild}}
+
+
+\bigskip
+
+\subsection{Other results in the literature}
+
+(Include all the results mentioned in Bach talk.)
+
+
+\newpage%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Quasi-Newton Extensions}
+
+\subsection{Repeating the analysis in \cite{nemirovski:2009} for a scaled step.}
+Consider the iteration
+\[
+ \theta_{k+1} = \theta_k - \frac{\eta}{k}H_k \hat{\nabla F}(\theta_k).
+\]
+
+Suppose $\exists \sigma : \sigma_k \leq \sigma$ and $\exists \lambda : \lambda_k \leq \lambda$, where $\sigma_k = \lambda_{\max}(H_k)$ and $\lambda_k = \lambda_{\min}(H_kQ_\ast)$, respectively.
+
+Suppose also $\nabla F(\theta_k)\approx Q_\ast (\theta_k-\theta_\ast)$, and $\exists M$ such that $E\|\hat{\nabla F(\theta_k)}\|^2\leq M^2$ for all $k$.
+
+\bigskip
+
+\noindent
+Then, the $\dfrac{1}{k}$ convergence rate result holds for the bound 
+\[
+  C = \max \left\lbrace \frac{1}{2}\frac{\eta^2M^2\sigma^2}{2\lambda\eta-1}, \frac{1}{2}\|\theta_1-\theta_\ast|^2 \right\rbrace;
+\]
+i.e. $\dfrac{1}{2}\|\theta_k-\theta_\ast\|^2 \leq \dfrac{C}{k}$ provided that $\eta\lambda > \dfrac{1}{2}$.
+
+\bigskip
+
+\noindent
+Note that:
+\begin{itemize}
+ \item This does not cover the case when $H_k$ is stochastic.
+ \item With the assumption
+\[
+ <\nabla F(\theta_k) - \nabla F(\theta_\ast), \theta_k-\theta_y >_{H_k} \geq \mu \|\theta_k-\theta_\ast\|_{H_k}^2, \ \mbox{ for all } \theta_k,
+\]
+we could get rid of $Q_\ast$.
+ \item Extending the assumption on the variance for a scaled norm, i.e. $E\|\hat{\nabla F(\theta_k)}\|_{H_k^2}^2\leq M_H^2$ for all $k$, the $\sigma^2$ term in $C$ would dissapear.
+\end{itemize}
+
+\bigskip
+
+\subsection{Incremental Gauss-Newton for Least Squares \cite{bertsekas} }
+
+
+\bigskip
+
+\subsection{Employing the Dennis-More condition}
+
+\begin{verbatim}
+Hi Figen
+I think the really tricky question is whether a Dennis-More like condition along 
+some direction implies that a good step is taken, i.e. does 
+         ||(B_k - Hessian f(x_k)) s||/||s|| <= epsilon 
+imply that some step computed using B_k is really good. I tried to show this using 
+s = x_k - x_{k-L} , but I could not show this guaranteed a good step.
+
+I think this will only work if s = x_{k+1} - x_k .  Then we can show the step 
+from x_k to x_{k+1} is good. I think we should get this point established before 
+working on showing that the update guarantees our Dennis-More condition.
+
+Now if we update every L iterations we only know that one out of every L 
+iterations is good, In the deterministic case this means we have L-step superlinear 
+convergence, which is good. In the stochastic case, things are less clear. It seems 
+to me that, if we know the other steps do not make things worse, a Murata-type 
+analysis might give ||x_k-x*|| <= constant /(k/L), which would be better than 
+||x_k-x*|| <= const*cond(H)/k, for reasonable values of L.
+\end{verbatim}
+
+\bigskip
+
+\subsection{The Scaling Matrix in the Stochastic Setting}
+
+In step \ref{eq:iter}, let $H_k$ be computed by using information from iterations $1,\dots,k-1$.  So, it is a random variable that depends on $z_1,\dots,z_{k-1}$ like $\theta_k$.  At iteration $k$ (iteration to compute $\theta_{k+1}$), only $\hat{\nabla F_k}$ depends on $z_k$.  Following the lines of analysis in previous sections, this yields the following.  Recall that $E^{z_k}[\hat{\nabla F_k}]=\nabla F_k$.
+\[
+ \frac{1}{2}E^{\theta_{k+1}}\|\theta_{k+1}-\theta_\ast\|^2 = \frac{1}{2}E^{\theta_k}\|\theta_k-\theta_\ast\|^2 -\alpha_kE^{\theta_k}[\nabla F_k^TH_k(\theta_k-\theta_\ast)] + \alpha_k^2 E^{\theta_k}[tr(H_kG_kH_k)].
+\]
+Placing $\nabla F_k = Q_\ast(\theta_k-\theta_\ast)+o(\|\theta_k-\theta_\ast\|^2)$, and assuming that $\|H_k\|$ is bounded,
+\small
+\begin{align*}
+ \frac{1}{2}E\|\theta_{k+1}-\theta_\ast\|^2 &= \frac{1}{2}E\|\theta_k-\theta_\ast\|^2 -\alpha_kE\left[\left((\theta_k-\theta_\ast)^TQ_\ast+o(\|\theta_k-\theta_\ast\|^2)\right) H_k(\theta_k-\theta_\ast)\right] + \alpha_k^2 E[tr(H_kG_kH_k)]\\
+ & E\left[(\theta_k-\theta_\ast)^T\left(\frac{1}{2}-\alpha_kQ_\ast H_k\right)(\theta_k-\theta_\ast)\right]\|\theta_k-\theta_\ast\|^2+ \alpha_k^2 E[tr(H_kG_kH_k)]\\
+\end{align*}
+\normalsize
+
+
+\newpage%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Meeting with Leon Bottou 6/11/2014}
+Leon seems to be have complete mastery of the convergence results for first and second-order methods. I will write these notes little by little, as there is much information to be recorded; we can use them as a reference for our google+ conversations.
+
+\medskip\noindent\emph{Big Picture}
+Leon has arrived at the following conclusions about 4 regimes.
+\begin{enumerate}
+\item For small well conditioned problems many methods work well
+\item For small ill conditioned problems use Average SGD (ASGD)
+\item For large well conditioned problems use SGD
+\item For large ill conditioned problems $\cdots$ nobody knows.
+\end{enumerate}
+He supports these observations with the numerical tests in his slides.
+
+\medskip\noindent\emph{Does it make sense to use second order information?} Yes (see the conclusions in the slides) except that the cost is too high for large dimensional problems.
+
+\medskip\noindent\emph{Averaging (ASGD)}
+He states that the asymptotic convergence result for Polyak-Rupper is in fact independent of the condition number. He has a detailed argument for the reason for this based on a dynamic system analysis (see his slides).  However, he is suspicious (like Richard and me) about the correct interpretation of this result. He argues that if it were real, one would be able to solve linear systems in $O(n^2)$ as opposed to $O(n^3)$ operations. The ``danger'' of asymptotic analysis is that one does not know how many iterations it will be needed to reach the asymptotic regime. He feels that more analysis is needed and considers the following two papers as the best at this point: Xu 2010 and Bach-Moulines 2010.
+
+In practice, it may be best to do one epoch of SGD before starting ASGD, or even start with a batch method. The latter option is unusual, and I believe that in his experiments ASGD starts after the first epoch.
+
+ He considers Averaging a very important algorithm but is aware about the loss of sparsity, say in the context of the RDA algorithm of Xiao. He recommends looking at the new paper by Xiao that proposes a replacement for RDA based on SAG-like ideas that is better suited for sparsity (and is an improvement over SAG).
+ 
+ Geoff Hinton recently told me (6/10/2014) that he is still happy with ASGD, ``Its one drawback is that when you are learning a big model and fiddling with learning rate and momentum and L2 regularization etc by hand,  the parameter averaging for evaluation gives a bigger delay in seeing the effect of your recent intervention.''
+
+\medskip\noindent\emph{SGD}
+Although in theory its convergence constant depends on the condition number squared, Leon's experience is that in practice it is dependent only on the condition number. He uses the following rule to determine the steplength
+\[    \eta_t = \eta_0(1+\eta_0 \lambda t)^{-1}
+\]
+where $\lambda$ is the regularization parameter (for $\ell_2$ regularization).
+The only tunable parameter is $\eta_0$ instead of choosing constant values for different regimes. (Some people start SGD with a constant value and later switch to $1/t$ regime). For ASGD he uses
+\[    \eta_t = \eta_0(1+\eta_0 \lambda t)^{-0.75}
+\]
+
+\medskip\noindent\emph{SAG} He is very interested in SAG and has experimented with it in detail. He knows the underlying theory well. He has observed that if one starts it with a round of SGD the performance is more stable but not preferable to the strategy used by Schmidt, which in the beginning goes away from the solution but then advances more quickly toward the solution. He explains this by noting that by starting far from the solution, the algorithm avoids the area of "high ill conditioning" where SGD leads. In his experience SAG is as good as advertised in terms of training error, but not testing error. For the latter he little if no improvement.
+
+\medskip\noindent\emph{$\ell_{1/2}$ Norm} Leon has mentioned the following strategy to me more than once: solve a problem with $\ell_1$ regularization, then switch to the $\ell_{1/2}$ norm and get a sparser solution. This brings up the question of the best way to improve upon $\ell_1$ solutions. 
+
+\medskip\noindent\emph{AdaGrad, Incremental Gauss-Newton}. Leon does not have any insights about AdaGrad (whether it is justified, a good idea, etc). Same thing about Incremental Gauss-Newton. He remarked that if you add almost any sensible diagonal matrix the results will improve upon SGD.
+
+
+\newpage%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{To Do \& Questions}
+\begin{itemize}
+ \item Check incremental gradient theory -- it should apply to the finite data set problem, so should be comparable to Bottou\&Bousquet results?  
+ \item Study Polyak-Juditsky analysis -- The variance they prove for iterate averaging is larger than the optimal scenario variance in Murata paper by a factor of $\sqrt{t}$?
+ \item Fix the typos regarding big O and little o uses in Section 2.1. 
+\end{itemize}
+
+\newpage%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{BFGS Analysis}
+
+Since the stochastic quasi-Newton method does not perform BFGS updates at each iteration, we need to make sure that the global and rate of convergence analysis still holds \emph{in the deterministic} analogue of the method.
+
+Specifically, the stochQN algorithm we define $s$ to be the difference between average iterates $s= \hat \theta_I -\hat \theta_J$. To make things simpler suppose we consider, instead, that the update is being done every $L$ iterations using the composite step, i.e. $s_1= \theta_L - \theta_0$, $s_2= \theta_{2L} -\theta_L$, etc.
+
+\medskip\noindent\emph{Question 1}. Is a deterministic BFGS method that updates the Hessian approximation every $L$ iteration in that manner $L$-step superlinearly convergent? 
+
+\medskip To investigate this question we decided to look at the paper ``A Tool for the Analysis ...''. This is what we know so far. In trying to prove global convergence, we immediately get into trouble because the results in that paper are written for the case when the information used for the update is given by the preceding step. If we look at updates based on composite steps, the effect of intermediate steps cannot be estimated. Therefore, for the global convergence analysis we decided to change the algorithm and update only along the last direction generated by the algorithm (as in the classical case), and then freeze that matrix for the next $L$ iterations. Stefan is working on verifying that the proof goes through. That modification could clearly be made in Sammy's algorithm with no negative repercussions.
+
+In terms of local convergence, there is a chance that the composite step will give superlinear convergence. Richard can fill you in about the state of the analysis but from what I can see it is short and correct.
+
+After \emph{Question 1} has been resolved we can start considering the stochastic setting.
+
+
+
+\newpage%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\bibliographystyle{plain}
+\bibliography{stochastic}
+
+\end{document}

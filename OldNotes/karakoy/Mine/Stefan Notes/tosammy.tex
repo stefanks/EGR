@@ -1,0 +1,60 @@
+\documentclass[12pt]{article} 
+\usepackage{amsmath,amsfonts,amssymb} 
+\usepackage[usenames,dvipsnames]{xcolor} 
+\usepackage{hyperref} 
+\usepackage{fullpage} 
+\usepackage{empheq} 
+\usepackage{pgfplots} 
+\usepackage{float}
+\usepackage{color}
+\usepackage{multirow}
+
+
+
+\usetikzlibrary{external}
+\tikzexternalize[prefix=paperOnImpFigures/,figure list=true] 
+
+\begin{document}
+
+In the following table we show the generalization function values for the three problems with the different stepsize strategies. On the first line of each cell we display the function value achieved (after work amount equivalent to the figures in the previous sections (43, 5, and 2 passes over data)). The second line shows $a$, which is the initial stepsize. The best function values for each line are bold. The best for each problem are in blue. 
+
+\begin{tabular}{|c|c|cc|cc|}
+\hline
+	&&\multicolumn{2}{ |c| }{$a/k$}  &  \multicolumn{2}{ |c| }{$a$} \\
+	&& gg & sqn & gg & sqn \\
+\hline
+\multirow{10}{*}{Yoram} & gradient batch=1 & 0.33112 & 0.27869 & \textbf{0.025098} & 0.041343\\
+& $a=$ & 0.25 & 0.25 & 0.015625 & 0.00097656\\
+& gradient batch=2 & 0.20157 & 0.14361 & 0.027666 & \textbf{0.023134}\\
+& $a=$ & 1 & 0.5 & 0.03125 & 0.00097656\\
+& gradient batch=5 & 0.16883 & 0.097397 & \textbf{0.027306} & 0.027766\\
+& $a=$ & 1 & 0.5 & 0.125 & 0.0039062\\
+& gradient batch=10 & 0.12336 & 0.030233 & 0.025444 & \textbf{0.020283}\\
+& $a=$ & 4 & 1 & 0.125 & 0.00097656\\
+& gradient batch=50 & 0.079928 & \textcolor{blue}{\textbf{0.012097}} & 0.026655 & 0.017143\\
+& $a=$ & 8 & 2 & 1 & 0.0078125\\
+\hline
+\multirow{10}{*}{Speech} & gradient batch=1 & 3.2753 & 1.9977 & \textbf{1.8441} & 2.0632\\
+& $a=$ & 0.5 & 1 & 0.00097656 & 0.0019531\\
+& gradient batch=2 & 3.2523 & 1.9336 & \textbf{1.8422} & 2.0085\\
+& $a=$ & 0.5 & 2 & 0.0019531 & 0.0039062\\
+& gradient batch=5 & 2.9073 & 1.8567 & \textbf{1.8396} & 1.9291\\
+& $a=$ & 1 & 4 & 0.0039062 & 0.0078125\\
+& gradient batch=10 & 2.755 & \textbf{1.8367} & 1.844 & 1.8872\\
+& $a=$ & 2 & 4 & 0.0078125 & 0.0078125\\
+& gradient batch=50 & 2.1842 & \textcolor{blue}{\textbf{1.8332}} & 1.8442 & 1.8409\\
+& $a=$ & 8 & 16 & 0.03125 & 0.0078125\\
+\hline
+\multirow{10}{*}{RCV1}& gradient batch=1 & 0.28619 & 0.15758 & \textbf{0.13224} & 0.16153\\
+& $a=$ & 2 & 4 & 0.0039062 & 0.00024414\\
+& gradient batch=2 & 0.27395 & 0.14859 & \textbf{0.13264} & 0.15313\\
+& $a=$ & 2 & 4 & 0.015625 & 0.00097656\\
+& gradient batch=5 & 0.25892 & 0.14129 & \textcolor{blue}{\textbf{0.13179}} & 0.14647\\
+& $a=$ & 2 & 2 & 0.03125 & 0.0019531\\
+& gradient batch=10 & 0.23635 & \textbf{0.13523} & 0.13527 & 0.14129\\
+& $a=$ & 4 & 2 & 0.0625 & 0.0019531\\
+& gradient batch=50 & 0.20431 & \textbf{0.1329} & 0.13428 & 0.1349\\
+& $a=$ & 8 & 4 & 0.25 & 0.0039062\\
+\hline
+\end{tabular}
+\end{document} 
