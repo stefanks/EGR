@@ -1,4 +1,3 @@
-*.pdf
 *.log
 *.dropbox
 *.lb
@@ -14,4 +13,10 @@ karakoy/*
 *.svg
 *.synctex
 DefenseSlides/*
-AlmostThere/
+AlmostThere/*
+Figen/*
+Backup/*
+Ind/*
+OldNotes/*
+Relevant Papers/*
+Slides/*
