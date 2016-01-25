@@ -1,0 +1,96 @@
+\begin{thebibliography}{10}
+
+\bibitem{babanezhad2015stop}
+Reza Babanezhad, Mohamed~Osama Ahmed, Alim Virani, Mark Schmidt, Jakub
+  Kone{\v{c}}n{\`y}, and Scott Sallinen.
+\newblock Stop wasting my gradients: Practical {SVRG}.
+\newblock {\em Advances in Neural Information Processing Systems (NIPS)}, 2015.
+
+\bibitem{bertsekas2011incremental}
+Dimitri~P Bertsekas.
+\newblock Incremental gradient, subgradient, and proximal methods for convex
+  optimization: A survey.
+\newblock {\em Optimization for Machine Learning}, pages 1--38, 2010.
+
+\bibitem{dss}
+R.~H. Byrd, G.~M. Chin, J.~Nocedal, and Y.~Wu.
+\newblock Sample size selection in optimization methods for machine learning.
+\newblock {\em Mathematical Programming}, 134(1):127--155, 2012.
+
+\bibitem{NIPS2014_5258}
+Aaron Defazio, Francis Bach, and Simon Lacoste-Julien.
+\newblock Saga: A fast incremental gradient method with support for
+  non-strongly convex composite objectives.
+\newblock In Z.~Ghahramani, M.~Welling, C.~Cortes, N.D. Lawrence, and K.Q.
+  Weinberger, editors, {\em Advances in Neural Information Processing Systems
+  27}, pages 1646--1654. Curran Associates, Inc., 2014.
+
+\bibitem{defazio2014finito}
+Aaron~J Defazio, Tib{\'e}rio~S Caetano, and Justin Domke.
+\newblock Finito: A faster, permutable incremental gradient method for big data
+  problems.
+\newblock {\em arXiv preprint arXiv:1407.2710}, 2014.
+
+\bibitem{FS2011}
+M.P. Friedlander and M.~Schmidt.
+\newblock Hybrid deterministic-stochastic methods for data fitting.
+\newblock {\em Arxiv preprint arXiv:1104.2373}, 2011.
+
+\bibitem{frostig2014competing}
+Roy Frostig, Rong Ge, Sham~M Kakade, and Aaron Sidford.
+\newblock Competing with the empirical risk minimizer in a single pass.
+\newblock {\em arXiv preprint arXiv:1412.6606}, 2014.
+
+\bibitem{johnson2013accelerating}
+Rie Johnson and Tong Zhang.
+\newblock Accelerating stochastic gradient descent using predictive variance
+  reduction.
+\newblock In {\em Advances in Neural Information Processing Systems}, pages
+  315--323, 2013.
+
+\bibitem{mairal2015incremental}
+Julien Mairal.
+\newblock Incremental majorization-minimization optimization with application
+  to large-scale machine learning.
+\newblock {\em SIAM Journal on Optimization}, 25(2):829--855, 2015.
+
+\bibitem{Nesterov:09}
+Yurii Nesterov.
+\newblock Primal-dual subgradient methods for convex problems.
+\newblock {\em Math. Program.}, 120(1):221--259, 2009.
+
+\bibitem{2014pasglyetal}
+R.~Pasupathy, P.~W. Glynn, S.~Ghosh, and F.~Hahemi.
+\newblock How much to sample in simulation-based stochastic recursions?
+\newblock 2014.
+\newblock Under Review.
+
+\bibitem{PolJud92}
+B.T. Polyak and A.B. Juditsky.
+\newblock Acceleration of stochastic approximation by averaging.
+\newblock {\em SIAM Journal on Control and Optimization}, 30:838, 1992.
+
+\bibitem{RobMon51}
+H.~Robbins and S.~Monro.
+\newblock A stochastic approximation method.
+\newblock {\em The Annals of Mathematical Statistics}, pages 400--407, 1951.
+
+\bibitem{roux2012stochastic}
+Nicolas~L Roux, Mark Schmidt, and Francis~R Bach.
+\newblock A stochastic gradient method with an exponential convergence rate for
+  finite training sets.
+\newblock In {\em Advances in Neural Information Processing Systems}, pages
+  2663--2671, 2012.
+
+\bibitem{ruppert1988efficient}
+David Ruppert.
+\newblock Efficient estimations from a slowly convergent robbins-monro process.
+\newblock Technical report, Cornell University Operations Research and
+  Industrial Engineering, 1988.
+
+\bibitem{shalev2013stochastic}
+Shai Shalev-Shwartz and Tong Zhang.
+\newblock Stochastic dual coordinate ascent methods for regularized loss.
+\newblock {\em The Journal of Machine Learning Research}, 14(1):567--599, 2013.
+
+\end{thebibliography}
