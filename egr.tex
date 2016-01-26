@@ -67,12 +67,10 @@ We propose an algorithm for minimizing expected risk $F$ that shares some proper
 \section{Introduction}
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 
-The stochastic gradient method of Robbins and Monro \cite{RobMon51} is the algorithm of choice for optimization problems arising in many large-scale machine learning applications.  At the onset of the optimization procedure, when the number of processed datapoints is relatively small, it often outperforms most other methods proposed in the literature. However, to achieve such efficient initial behavior,  the steplength must be selected in a way that prevents fast progress in later iterations. This is due to the high variance of the stochastic gradients, which must be controlled with a diminishing steplength. Several algorithms have been proposed to address this limitation, including methods that average the iterates \cite{PolJud92,ruppert1988efficient, Nesterov:09}, dynamic sampling methods \cite{dss,FS2011,2014pasglyetal} and aggregated gradient methods  \cite{roux2012stochastic,johnson2013accelerating,shalev2013stochastic,mairal2015incremental,defazio2014finito,frostig2014competing,NIPS2014_5258}.
-The latter focus on the finite sum problem and enjoy a linear rate of convergence for strongly convex problems, whereas the stochastic gradient method (in this case, the incremental gradient method) only has a sublinear rate of convergence. 
+The stochastic gradient method of Robbins and Monro \cite{RobMon51} is the algorithm of choice for optimization problems arising in many large-scale machine learning applications.  At the onset of the optimization procedure, when the number of processed datapoints is relatively small, it often outperforms most other methods proposed in the literature. However, to achieve such efficient initial behavior, the steplength must be chosen to be sufficiently large. This prevents the algorithm from converging to a good solution later on. This is due to the high variance of the stochastic gradients, which must be controlled with a diminishing steplength. Several algorithms have been proposed to address this limitation, including methods that average the iterates \cite{PolJud92,ruppert1988efficient, Nesterov:09}, dynamic sampling methods \cite{dss,FS2011,2014pasglyetal} and aggregated gradient methods  \cite{roux2012stochastic,johnson2013accelerating,shalev2013stochastic,mairal2015incremental,defazio2014finito,frostig2014competing,NIPS2014_5258}.
+The latter focus on the finite sum problem and enjoy a linear rate of convergence for strongly convex problems, whereas the stochastic gradient method (in this case, the incremental gradient method) only has a sublinear rate of convergence.  
 
-In this paper, we propose an algorithm that shares some characteristics with the aggregated gradient methods as well as with dynamic sampling methods (sometimes called batching methods). Unlike aggregated gradient methods, which are designed to revisit the training set multiple times (perhaps dozens of times), the algorithm proposed here is well suited for problems involving an extremely large training set, and where one (or a few) passes over the data suffice to produce an acceptable solution. The method is quite general; it includes as special cases  the classical stochastic gradient method, the aggregated gradient methods SAG \cite{NIPS2014_5258} and SAGA \cite{NIPS2014_5258} and  dynamic sampling methods \cite{dss,FS2011,2014pasglyetal}. 
-
-The goal  of this work is the design of an algorithm that achieves good testing error --- not just good training error --- a goal it shares with the methods recently proposed in \cite{frostig2014competing,babanezhad2015stop}. {\color{blue} The  novelty of our analysis is that it describes the behavior of a method that  updates old gradients \emph{and also}  increases the batch size at each iteration. This is of interest in its own right due to the generality of the framework, and is also of practical value as an algorithm that strikes the right balance between these two noise reducing techniques could prove to be  effective in machine learning applications.}
+In this paper, we propose an algorithm that shares some characteristics with the aggregated gradient methods mentioned above, but is more general and flexible. Unlike those methods, which are designed to revisit the training set multiple times (perhaps dozens of times), the algorithm proposed here is well suited for problems involving an extremely large training set, and where one (or a few) passes over the data suffice to produce an acceptable solution. The method is quite general; it includes as special cases  the classical stochastic gradient method, the aggregated gradient methods SAG \cite{NIPS2014_5258} and SAGA \cite{NIPS2014_5258} and  dynamic sampling methods \cite{dss,FS2011,2014pasglyetal}. The goal  of this work is the design of an algorithm that achieves good testing error --- not just good training error --- a goal it shares with the methods recently proposed in \cite{frostig2014competing,babanezhad2015stop}.The  novelty of our analysis is that it describes the behavior of a method that  updates old gradients \emph{and also}  increases the batch size at each iteration. This is of interest in its own right due to the generality of the framework, and is also of practical value as an algorithm that strikes the right balance between these two noise reducing techniques could prove to be  effective in machine learning applications.
 
 
 The problem of interest is stated as
@@ -80,7 +78,7 @@ The problem of interest is stated as
 	\min_{x \in \mathbb{R}^n} F(x) = \mathbb{E}[ f(x;\xi)] ,
 \end{equation}
 where $\xi$ is a random variable with distribution $P$ and $f(\cdot\,; \xi): \mathbb{R}^n \rightarrow \mathbb{R}$  is a smooth function. In machine learning applications, $f$ is the composition of a  loss function and a prediction function parametrized by a vector $x$. 
-For purposes of analysis, we assume that $f(\cdot\,; \xi)$ is strongly convex, but the algorithm is  well-defined and applicable to non-convex problems. 
+For purposes of analysis, we assume that $f(\cdot\,; \xi)$ is strongly convex, but the algorithm is practical on non-strongly convex problems, and well-defined even for non-convex problems. 
 
 The stochastic gradient (SG) method for solving problem \eqref{risk} is given by 
 \begin{equation}   \label{sgdm}
@@ -667,7 +665,7 @@ Table~\ref{tab1},  lists five classes of methods that can be generated by the EG
   		\hline {Only-update}  &$ 
   		\begin{array}{ll}
   			m & \mbox{ if $k=0$} \\
-  			0 & \mbox{ if $k>0$} 
+  			0 & \mbox{ if $k>0$}
   		\end{array}
   		$& $m$ & $0$& * & * \\
   		\hline {EGR-lin}  &$r$& $rk$ & $\frac{1}{k}$ &$r$ &$\frac{1}{k}$  \\
@@ -675,9 +673,9 @@ Table~\ref{tab1},  lists five classes of methods that can be generated by the EG
   		\hline {EGR-exp}  &$ 
   		\begin{array}{ll}
   			1 & \mbox{ if $k=0$} \\
-  			\frac{1}{r-1}\left(1+\frac{1}{r-1}\right)^{k-1} & \mbox{ if $k>0$} 
+  			r\left(1+r \right)^{k-1} & \mbox{ if $k>0$} 
   		\end{array}
-  		$& $\left(1+\frac{1}{r-1}\right)^{k-1}$ & $\frac{1}{r-1}$&$\frac{1}{r-1}\left(1+\frac{1}{r-1}\right)^{k-1} $ &$\frac{1}{r-1}$\\
+  		$& $\left(1+r\right)^{k-1}$ & $r$&$r\left(1+r\right)^{k-1} $ &$r$\\
   		\hline
   	\end{tabular}
   \end{center}  
@@ -694,7 +692,7 @@ Table~\ref{tab1},  lists five classes of methods that can be generated by the EG
 
 \medskip\noindent{\texttt{egr-quad}}  lets the number of replacements and new samples to grow linearly at each iteration. This results in a  quadratic growth in $t_k$.
 
-\medskip\noindent{\texttt{egr-exp}} forces the sequence $\{ t_k \}$ to grow by a fixed factor at every iteration. This strategy starts with a large {\color{blue}[JN: why large?]} initial batch of size $c(r-1)$ for $u_0$, and at each iteration resamples a fixed percentage of the number of seen gradients and samples an equivalent number of unseen gradients, thus leading to an exponential growth rate of $t_k$. 
+\medskip\noindent{\texttt{egr-exp}} forces the sequence $\{ t_k \}$ to grow by a fixed factor at every iteration. This strategy starts with an initial batch of size 1 for $u_0$, and at each iteration resamples a fixed percentage of the number of seen gradients and samples an equivalent number of unseen gradients, thus leading to an exponential growth rate of $t_k$. 
  
 As stated, Algorithm \ref{alg1} computes a sum over all $\{1, \ldots ,t_k \} $ at every iteration; see \eqref{ysag} and \eqref{ysaga}. This costly computation can be avoided by storing the current sum, and updating it accordingly at every iteration. An efficient implementation of the EGR method is discussed in \cite{stefan-thesis} and the corresponding software, written in Julia, is available at \url{https://github.com/stefanks/EGR.jl}.
 
@@ -710,11 +708,11 @@ As stated, Algorithm \ref{alg1} computes a sum over all $\{1, \ldots ,t_k \} $ a
   		[1] 
   		\State $T= 0$, $k = 0$, $A = 0$
   		\Loop 
-  		\State $U_k =\{T+1,\ldots,T+u_k \}$ 
-  		\State For all $j \in U_k$ draw $\xi^j$ from the distribution $P$ 
-  		\State $S_k = \mbox{sample of } s_k \mbox{ indices from }\{ 1, \ldots ,T\}$ uniformly
+  		\State $U =\{T+1,\ldots,T+u_k \}$ 
+  		\State For all $j \in U$ draw $\xi^j$ from the distribution $P$ 
+  		\State $S = \mbox{sample of } s_k \mbox{ indices from }\{ 1, \ldots ,T\}$ uniformly
   		\State $B = \sum_{j \in S} g^j$ 
-  		\State $g^j =  \nabla f^j(x) \mbox{ for all } j \in S\cup U$ \textcolor{green}{[Figen: The indices of $S$ and $U$ are missing]}
+  		\State $g^j =  \nabla f^j(x) \mbox{ for all } j \in S\cup U$
   		\State 
   		\begin{equation}
   			y =  \frac{\frac{s_k}{T} A - B +\sum_{j \in S\cup U}g^j}{s_k+u_k} \mbox{ EGR-SAGA } \; \mbox{ or } \; y =  \frac{A - B +\sum_{j \in S\cup U}g^j}{T+u_k} \mbox{ EGR-SAG } 
@@ -823,13 +821,22 @@ A description of the chunking idea for the original SAG and SAGA algorithms, as 
   
 \section{Numerical Tests} \label{numerical}
  
-In this section we compare the performance of the EGR method against other established methods, and study the effect of different  sequences for $\{u_k\}, \{s_k\}$. In our tests, we run the EGR method (and competing methods) until the number of gradients it has sampled reaches the size of the complete training set.  This experimental setting allows us to make conclusions about the performance of our algorithm when used on a problem with a very large training set, and in the the \emph{oracle} or \emph{streaming} cases,  where new samples from the distribution $P$ are available on demand. 
-%Both cases are of interest in practical applications. 
-Therefore, a direct comparison of EGR with  SAG and SAGA is not appropriate, since any iteration of these methods requires pre-computed sample gradients $\nabla f^i$ for each function $f^i$ where $i \in  \{1 , \ldots, m \} $. Instead, we compare with the Stochastic Gradient (SG) and the Dynamic Sample Size (DSS) methods, as well as with the initialization heuristics of SAG and SAGA discussed in section~\ref{themethod}, which we call SAG-init and SAGA-init; both can be viewed as methods for minimizing the expected risk $F$. 
+ 
+ The purpose of this section is to qualitatively measure the performance of EGR in the early iterations of the algorithm, when the number of evaluated sample gradients is smaller than the number of available training points $m$, i.e. the single-epoch mode. This experimental mode allows us to make conclusions about the performance of our algorithm when used on a problem with a very large training set, and the "oracle" or "streaming" case,  where new samples from $P$ are available on demand. Both cases are common in practice. Therefore, a direct comparison of EGR with aggregated gradient methods such as SAG and SAGA is not appropriate, since any iteration of these methods requires pre-computed sample gradients $\nabla f^i$ for each function $f^i$ where $i \in  \{1 , \ldots, m \} $. Instead, we test different growth sequences of EGR, including the Stochastic Gradient (SG) and the Dynamic Sample Size (DSS) methods, both special cases of EGR.
 
-The Streaming SVRG method  is also well suited in our experimental setup. However, we were not able to select parameters that would make this algorithm (as described in \cite{frostig2014competing}) competititve. 
-%Two other popular algorithms that are appropriate for this comparison are SDA and FINITO. Scaling algorithms such as SQN and ADA-GRAD are outisde the scope of this paper.
-The \texttt{SAG-init} and \texttt{SAG-init} methods, are as Algorithm~\ref{alg:sagInit}, \textcolor{green}{[Figen: We can refer to SAG and SAGA papers, or put these algorithms to the appendix.]}
+ The EGR algorithm closely resembles the so-called \emph{initialization heuristic} of SAG. This heuristic is mentioned in \cite{NIPS2014_5258} alongside its full counterpart, as a way to gradually grow the stored number of datapoints in SAG. No theoretical support is given, and the paper claims that simply running SG instead gives nearly identical performance. A possible explanation is that the function value is not evaluated at the end of the initialization phase, but instead, the performance of the later iterations is compared. We do not claim to dismiss this statement: rather, we draw new conclusions on the efficacy of using this heuristic as a stand-alone algorithm. 
+ 
+ The \texttt{SAG-init} method, given as Algorithm~\ref{alg:sagInit}, works as follows: at each iteration a randomly sampled datapoint is chosen from the full dataset, the corresponding sample gradient is evaluated, and this gradient replaces the old one only if it has been sampled previously. Otherwise the new gradient is stored, and the memory grows, see \cite{roux2012stochastic} for details. The only difference between this method and EGR is that in our framework we pre-determine the sampling from the seen and unseen sets by the sequences $u_k$ and $s_k$. In \texttt{SAG-init}, the choice of sampling from $S_k$ or $U_k$ is random. \texttt{SAGA-init} is similar, except that it uses the SAGA direction computation.
+ 
+ 
+%
+% In this section we compare the performance of the EGR method against other established methods, and study the effect of different  sequences for $\{u_k\}, \{s_k\}$. In our tests, we run the EGR method (and competing methods) until the number of gradients it has sampled reaches the size of the complete training set.  This experimental setting allows us to make conclusions about the performance of our algorithm when used on a problem with a very large training set, and in the the \emph{oracle} or \emph{streaming} cases,  where new samples from the distribution $P$ are available on demand.
+% %Both cases are of interest in practical applications.
+% Therefore, a direct comparison of EGR with  SAG and SAGA is not appropriate, since any iteration of these methods requires pre-computed sample gradients $\nabla f^i$ for each function $f^i$ where $i \in  \{1 , \ldots, m \} $. Instead, we compare with the Stochastic Gradient (SG) and the Dynamic Sample Size (DSS) methods, as well as with the initialization heuristics of SAG and SAGA discussed in section~\ref{themethod}, which we call SAG-init and SAGA-init; both can be viewed as methods for minimizing the expected risk $F$.
+%
+% The Streaming SVRG method  is also well suited in our experimental setup. However, we were not able to select parameters that would make this algorithm (as described in \cite{frostig2014competing}) competititve.
+% %Two other popular algorithms that are appropriate for this comparison are SDA and FINITO. Scaling algorithms such as SQN and ADA-GRAD are outisde the scope of this paper.
+% The \texttt{SAG-init} and \texttt{SAG-init} methods, are as Algorithm~\ref{alg:sagInit}, \textcolor{green}{[Figen: We can refer to SAG and SAGA papers, or put these algorithms to the appendix.]}
 
 % The EGR algorithm closely resembles the so-called \emph{initialization heuristic} of SAG. This heuristic is mentioned alongside it's full counterpart, as a way to gradually grow the stored number of datapoints in SAG. No theoretical support is given, and the paper claims that simply running SG instead gives nearly identical performance. A possible explanation is that the function value is not evaluated at the end of the initialization phase, but instead, the performance of the later iterations is compared. We do not claim to dismiss this statement: rather, we draw new conclusions on the efficacy of using this heuristic as a stand-alone algorithm. 
 % 
@@ -848,7 +855,7 @@ The \texttt{SAG-init} and \texttt{SAG-init} methods, are as Algorithm~\ref{alg:s
 		\State Draw $j$ from $\{ 1, \ldots ,m\}$ 
 		\State Evaluate $\nabla f^j(x_k) = \nabla f(x_k, \xi_j) $
 		\If {$j \not \in T_{k-1}$}
-		\State $T_{k} = T_{k-1}+j$
+		\State $T_{k} = T_{k-1} \cup  j$
 		\State $t_{k}=t_{k-1}+1$
 		\Else
 		\State $T_{k} = T_{k-1}$
@@ -898,10 +905,13 @@ The \texttt{SAG-init} and \texttt{SAG-init} methods, are as Algorithm~\ref{alg:s
 %	\end{algorithmic}
 %\end{algorithm}
 
+The Streaming SVRG method~\cite{Frostig:2014aa} would fit ideally in our experimental setup, since the motivation is identical to EGR. Unfortunately, we were not able to select parameters that would make this algorithm competitive. Scaling algorithms such as SQN~\cite{sammy} and ADA-GRAD~\cite{duchihazansing}, while having superior performance, are outside the scope of this project.
+ % Two other popular algorithms that are appropriate for this comparison are SDA \cite{Nesterov:09} and FINITO \cite{defazio2014finito}.
  
  The testing setup is as follows: all problems are publicly available binary classification datasets. Each dataset is split into two parts: a \emph{training set} and a \emph{testing set}. The training set constitues the information available to the algorithms through the iterations, and is used as a proxy for sampling from the distribution $P$. The testing set is used to assess the effectiveness of the algorithms compared, which we do using the \emph{test function value}, which is defined as \eqref{saa} using the testing set. Training points constitute 75\% of the total number of datapoints. We use a cross-entropy loss function with L2 regularization. The L2 regularization parameter is always $\frac{1}{\mbox{num training points}}$.
 
  The basis for comparison of the different methods is the number of gradient evaluations: this is a fair estimate of the total work expended for the methods tested.
+ 
  
    \subsection{Test Problems}
 
@@ -926,7 +936,7 @@ The datasets are all dense, with approximately evenly split -1 and +1 labels. Th
 
 \begin{itemize}
 	\item \textbf{alphaGood} is a scaled version of the alpha dataset from \url{http://leon.bottou.org/projects/sgd}. The features are scaled to have zero mean and unit variance
-	\item \textbf{MNIST} is a popular digit recognition dataset. We use the digit 4 as the positive label and the other digits as the negative label. 
+	\item \textbf{MNIST} is a popular digit recognition dataset.
 	\item \textbf{myrand} is an artificial dataset generated from two different multinomial Gaussian distributions. 
 	\item  \textbf{SUSY} is a classification dataset from \url{https://archive.ics.uci.edu/ml/datasets/SUSY}, with the positive label signifies particle detection. 
 \end{itemize}
@@ -956,11 +966,48 @@ The datasets are all dense, with approximately evenly split -1 and +1 labels. Th
 
    We conducted three sets of experiments, each with a different objective. 
    \begin{itemize}
-    \item \textbf{EGR Benchmarking} EGR growth rates comparison. We test the empirical performance of the three suggested growth rates. Suggestions as to the best choice of parameters for any given problem are made. The two EGR versions, EGR-SAG and EGR-SAGA are also compared. 
-    \item \textbf{Only Add Tests} We test the relative performance of our methods with the SG method. Stepsize tuning to different goals is discussed in detail. We also demonstrate the difference in performance when identical growth rates are used in EGR vs DSS methods. A discussion of the benefits of using/updating history follows. 
-   	\item \textbf{Performance Comparison} A final comparison of a reasonably chosen EGR implementation with some competing algorithms such as SAG-init, SAGA-init, and SG.
+   	\item \textbf{Performance Comparison} A comparison of a reasonably chosen EGR implementation with some competing algorithms such as SAG-init, SAGA-init, and SG.
+    \item \textbf{EGR Benchmarking} EGR growth rates comparison. We test the empirical performance of the three suggested growth rates. Suggestions as to the best choice of parameters for any given problem are made. The two EGR versions, EGR-SAG and EGR-SAGA are also compared. Stepsize tuning to different goals is discussed in detail.  
+    \item \textbf{DSS Tests} We test the relative performance of our methods with the DSS method, when identical growth rates are used. A discussion of the benefits of using/updating history concludes the section.
    \end{itemize}
-
+   
+   \subsubsection{Performance Comparison}   
+    
+	
+   
+    We compare the EGR method with two other similar algorithms: The SAGinit and SAGAinit methods are not commonly thought of as optimization methods, but are presented as initialization heuristics in the corresponding papers. Nevertheless, the methods are considered as a way to run these aggregated gradient methods while building up memory as you go along. The EGR framework includes algorithms which outperform these heuristics: they are able to consistently reach a better $F$ value, see Figure~\ref{fig:myrandom}.
+	
+   
+   \begin{figure}[H]
+       \centering
+       \begin{subfigure}[b]{0.45\textwidth}
+           \includegraphics[width=\textwidth]{Figures/myrandBLtrueFfFinal-g.pdf}
+           \caption{myrand}
+       \end{subfigure}
+       ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
+         %(or a blank line to force the subfigure onto a new line)
+         \begin{subfigure}[b]{0.45\textwidth}
+           \includegraphics[width=\textwidth]{Figures/MNISTBLtrueFfFinal-g.pdf}
+             \caption{MNIST}
+         \end{subfigure}
+       \caption{EGR vs other methods}\label{fig:myrandom}
+   \end{figure}
+   
+   \begin{figure}[H]
+       \centering
+       \begin{subfigure}[b]{0.45\textwidth}
+           \includegraphics[width=\textwidth]{Figures/alphaGoodBLtrueFfFinal-g.pdf}
+           \caption{alphaGood}
+       \end{subfigure}
+       ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
+         %(or a blank line to force the subfigure onto a new line)
+         \begin{subfigure}[b]{0.45\textwidth}
+           \includegraphics[width=\textwidth]{Figures/SUSYBLtrueFfFinal-g.pdf}
+             \caption{SUSY}
+         \end{subfigure}
+       \caption{EGR vs other methods}\label{fig:alphaGoodom}
+   \end{figure}
+   
    
    \subsubsection{EGR Benchmarking}
    
@@ -975,212 +1022,117 @@ The datasets are all dense, with approximately evenly split -1 and +1 labels. Th
           \centering
           \begin{subfigure}[b]{0.45\textwidth}
               \includegraphics[width=\textwidth]{Figures/MNISTBLtrueFfFinal-1.pdf}
-              \caption{Current F value}
+              \caption{MNIST}
           \end{subfigure}
           ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
             %(or a blank line to force the subfigure onto a new line)
             \begin{subfigure}[b]{0.45\textwidth}
-                \includegraphics[width=\textwidth]{Figures/MNISTBLtrueFminfFinal-2.pdf}
-                \caption{Incumbent best solution}
+           \includegraphics[width=\textwidth]{Figures/myrandBLtrueFfFinal-1.pdf}
+                \caption{myrand}
             \end{subfigure}
-          \caption{MNIST summary: all EGR methods}\label{fig:MNISTsummary}
+          \caption{summary: all EGR methods}\label{fig:MNISTsummary}
       \end{figure}
    
-   
-
-   \begin{figure}[H]
-       \centering
-       \begin{subfigure}[b]{0.45\textwidth}
-           \includegraphics[width=\textwidth]{Figures/myrandBLtrueFfFinal-1.pdf}
-           \caption{Current F value}
-       \end{subfigure}
-       ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
-         %(or a blank line to force the subfigure onto a new line)
-         \begin{subfigure}[b]{0.45\textwidth}
-             \includegraphics[width=\textwidth]{Figures/myrandBLtrueFminfFinal-2.pdf}
-             \caption{Incumbent best solution}
-         \end{subfigure}
-       \caption{myrand summary: all EGR methods}\label{fig:myrandsummary}
-   \end{figure}
-   %
    \begin{figure}[H]
        \centering
        \begin{subfigure}[b]{0.45\textwidth}
            \includegraphics[width=\textwidth]{Figures/alphaGoodBLtrueFfFinal-1.pdf}
-           \caption{Current F value}
+           \caption{alphaGood}
        \end{subfigure}
        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
          %(or a blank line to force the subfigure onto a new line)
          \begin{subfigure}[b]{0.45\textwidth}
-             \includegraphics[width=\textwidth]{Figures/alphaGoodBLtrueFminfFinal-2.pdf}
-             \caption{Incumbent best solution}
-         \end{subfigure}
-       \caption{alphaGood summary: all EGR methods}\label{fig:alphaGoodsummary}
-   \end{figure}
-
-   \begin{figure}[H]
-       \centering
-       \begin{subfigure}[b]{0.45\textwidth}
            \includegraphics[width=\textwidth]{Figures/SUSYBLtrueFfFinal-1.pdf}
-           \caption{Current F value}
-       \end{subfigure}
-       ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
-         %(or a blank line to force the subfigure onto a new line)
-         \begin{subfigure}[b]{0.45\textwidth}
-             \includegraphics[width=\textwidth]{Figures/SUSYBLtrueFminfFinal-2.pdf}
-             \caption{Incumbent best solution}
+             \caption{SUSY}
          \end{subfigure}
-       \caption{SUSY summary: all EGR methods}\label{fig:SUSYsummary}
+       \caption{summary: all EGR methods}\label{fig:alphaGoodsummary}
    \end{figure}
    
    
 		 
-   On problem MNIST, in Figure \ref{fig:MNIST}, we see that for linear EGR-SAGA, smaller batch sizes are preferable. When $r=1$, the method performs extremely well, but slightly increasing the batch to $r=10$ allows for significantly larger stepsizes to be taken. This closely resembles the common knowlegde about the need for mini-batching in SG methods. As r increases, larger steplengths are needed for good performance: this is logical since the methods use more new informantion at each iteration, thus having less variance in the step directions. Large batch sizes do not work well, since the method only takes a few iterations. For the linear EGR-SAG, the additional stability introduced by the slightly increased batch size ($r=10$) is more pronounced.  For quadratic EGR-SAGA, the smallest $r$ tested gives the same method as the linear $r=1$ method because of rounding. Improved performance for slightly higher $r$ values can be attributed to the additional stability stemming from increasing batch sizes in the later iterations. For quadratic EGR-SAG, while increasing beyond $r=1e-5$ does not seem to benefit the final objective value achieved, the stability of the method is apparent. The the exponentially growing case, the same idea as before applies: A slightly increasing batch size in the latter iterations seems to benefit the stability and sometimes the performance of the methods. Value of $r=1,000$ seems to perform well. 
+	     On problem MNIST, in Figure \ref{fig:MNIST}, we see that for EGR-lin(SAG) smaller batch sizes are preferable. When $r=1$, the method performs extremely well, but slightly increasing the batch to $r=10$ allows for significantly larger stepsizes to be taken. This closely follows the common knowledge about the need for mini-batching in SG methods. As $r$ increases, larger steplengths are needed for good performance: this is logical since the methods use more new information at each iteration, thus having less variance in the step directions. Large batch sizes do not work well, since the method is only able to take a few iterations in the allotted sample gradient evaluation limit. The EGR-lin(SAGA) version shows similar patterns, but a higher variance in the algorithm progression is seen. This is due to the fact that the SAG version of the algorithm places a much larger emphasis on the relatively stable term involving the summation of historic sample gradient information (which also implies that smaller stepsizes than in EGR-lin are needed). In the quadratic EGR-SAG growth rate case, the smallest $r$ tested gives the same method as the linear $r=1$ method because of rounding. The second growth rate (corresponding to $r=0.0001$) behaves identical to the smallest one initially, but approximately after the first half of the graph, the two plots diverge. This is because with the second growth rate the batch sizes start increasing from $s_k=u_k=1$. In the quadratic EGR-SAGA case, this sudden increase of the sample sizes enables the superior performance of the method. For the exponentially growing case, the same idea as before applies: A slightly increasing batch size in the latter iterations seems to benefit the stability and sometimes the performance of the methods.
    
-   In Figure~\ref{fig:MNISTsummary}, we combine these methods in a single plot. The EGR-SAGA methods with growing batch sizes at the end seem to work best in practice. We attribute this to the unbiased nature of the methods. In both cases, we see that it is beneficial to increase the batches at the end, instead of leaving them 1 and 1 constantly. 
+	     In Figure~\ref{fig:MNISTsummary}, we combine these methods in two plots. The one on the left always shows the true progression of the algorithm to the minimizer, i.e. the current estimate of the function value of $F$. The plot on the right shows the same data plotted to display the current best solution. The EGR-SAGA methods with growing batch sizes at the end seem to work best in practice. We attribute this to the unbiased nature of the methods. We see that the best performing methods are the ones which increase the sample sizes at the end, instead of leaving them at a constant level. 
+   
+	     With the myrand dataset, the picture is slightly different. In Figure~\ref{fig:myrand}, we can see that the required growth rates are higher than for MNIST. In Figure~\ref{fig:myrandsummary}, we again see the clear advantage of using growing batch sizes, and of SAGA step computation formula over the SAG one. 
+   
+	     On the alphaGood dataset, and the SUSY dataset, the conclusions are similar. In Figure~\ref{fig:ss} we provide a plot of current sample size, $s_k+u_k$, at each iteration of the algorithm, on the MNIST dataset. The best performing growth rate choice seems to be the one where approximately for this first half of the algorithm progression the sample sizes are as small as possible, and only then start growing.
+  
+ 
+  \begin{figure}[H]
+      \centering
+      \begin{subfigure}[b]{0.45\textwidth}
+          \includegraphics[width=\textwidth]{Figures/alphaGoodBLtrueSampleSizefFinal.pdf}
+          \caption{alphaGood}
+      \end{subfigure}
+      ~ 
+        \begin{subfigure}[b]{0.45\textwidth}
+          \includegraphics[width=\textwidth]{Figures/MNISTBLtrueSampleSizefFinal.pdf}
+            \caption{MNIST}
+        \end{subfigure}
+      \caption{growth rates}\label{fig:alphaGoodsummary}
+  \end{figure}
+  
+  
+  \begin{figure}[H]
+      \centering
+      \begin{subfigure}[b]{0.45\textwidth}
+          \includegraphics[width=\textwidth]{Figures/myrandBLtrueSampleSizefFinal.pdf}
+          \caption{myrand}
+      \end{subfigure}
+      ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
+        %(or a blank line to force the subfigure onto a new line)
+        \begin{subfigure}[b]{0.45\textwidth}
+          \includegraphics[width=\textwidth]{Figures/SUSYBLtrueSampleSizefFinal.pdf}
+            \caption{SUSY}
+        \end{subfigure}
+      \caption{growth rates}\label{fig:alphaGoodsummary}
+  \end{figure}
+  
+
+  
+  
+  
+  
+  
+  
+   \subsubsection{Only Add Comparison}
 
    
-   
-   With the myrand dataset, the picture is slightly different. In Figure~\ref{fig:myrand}, we can clearly see that the relative growth rates are higher than for MNIST, and the take-off points occur earlier than in MNIST. In Figure~\ref{fig:myrandsummary}, we again see the clear advantage of using growing batch sizes, but in this case the growth rates are higher than in MNIST.
-    
-  
-  We do not claim to have exhastively searched all possible growth rates. Rather, we presented three reasonable choices, with one having a strong theoretical support. On some problems, an alternative growth rate works well: Starting with a large initial batch
-   \subsubsection{Only Add Comparison}
-   
-   The only-add option in EGR includes many existing methods, such as SG and DSS. We empirically compare the performance of our new methods with SG and DSS.
-   The Stochastic Gradient method enjoys immense popularity in both the optimization and the machine learning communities, and when carefully tuned can outperform any known modern method. The tuning often involves intricate step size strategies. We do not attempt to compare with the best SG implementation, rather we demonstrate the benefits of using the EGR scheme, compared to SG, with both methods using a constant step size. 
-   
-   
+   The only-add option in EGR includes many existing methods, such as SG and DSS. We empirically compare the performance of our new methods with SG and DSS. The Stochastic Gradient method enjoys immense popularity in both the optimization and the machine learning communities, and when carefully tuned can outperform any known modern method. The tuning often involves intricate step size strategies. We do not attempt to compare with the best SG implementation, rather we demonstrate the benefits of using the EGR scheme, compared to SG, with both methods using a constant step size. The DSS method tested uses a sample size identical to the one suggested by EGR, to make the per-iteration comparison fair. The plots for each problem can be found in Figures \ref{fig:MNISToa},  \ref{fig:myrandoa},  \ref{fig:alphaGoodoa},  \ref{fig:SUSYoa}.
    
 
    \begin{figure}[H]
        \centering
        \begin{subfigure}[b]{0.45\textwidth}
            \includegraphics[width=\textwidth]{Figures/MNISTBLtrueFfFinal-dss.pdf}
-           \caption{Current F value}
+           \caption{MNIST}
        \end{subfigure}
        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
          %(or a blank line to force the subfigure onto a new line)
          \begin{subfigure}[b]{0.45\textwidth}
-             \includegraphics[width=\textwidth]{Figures/MNISTBLtrueFminfFinal-dss.pdf}
-             \caption{Incumbent best solution}
-         \end{subfigure}
-       \caption{MNIST: EGR vs only-add methods}\label{fig:MNISToa}
-   \end{figure}
-   
-   \begin{figure}[H]
-       \centering
-       \begin{subfigure}[b]{0.45\textwidth}
            \includegraphics[width=\textwidth]{Figures/myrandBLtrueFfFinal-dss.pdf}
-           \caption{Current F value}
-       \end{subfigure}
-       ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
-         %(or a blank line to force the subfigure onto a new line)
-         \begin{subfigure}[b]{0.45\textwidth}
-             \includegraphics[width=\textwidth]{Figures/myrandBLtrueFminfFinal-dss.pdf}
-             \caption{Incumbent best solution}
+             \caption{myrand}
          \end{subfigure}
-       \caption{myrand: EGR vs only-add methods}\label{fig:myrandoa}
-   \end{figure}
-   
-   \begin{figure}[H]
-       \centering
-       \begin{subfigure}[b]{0.45\textwidth}
-           \includegraphics[width=\textwidth]{Figures/alphaGoodBLtrueFfFinal-dss.pdf}
-           \caption{Current F value}
-       \end{subfigure}
-       ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
-         %(or a blank line to force the subfigure onto a new line)
-         \begin{subfigure}[b]{0.45\textwidth}
-             \includegraphics[width=\textwidth]{Figures/alphaGoodBLtrueFminfFinal-dss.pdf}
-             \caption{Incumbent best solution}
-         \end{subfigure}
-       \caption{alphaGood: EGR vs only-add methods}\label{fig:alphaGoodoa}
+       \caption{EGR vs only-add methods}\label{fig:MNISToa}
    \end{figure}
    
    \begin{figure}[H]
        \centering
        \begin{subfigure}[b]{0.45\textwidth}
            \includegraphics[width=\textwidth]{Figures/SUSYBLtrueFfFinal-dss.pdf}
-           \caption{Current F value}
+           \caption{SUSY}
        \end{subfigure}
        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
          %(or a blank line to force the subfigure onto a new line)
          \begin{subfigure}[b]{0.45\textwidth}
-             \includegraphics[width=\textwidth]{Figures/SUSYBLtrueFminfFinal-dss.pdf}
-             \caption{Incumbent best solution}
+           \includegraphics[width=\textwidth]{Figures/alphaGoodBLtrueFfFinal-dss.pdf}
+             \caption{alphaGood}
          \end{subfigure}
-       \caption{SUSY: EGR vs only-add methods}\label{fig:SUSYoa}
+       \caption{EGR vs only-add methods}\label{fig:SUSYoa}
    \end{figure}
    
-   
-   \subsubsection{Performance Comparison}   
-    
-   We compare the EGR method with other... FINITO seems to be an appropriate method to compare with, since a precise streaming version of the algorithm is presented in the original paper. S-SVRG, while being seemingly a perfect fit for our objective was not competitive on any test problem. 
-   
-   The SAGinit and SAGAinit methods are not commonly thought of as optimization methods, but are presented as initialization heuristics in the corresponding papers. Nevertheless, the methods are considered as a way to run these aggregated gradient methods while buliding up memory as you go along. For example, the SAGinit method presented in \cite{roux2012stochastic}, can be written as follows:
-   
-   Note the major differences with the EGR framework: The decision to update a previously sampled point or to sample a new function is a random variable, as opposed to pre-defined sequences $s_k$ and $u_k$ in EGR. 
-
-   \begin{figure}[H]
-       \centering
-       \begin{subfigure}[b]{0.45\textwidth}
-           \includegraphics[width=\textwidth]{Figures/MNISTBLtrueFfFinal-g.pdf}
-           \caption{Current F value}
-       \end{subfigure}
-       ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
-         %(or a blank line to force the subfigure onto a new line)
-         \begin{subfigure}[b]{0.45\textwidth}
-             \includegraphics[width=\textwidth]{Figures/MNISTBLtrueFminfFinal-g.pdf}
-             \caption{Incumbent best solution}
-         \end{subfigure}
-       \caption{MNIST: EGR vs other methods}\label{fig:MNISTom}
-   \end{figure}
-   
-   \begin{figure}[H]
-       \centering
-       \begin{subfigure}[b]{0.45\textwidth}
-           \includegraphics[width=\textwidth]{Figures/myrandBLtrueFfFinal-g.pdf}
-           \caption{Current F value}
-       \end{subfigure}
-       ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
-         %(or a blank line to force the subfigure onto a new line)
-         \begin{subfigure}[b]{0.45\textwidth}
-             \includegraphics[width=\textwidth]{Figures/myrandBLtrueFminfFinal-g.pdf}
-             \caption{Incumbent best solution}
-         \end{subfigure}
-       \caption{myrand: EGR vs other methods}\label{fig:myrandom}
-   \end{figure}
-   
-   \begin{figure}[H]
-       \centering
-       \begin{subfigure}[b]{0.45\textwidth}
-           \includegraphics[width=\textwidth]{Figures/alphaGoodBLtrueFfFinal-g.pdf}
-           \caption{Current F value}
-       \end{subfigure}
-       ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
-         %(or a blank line to force the subfigure onto a new line)
-         \begin{subfigure}[b]{0.45\textwidth}
-             \includegraphics[width=\textwidth]{Figures/alphaGoodBLtrueFminfFinal-g.pdf}
-             \caption{Incumbent best solution}
-         \end{subfigure}
-       \caption{alphaGood: EGR vs other methods}\label{fig:alphaGoodom}
-   \end{figure}
-   
-   \begin{figure}[H]
-       \centering
-       \begin{subfigure}[b]{0.45\textwidth}
-           \includegraphics[width=\textwidth]{Figures/SUSYBLtrueFfFinal-g.pdf}
-           \caption{Current F value}
-       \end{subfigure}
-       ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
-         %(or a blank line to force the subfigure onto a new line)
-         \begin{subfigure}[b]{0.45\textwidth}
-             \includegraphics[width=\textwidth]{Figures/SUSYBLtrueFminfFinal-g.pdf}
-             \caption{Incumbent best solution}
-         \end{subfigure}
-       \caption{SUSY: EGR vs other methods}\label{fig:SUSYom}
-   \end{figure}
+   These plots show that the benefit of having multiple sample gradients evaluated at some iterations is advantageous to having a single one being evaluated at each step. In most of our experiments, DSS performed slightly better, because it was able to see all data while EGR only half. This advantage is not uniform, and we cannot make a justifiable recommendation of using one over the other.
    
    \subsubsection{Memory Reduction Techniques in Practice}
    
@@ -1205,7 +1157,6 @@ The datasets are all dense, with approximately evenly split -1 and +1 labels. Th
 \appendix 
 
 \section{EGR Growth Rates Detailed} \label{appendix:EGRGrowthRatesDetailed}
-
    
    \begin{figure}[H]
        \centering
