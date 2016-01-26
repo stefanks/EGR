@@ -748,72 +748,7 @@ We propose an alternative way of reducing this memory requirement. The strategy,
 	Note that chunking and \emph{batching} are different algorithms. Specifically, a batched version of EGR would simply be a version with $s_k$ or $u_k$ being greater than 1, without reducing memory requirements. 
 	 
 A description of the chunking idea for the original SAG and SAGA algorithms, as well as to the proposed EGR algorithm is given in \cite{stefan-thesis}.
-	   
-%   \begin{algorithm}
-%   	[H] 
-%   	\caption{SAG - Chunking}
-%   	\label{alg:sag-chunking}
-%   	{\bf Input:} Initial iterate $x^0$, chunk size $C$, steplength $\alpha$, number of datapoints $m$, $g_i^{-1}$ for each $i \in \{ 1, \ldots,\frac{m}{C} \}$
-%   	\begin{algorithmic}
-%   		[1] 
-%   		\Loop { $k= \{ 0,1,\ldots \}$}
-%   		\State Sample $i$ from $\{ 1, \ldots, \frac{m}{C} \}$
-%		\State $\mbox{chunk } i  = \{ (i-1)C+1,\ldots, iC \}$
-%   		\State $ g_i^k = \frac{1}{C} \sum_{j \in \mbox{chunk } i }  \nabla f^{j}(x_k) $ 
-%   		\State $ g_j^k = g_j^{k-1} $ for $j \neq i$ 
-%   		\State $y_k = \frac{C}{m} \sum_{j=1}^{\frac{m}{C}} g_j^k$ 
-%   		\State $\theta^{k+1} = x_k - \alpha y_k$ 
-%   		\EndLoop 
-%   	\end{algorithmic}
-%   \end{algorithm}
-%
-%   \begin{algorithm}
-%   	[H] 
-%   	\caption{SAGA - Chunking}
-%   	\label{alg:saga-chunking}
-%   	{\bf Input:} Initial iterate $x^0$, chunk size $C$, steplength $\alpha$, number of datapoints $m$, $g_i^{-1}$ for each $i \in \{ 1, \ldots,\frac{m}{C} \}$
-%   	\begin{algorithmic}
-%   		[1] 
-%   		\Loop { $k= \{ 0,1,\ldots \}$}
-%   		\State Sample $i$ from $\{ 1, \ldots, \frac{m}{C} \}$
-%		\State $\mbox{chunk } i  = \{ (i-1)C+1,\ldots, iC \}$
-%   		\State $ g_i^k = \frac{1}{C} \sum_{j \in \mbox{chunk } i }  \nabla f^{j}(x_k) $ 
-%   		\State $ g_j^k = g_j^{k-1} $ for $j \neq i$ 
-%   		\State $y_k =  g_i^{k} -  g_i^{k-1}  +\frac{C}{m} \sum_{j = 1}^{\frac{m}{C}}g_j^{k-1}$ 
-%   		\State $\theta^{k+1} = x_k - \alpha y_k$ 
-%   		\EndLoop 
-%   	\end{algorithmic}
-%   \end{algorithm}
-%   
-%
-%   \begin{algorithm}
-%   	[H] 
-%   	\caption{EGR - Chunking}
-%   	\label{alg1-chunking}
-%   	{\bf Input:} Sequences $\{ s_k\}$, $\{ u_k \}$, steplength $ \alpha $, chunk size $C$, and initial iterate $x_0$
-%   	\begin{algorithmic}
-%   		[1] 
-%   		\State Set $t_{0} = 0$
-%   		\Loop { $k= 0, 1,2,,\ldots $}
-%   		\State $U_k =\{t_{k}+1,\ldots, t_{k}+u_k \}$ 
-%   		\State For each $j \in U_k$ draw $C$ samples $\xi_j^1,\ldots,\xi_j^C$ from the distribution $P$, and define $\tilde{f}_j(x) = \frac{1}{C} \sum_{i=1}^C  \nabla f(x,\xi_j^i) $
-%   		\State $S_k = \mbox{sample of } s_k \mbox{ indices from }\{ 1, \ldots ,t_{k}\}$ 
-%              \State Evaluate $\tilde{f}_j(x) $ for $j \in S_k \cup U_k$
-%              \State Compute $y_k$ by \eqref{ysag} or \eqref{ysaga}, replacing $\tilde{f}_j(x)$ by $\tilde{f}_j(x)$
-%   		\State \begin{flalign} \mbox{Set   }  \phi^i_k =
-%   		\begin{cases} 
-%     x_k & \mbox{for all $i \in S_k\cup U_k$ } \\
-%     \phi^i_{k-1} & \mbox{ otherwise} 
-%    \end{cases}&&&
-%   \end{flalign}
-%   		\State $x_{k+1} = x_k - \alpha y_k$ 
-%   		\State $t_{k+1} = t_{k} +u_k$ 
-%   		\EndLoop 
-%   	\end{algorithmic}
-%   \end{algorithm}
-%   
-   	%
-  
+
 \section{Numerical Tests} \label{numerical}
  
  
