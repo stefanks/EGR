@@ -119,22 +119,22 @@ The EGR method maintains an integer $t_k $ that counts the number of gradient ve
 \begin{equation} \label{capt}
          T_k = \{1, \ldots, t_k\}. 
  \end{equation}
- \textcolor{green}{Thus, $T_k$ is the set of the assigned indices to the sampled gradients up to iteration $k$; i.e. $i\in T_k$ is the index corresponding to the $i^{th}$ realization of $\xi$.}
+ Thus, $T_k$ is the set of the assigned indices to the sampled gradients up to iteration $k$; i.e. $i\in T_k$ is the index corresponding to the $i^{th}$ realization of $\xi$.
  
  The objective function $F$ can then be approximated by the sample average approximation
 \begin{equation}  \label{batch}
-	\tint (x)= \frac{1}{t_k} \sum_{i =1}^{ t_k} f(x; \xi_i) \, \equiv \,  \frac{1}{t_k} \sum_{i =1}^{ t_k} f^i (x) ,
+	F_{T_k}(x)= \frac{1}{t_k} \sum_{i =1}^{ t_k} f(x; \xi_i) \, \equiv \,  \frac{1}{t_k} \sum_{i =1}^{ t_k} f^i (x) ,
 \end{equation}
 where  we have defined
 \begin{equation} \label{spring}
 	f^i(x) =  f(x, \xi_i) ,
 \end{equation}
 so that $F_{T_k}$ is similar in form to the (deterministic) finite sum function \eqref{saa}.
-The iteration of the EGR method is given by
+Iterations of the EGR method are given by
 \begin{equation}  \label{egri}
         x_{k+1}= x_k - \alpha y_k ,
 \end{equation}
-where $\alpha$ is a (fixed) steplength and the aggregated gradient $y_k$ is defined as follows. To compute the $k$-th step, the method first adds some new sample gradients, indexed by the set $U_k$, to the current aggregated gradient, and at the same time updates some of the gradients previously stored, indexed by $S_k$. More precisely, defining
+where $\alpha$ is a (fixed) steplength and the aggregated gradient $y_k$ is defined as follows: At the $k$-th iteration, the method adds some new sample gradients, indexed by the set $U_k$, to $y_k$, and at the same time updates some of the gradients previously stored, indexed by $S_k$. More precisely, defining
 \begin{equation}   \label{usdef}
       u_k = | U_k |, \qquad s_k = | S_k |,
 \end{equation}
@@ -144,19 +144,15 @@ the first version of our method sets
 \end{align}
 where  $\phi_{k-1}^j$ denotes the most recent iterate at which the gradient of function the $f^j$ was computed (we define this precisely below). 
 
-Formula \eqref{ysag} is motivated by the SAG method \eqref{sag}.   The main changes are that the  second sum in \eqref{ysag}  includes $t_k$ terms rather than $m$ terms, that the first sum accounts for the fact that $s_k$ gradients in storage are updated, and the last sum represents the addition of $ u_k$ gradients evaluated at the current iterate (i.e., a mini-batch computation).  Thus, in the EGR method we have 
-\begin{equation}   \label{tdef}
-     t_{k+1}= t_{k} + u_k, 
-\end{equation}
-and by choosing $u_k >0$  the number of gradients contained in $y_k$ grows at every iteration in contrast with methods described in 
+Formula \eqref{ysag} is motivated by the SAG method \eqref{sag}.   The main changes are that the  second sum in \eqref{ysag}  includes $t_k$ terms rather than $m$ terms, that the first sum accounts for the fact that $s_k$ gradients in storage are updated, and the last sum represents the addition of $ u_k$ gradients evaluated at the current iterate.  In the EGR method where $t_{k+1}= t_{k} + u_k$, we have the option of having $u_k >0$,  so that the number of gradients contained in $y_k$ grows at every iteration, in contrast with methods described in 
 \cite{johnson2013accelerating,NIPS2014_5258,shalev2013stochastic,mairal2015incremental,defazio2014finito},
  where the number of stored gradients is constant. (The SAG method corresponds to the choice $s_k=1, u_k =0, t_k=m$).
  
- Another version of the EGR method is based on the SAGA \cite{NIPS2014_5258} step direction,
+ A variant of EGR is based on the SAGA step direction,
  \begin{equation}   \label{saga} 
-      y_k^{saga}= \nabla f^j(x_k) -  \nabla f^j(\phi_{k-1}^j) +\frac{1}{m}  \sum_{i=1}^{m}  \nabla f^i (\phi^i_{k-1}).
+      y_k^{saga}= \nabla f^j(x_k) -  \nabla f^j(\phi_{k-1}^j) +\frac{1}{m}  \sum_{i=1}^{m}  \nabla f^i (\phi^i_{k-1}),
       \end{equation}
-Allowing for multiple sample gradient replacements as well as for the addition of new gradients to memory, the version of EGR based on  SAGA  defines the search direction as
+and also allows for multiple sample gradient replacements as well as for the addition of new samples to memory. The step direction for this variant of EGR based on the SAGA direction \eqref{saga}, is defined as
 \begin{align}  \label{ysaga}
       y_k =  \frac{1}{s_k+u_k} \left(  \sum_{j \in S_k} \left[  \nabla f^j(x_{k}) -   \nabla f^j(\phi_{k-1}^j) + \frac{1}{t_{k}} \sum_{i = 1}^{t_{k} }  \nabla f^i (\phi^i_{k-1})  \right] + \sum_{j \in U_k}  \nabla f^j(x_k)\right),
 \end{align}
@@ -180,13 +176,13 @@ Allowing for multiple sample gradient replacements as well as for the addition o
 %		\State      $y_k =  \frac{1}{s_k+u_k} \left(  \sum_{j \in S_k} \left[  \nabla f^j(x_{k}) -   \nabla f^j(\phi_{k-1}^j) + \frac{1}{t_{k}} \sum_{i = 1}^{t_{k} }  \nabla f^i (\phi^i_{k-1})  \right] + \sum_{j \in U_k}  \nabla f^j(x_k)\right).$
            \State Compute $y_k$ by \eqref{ysag} or \eqref{ysaga}
 		\State Set \begin{flalign}  \label{chico} \qquad\quad \phi^i_k =
-		\begin{cases} 
+			\begin{cases} 
   x_k & \mbox{for all $i \in S_k\cup U_k$ } \\
-  \phi^i_{k-1} & {\color{blue} \mbox{ for all $i \in T_k\setminus S_k$}}
+  \phi^i_{k-1} &  \mbox{ for all $i \in T_k\setminus S_k$}
  \end{cases}&&&
 \end{flalign}
 		\State $x_{k+1} = x_k - \alpha y_k$ 
-		\State $ t_{k+1} = t_{k} +u_k $ 
+		\State $t_{k+1} = t_{k} +u_k$ 
 		\EndLoop 
 	\end{algorithmic}
 \end{algorithm}
