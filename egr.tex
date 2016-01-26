@@ -100,11 +100,10 @@ The paper is organized into 6 sections. In the next section we present the algor
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{The Evolving Gradient Resampling (EGR) Method}  \label{themethod}
 \setcounter{equation}{0}
-
-The EGR method combines ideas from dynamic sampling methods, which  employ batches of increasing size, and  aggregated gradient methods that store gradients evaluated at previous iterations. The latter, which are more accurately described as \emph{randomized incremental aggregated methods}  \cite{roux2012stochastic,johnson2013accelerating,frostig2014competing,NIPS2014_5258}, employ an iteration of the form \eqref{iteration} to minimize the finite sum 
+The EGR method combines ideas from dynamic sampling methods, which  employ mini-batches of increasing size, and  aggregated gradient methods that store gradients evaluated at previous iterations. The latter, which are more accurately described as \emph{randomized incremental aggregated methods}  \cite{roux2012stochastic,johnson2013accelerating,frostig2014competing,NIPS2014_5258}, employ an iteration of the form \eqref{iteration} to minimize the finite sum
 \begin{equation}
 	\label{saa}
-	\psi(x)= \frac{1}{m} \sum_{i =1}^m f^i(x),
+	\frac{1}{m} \sum_{i =1}^m f^i(x),
 \end{equation}
 where $f^i: \mathbb{R}^n \rightarrow \mathbb{R},$ $i=1, \ldots, m$ are given convex functions. 
 An example of a method of this kind is SAG \cite{roux2012stochastic}, where at every iteration $k$ an index $j \in \{1, \ldots, m\}$  is chosen at random and the aggregated gradient $y_k$ is computed as
@@ -112,11 +111,11 @@ An example of a method of this kind is SAG \cite{roux2012stochastic}, where at e
      y_k^{sag}= \frac{1}{m} \left[ \nabla f^j(x_k) -  \nabla f^j(\phi_{k-1}^j) + \sum_{i=1}^{m}  \nabla f^i (\phi^i_{k-1}) \right].
      \end{equation}
 Here $\phi^i_{k-1}$ is the most recent iterate at which the gradient of the function $f^i$ was evaluated. Thus, in the SAG method one gradient, namely  $\nabla f^j$,  is updated while the rest of the gradients kept in storage (the summation in \eqref{sag}) are not altered. A distinctive property of SAG  and the methods described in  \cite{johnson2013accelerating,NIPS2014_5258,shalev2013stochastic,mairal2015incremental,defazio2014finito} 
-is that they achieve a linear rate of convergence in  $\mathbb{E}[\psi(x_k)]$, which is not the case for the incremental gradient method. Numerical experience has shown that the SAG, SAGA \cite{NIPS2014_5258} and SVRG \cite{johnson2013accelerating} methods are effective in practice.
+is that they achieve a linear rate of convergence in the expected value of the finite sum problem, which is not the case for the incremental gradient method. Numerical experience has shown that the SAG, SAGA \cite{NIPS2014_5258} and SVRG\cite{johnson2013accelerating} methods are effective in practice.
 
-Aggregated gradient methods are designed for the case when $m$ is not too large so that multiple passes over the data are possible. Storage is a concern, as $m$ gradients need to be saved, which may not be practical in general for applications involving large data sets. However,  when $f^i$ is the composition of a linear function and a smooth function (as in logistic regression) it suffices to store one scalar in lieu of the gradient vector \cite{roux2012stochastic}. Storage is not an issue for the SVGR method \cite{johnson2013accelerating}, which requires only one extra vector of storage regardless of the form of $f^i$.
+Aggregated gradient methods are suitable for the case when $m$ is not too large so that multiple passes over the data are possible. Storage is a concern, as $m$ gradients need to be saved, which may not be practical in general for applications involving large data sets. However,  when $f^i$ is the composition of a linear function and a smooth function (as in logistic regression) it suffices to store one scalar in lieu of the gradient vector \cite{roux2012stochastic}. Storage is not an issue for the SVGR method \cite{johnson2013accelerating}, which requires only one extra vector of storage regardless of the form of $f^i$.
 
-The EGR method maintains an integer $t_k $ that counts the number of gradient vectors in storage at the beginning of the $k$-th iteration, and defines the set 
+The EGR method maintains an integer $t_k $ that counts the number of gradient vectors in storage at the beginning of the $k$-th iteration, and defines the set
 \begin{equation} \label{capt}
          T_k = \{1, \ldots, t_k\}. 
  \end{equation}
