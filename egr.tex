@@ -323,7 +323,7 @@ By Jensen's inequality,
   &  \leq \frac{v^2}{t_k} ,
 \end{align*}
 where the last equality follows from Assumption A.4, and the fact that $\xi_i$ are independent.
-\textcolor{green}{[Figen: For the second line of the above derivation, is it straigtforward to see that $E[\nabla F_{T_k}(x)]=\nabla F(x)$, or should we discuss it?]}
+\textcolor{green}{[Figen: For the second line of the above derivation, is it straightforward to see that $E[\nabla F_{T_k}(x)]=\nabla F(x)$, or should we discuss it?]}
 If we define
 \begin{equation}   \label{sigmad}
  \sigma_{k-1} = \sqrt{{v^2}/{t_k}}
@@ -379,7 +379,7 @@ Therefore,
 \begin{equation}\label{eq:row1}
  \E[\E_k[\delta_k]] \leq \frac{1-\eta}{1+\eta}\left(1 + L\alpha \right)\E[\delta_{k-1}]+  \frac{1-\eta}{1+\eta}L^2\alpha\E\|x_{k-1}-x_\ast\| + \frac{1-\eta}{1+\eta}L\alpha\sigma_{k-1} ,
 \end{equation}
-which proves the first inquality in \eqref{control}. To establish the second inequality, we note from \eqref{egri} and \eqref{yfe} that
+which proves the first inequality in \eqref{control}. To establish the second inequality, we note from \eqref{egri} and \eqref{yfe} that
  \begin{align*}
    \E\|x_k-x_\ast\| &= \E\|x_{k-1}-x_\ast + x_k-x_{k-1}\|\\
    &= \E\|x_{k-1}-x_\ast -\alpha y_{k-1}\|\\
@@ -1029,7 +1029,7 @@ The datasets are all dense, with approximately evenly split -1 and +1 labels. Th
    
    The three different growth rates (linear, quadratic, exponential) combined with two possible computation formulas for $y_k$ give rise to six methods, where each growth has an unspecified parameter. We tune it experimentally for each problem, and make observations of the effect of varying $r$ in each case. Finally, we make suggestions on good practical choices or $r$. 
    
-   In all plots in this section, the vertical axis is the test function value, which serves as an approximation to $F$. We demonstrate the continuous progression of the algorithms toward the minimizer of $F$. The horizontal axis is the total number of sample gradients evaluated so far. This is an approximate measure of the total work the algorithm has performed, and is more informative than the more commonly used plots where the horizontal axis is the iteration counter. All experiements were stopped when the number of sample gradients evaluated reached the size of the complete training set. Note that for our choices of the growth rates, when $s_k=u_k$, this means that roughly half of the avaiable training points was seen by the algorithm. 
+   In all plots in this section, the vertical axis is the test function value, which serves as an approximation to $F$. We demonstrate the continuous progression of the algorithms toward the minimizer of $F$. The horizontal axis is the total number of sample gradients evaluated so far. This is an approximate measure of the total work the algorithm has performed, and is more informative than the more commonly used plots where the horizontal axis is the iteration counter. All experiments were stopped when the number of sample gradients evaluated reached the size of the complete training set. Note that for our choices of the growth rates, when $s_k=u_k$, this means that roughly half of the available training points was seen by the algorithm. 
   The last remaining parameter, $\alpha$, was chosen to give the best testing function value at the end of the training epoch. A complete collection of these experiments for each of the six methods, on all four test problems can be seen in Figures \ref{fig:MNIST}, \ref{fig:alphaGood}, \ref{fig:myrand}, and \ref{fig:SUSY}. These extensive experiments are summarized in Figures \ref{fig:MNISTsummary}, \ref{fig:alphaGoodsummary}, \ref{fig:myrandsummary}, and \ref{fig:SUSYsummary} respectively. These summary plots show the best performing growth rates compared against each other. 
 
    
@@ -1154,7 +1154,7 @@ The datasets are all dense, with approximately evenly split -1 and +1 labels. Th
    
    The following experiments show the algorithm progress after 40 passes over the data. Only two types of chunking are tested: SAG and SAGA chunking. The labels are in the format \texttt{algorithm numChunks StepsizePower}. The stepsizes were tuned to give the best final function value. 
    
-   The follwing experiements show comparisons of the aggregated gradient methods SAG and SAGA with respect to Batching vs Chunking. We conducted experiments comparing Chunking vs Batching on three datasets, and two aggregated gradient methods: SAG and SAGA. This experiment was suggested to verify the previous chunking results (on pages 41-43), because these previous experiments suggested that the chunking idea is not working well in practice. 
+   The following experiments show comparisons of the aggregated gradient methods SAG and SAGA with respect to Batching vs Chunking. We conducted experiments comparing Chunking vs Batching on three datasets, and two aggregated gradient methods: SAG and SAGA. This experiment was suggested to verify the previous chunking results (on pages 41-43), because these previous experiments suggested that the chunking idea is not working well in practice. 
 
    The new experiments are ran with 40 equivalent passes over the data, and stepsizes were chosen to give the best possible function value over the progress of all iterations. Each method was tested with the following two configurations:
    a) Batching - batches of size 2, chunks of size 1  (blue and red on plots)
