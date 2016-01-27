@@ -70,7 +70,7 @@ We propose an algorithm for minimizing expected risk $F$ that shares some proper
 The stochastic gradient method of Robbins and Monro \cite{RobMon51} is the algorithm of choice for optimization problems arising in many large-scale machine learning applications.  At the onset of the optimization procedure, when the number of processed datapoints is relatively small, it often outperforms most other methods proposed in the literature. However, to achieve such efficient initial behavior, the steplength must be chosen to be sufficiently large. This prevents the algorithm from converging to a good solution later on. This is due to the high variance of the stochastic gradients, which must be controlled with a diminishing steplength. Several algorithms have been proposed to address this limitation, including methods that average the iterates \cite{PolJud92,ruppert1988efficient, Nesterov:09}, dynamic sampling methods \cite{dss,FS2011,2014pasglyetal} and aggregated gradient methods  \cite{roux2012stochastic,johnson2013accelerating,shalev2013stochastic,mairal2015incremental,defazio2014finito,frostig2014competing,NIPS2014_5258}.
 The latter focus on the finite sum problem and enjoy a linear rate of convergence for strongly convex problems, whereas the stochastic gradient method (in this case, the incremental gradient method) only has a sublinear rate of convergence.  
 
-In this paper, we propose an algorithm that shares some characteristics with the aggregated gradient methods mentioned above, but is more general and flexible. Unlike those methods, which are designed to revisit the training set multiple times (perhaps dozens of times), the algorithm proposed here is well suited for problems involving an extremely large training set, and where one (or a few) passes over the data suffice to produce an acceptable solution. The method is quite general; it includes as special cases  the classical stochastic gradient method, the aggregated gradient methods SAG \cite{NIPS2014_5258} and SAGA \cite{NIPS2014_5258} and  dynamic sampling methods \cite{dss,FS2011,2014pasglyetal}. The goal  of this work is the design of an algorithm that achieves good testing error --- not just good training error --- a goal it shares with the methods recently proposed in \cite{frostig2014competing,babanezhad2015stop}.The  novelty of our analysis is that it describes the behavior of a method that  updates old gradients \emph{and also}  increases the batch size at each iteration. This is of interest in its own right due to the generality of the framework, and is also of practical value as an algorithm that strikes the right balance between these two noise reducing techniques could prove to be  effective in machine learning applications.
+In this paper, we propose an algorithm that shares some characteristics with the aggregated gradient methods mentioned above, but is more general and flexible. Unlike those methods, which are designed to revisit the training set multiple times (perhaps dozens of times), the algorithm proposed here is well suited for problems involving an extremely large training set, and where one (or a few) passes over the data suffice to produce an acceptable solution. The method is quite general; it includes as special cases  the classical stochastic gradient method, the aggregated gradient methods SAG \cite{NIPS2014_5258} and SAGA \cite{NIPS2014_5258} and  dynamic sampling methods \cite{dss,FS2011,2014pasglyetal}. The goal  of this work is the design of an algorithm that achieves good testing error --- not just good training error --- a goal it shares with the methods recently proposed in \cite{frostig2014competing,babanezhad2015stop}.The  novelty of our analysis is that it describes the behavior of a method that updates old gradients \emph{and also}  increases the batch size at each iteration. This is of interest in its own right due to the generality of the framework, and is also of practical value as an algorithm that strikes the right balance between these two noise reducing techniques could prove to be  effective in machine learning applications.
 
 
 The problem of interest is stated as
@@ -637,6 +637,92 @@ In light of \eqref{eq:step},
  & < -\frac{\beta(1-\beta)(1-{\left(\frac{1-\eta}{1+\eta}\right)})^2}{\beta+{\left(\frac{1-\eta}{1+\eta}\right)}\kappa(\kappa+1)}.
 \end{align*} 
 \hspace*{\fill}$\Box$\medskip
+
+
+\paragraph{The SAGA variant.}
+
+Let us modify $y_k^{saga}$ given in \eqref{ysaga} as
+\[
+ y_k^{saga} = \frac{1}{t_k+u_k}\left(\frac{t_k}{s_k}\sum_{j\in S_k}\left[\nabla f^j(x_k) - \nabla f^j(\phi^j_{k-1}) + \frac{1}{t_k}\sum_{i=1}^{t_k} \nabla f^i(\phi^i_{k-1}) \right] + \sum_{j \in U_k} \nabla f^j(x_k)\right).
+\]
+
+Consider expectation of $y_k^{saga}$ with respect to the random event of selecting $s_k$ data points from the existing $t_k$ data points in storage.
+\small
+\[
+ E^{S_k}[y_k^{saga}] = \frac{1}{t_k+u_k}\left(t_k \left[E^{S_k}\left[\frac{1}{s_k}\sum_{j\in S_k}\nabla f^j(x_k)\right] - E^{S_k}\left[\frac{1}{s_k}\sum_{j\in S_k}\nabla f^j(\phi^j_{k-1})\right] + \frac{1}{t_k}\sum_{i=1}^{t_k} \nabla f^i(\phi^i_{k-1}) \right] + \sum_{j \in U_k} \nabla f^j(x_k)\right). 
+\]
+\normalsize
+Since
+\[
+ E^{S_k}\left[\frac{1}{s_k}\sum_{j\in S_k}\nabla f^j(\phi^j_{k-1})\right] = \frac{1}{t_k}\sum_{i=1}^{t_k} \nabla f^i(\phi^i_{k-1})
+\]
+and
+\[
+ E^{S_k}\left[\frac{1}{s_k}\sum_{j\in S_k}\nabla f^j(x_k)\right] = \frac{1}{t_k}\sum_{i=1}^{t_k} \nabla f^i(x_k),
+\]
+we end up with
+\[
+ E^{S_k}[y_k^{saga}] = \frac{1}{t_k+u_k}\left(\sum_{i=1}^{t_k} \nabla f^i(x_k) + \sum_{j \in U_k} \nabla f^j(x_k)\right) = \nabla F_{T_{k+1}}(x_k).
+\]
+Then,
+\begin{align}
+  E^{S_k}\left[\|x_{k+1}-x_\ast\|\right] & = E^{S_k}\left[\|x_{k}-x_\ast - \alpha y_k\|\right] \\
+  & = E^{S_k}\left[\|x_{k}-x_\ast - \alpha \nabla F_{T_{k+1}}(x_k) + \alpha \nabla F_{T_{k+1}}(x_k) - \alpha y_k\|\right]\\
+  & \leq \| x_{k}-x_\ast - \alpha \nabla F_{T_{k+1}}(x_k)\| + \alpha E^{S_k}\left[\| y_k - \nabla F_{T_{k+1}}(x_k)\|\right]. \label{eq:sumup}
+\end{align}
+Consider the first term,
+\begin{align*}
+ \| x_{k}-x_\ast - \alpha \nabla F_{T_{k+1}}(x_k)\| & = \|x_{k}-x_\ast - \alpha\nabla F(x_k) + \alpha \nabla F(x_\ast)+ \alpha \nabla F(x_k) - \alpha \nabla F_{T_{k+1}}(x_k)\|\\
+ & \leq (1-\alpha\mu) \|x_k-x_\ast\| + \alpha \|\nabla F(x_k) - \nabla F_{T_{k+1}}(x_k)\|.
+\end{align*}
+For the second term, consider following the lines of the derivation of \eqref{sigmad}.
+\begin{align*}
+ \left(E^{S_k}\left[\| y_k - \nabla F_{T_{k+1}}(x_k)\|\right]\right)^2 & \leq E^{S_k}\left[\| y_k - \nabla F_{T_{k+1}}(x_k)\|^2\right] \\
+ & = \mbox{tr}(\mbox{Var}^{S_k}(y_k))
+\end{align*}
+Using Assumption A.4, and additionally \underline{assuming that} $\mbox{tr}(\mbox{Cov}(\nabla f^j(x_k),\nabla f^j(\phi_{k-1}^j)))\geq 0$,
+\small
+\begin{align*}
+ \mbox{tr}(\mbox{Var}^{S_k}(y_k)) & = \left(\frac{t_k}{(t_k+u_k)s_k}\right)^2 \sum_{j\in S_k}\mbox{tr}\left(\mbox{Var}^{S_k}(\nabla f^j(x_k)) + \mbox{Var}^{S_k}(\nabla f^j(\phi_{k-1}^j)) - 2 \mbox{Cov}(\nabla f^j(x_k),\nabla f^j(\phi_{k-1}^j))\right)\\
+ & \leq \left(\frac{t_k}{t_k+u_k}\right)^2\frac{2v^2}{s_k}.
+\end{align*}
+\normalsize
+Then, defining $\gamma_k := \displaystyle\sqrt{\frac{2v^2}{s_k}}$,
+\[
+ E^{S_k}\left[\| y_k - \nabla F_{T_{k+1}}(x_k)\|\right] \leq \left(\frac{t_k}{t_k+u_k}\right)\sqrt{\frac{2v^2}{s_k}} \leq \frac{1}{1+\eta}\gamma_k
+\]
+since $t_k+u_k = t_{k+1}\geq t_k$. Gathering all in \eqref{eq:sumup},
+\begin{align*}
+E^{S_k}\left[\|x_{k+1}-x_\ast\|\right] \leq (1-\alpha\mu) \|x_k-x_\ast\| + \alpha \|\nabla F(x_k) - \nabla F_{T_{k+1}}(x_k)\| +  \frac{\alpha}{1+\eta}\gamma_k.
+\end{align*}
+Taking the total expectation gives,
+\begin{align*}
+E\left[E^{S_k}\left[\|x_{k+1}-x_\ast\|\right]\right] \leq (1-\alpha\mu) E\|x_k-x_\ast\| + \alpha \sigma_k + \frac{\alpha}{1+\eta}\gamma_k.
+\end{align*}
+Additionally \underline{assume that} $s_{k+1}\geq (1+\eta)s_k$.  Using $\sigma_{k+1}\leq \rho \sigma_k$, and $\gamma_{k+1}\leq \rho \gamma_k$,
+ \[
+  \begin{pmatrix}
+  E\left[E^{S_k}\left[\|x_{k+1}-x_\ast\|\right]\right]\\
+  \sigma_{k+1}\\
+  \gamma_{k+1}
+  \end{pmatrix} \leq 
+  \begin{pmatrix}
+   (1-\alpha\mu) & \alpha & \displaystyle\frac{\alpha}{1+\eta}\\
+   0 & \rho & 0 \\
+   0 & 0 & \rho 
+  \end{pmatrix}
+  \begin{pmatrix}
+  E\|x_k-x_\ast\|\\
+  \sigma_k\\
+  \gamma_k
+  \end{pmatrix}
+ \]
+ 
+ Let $\alpha = \displaystyle\frac{\theta}{L}$ for $\theta\in(0,1)$ so that 
+ \[
+  \lambda_{max} = \max\{ 1-\frac{\theta}{\kappa}, \rho\}.
+ \]
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

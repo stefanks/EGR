@@ -31,6 +31,13 @@ Aaron~J Defazio, Tib{\'e}rio~S Caetano, and Justin Domke.
   problems.
 \newblock {\em arXiv preprint arXiv:1407.2710}, 2014.
 
+\bibitem{duchihazansing}
+John Duchi, Elad Hazan, and Yoram Singer.
+\newblock Adaptive subgradient methods for online learning and stochastic
+  optimization.
+\newblock {\em The Journal of Machine Learning Research}, 999999:2121--2159,
+  2011.
+
 \bibitem{FS2011}
 M.P. Friedlander and M.~Schmidt.
 \newblock Hybrid deterministic-stochastic methods for data fitting.
@@ -40,6 +47,17 @@ M.P. Friedlander and M.~Schmidt.
 Roy Frostig, Rong Ge, Sham~M Kakade, and Aaron Sidford.
 \newblock Competing with the empirical risk minimizer in a single pass.
 \newblock {\em arXiv preprint arXiv:1412.6606}, 2014.
+
+\bibitem{Frostig:2014aa}
+Roy Frostig, Rong Ge, Sham~M. Kakade, and Aaron Sidford.
+\newblock Competing with the empirical risk minimizer in a single pass.
+\newblock 12 2014.
+
+\bibitem{sammy}
+S.~Hansen and J.~Nocedal.
+\newblock Second-order methods for ${L}_1$ regularized problems in machine
+  learning.
+\newblock {\em ICAASP 2012}, 2012.
 
 \bibitem{johnson2013accelerating}
 Rie Johnson and Tong Zhang.
