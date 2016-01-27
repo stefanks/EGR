@@ -252,14 +252,14 @@ It follows from
        e_k^i = 0 \  \mbox{ for } i \in S_k \cup U_k.
 \end{equation}
 %
-{\color{blue} Recalling \eqref{tdef}, the first statement in \eqref{capt} and \eqref{chico}, we see that  \eqref{ysag} can be written as}
+{\color{blue} Recalling \eqref{capt}, and \eqref{chico}, we see that  \eqref{ysag} can be written as}
  \begin{align}  \label{gk_sag2}
        y_k = & \  \frac{1}{t_{k+1}} \left(\sum_{i \in S_k} \nabla f^i(x_{k}) +\sum_{i\in (T_k \setminus S_k)} \nabla f^i (\phi^i_{k-1}) + \sum_{i \in U_k}  \nabla f^i(x_k)\right) \\
        = & \ \frac{1}{t_{k+1}} \left(\sum_{i \in S_k} \nabla f^i(x_{k}) +\sum_{i\in (T_k \setminus S_k)} \nabla f^i (\phi^i_{k}) + \sum_{i \in U_k}  \nabla f^i(x_k)\right) \\
        = &\  \frac{1}{t_{k+1}} \left(\sum_{i \in U_k \cup T_k} \nabla f^i(x_{k}) +\sum_{i\in (T_k \setminus S_k)} [ \nabla f^i (\phi^i_{k})  -
         \nabla f^i(x_{k})] \right) .
  \end{align}
-Therefore, from \eqref{batch}, \eqref{tdef} and \eqref{zeros}
+Therefore, from \eqref{batch}, \eqref{capt} and \eqref{zeros}
 \begin{equation}\label{eq:y}
  y_k = \nabla F_{T_{k+1}}(x_k) + \frac{1}{t_{k+1}}\sum_{i=1}^{t_k} e_k^i .
 \end{equation}
@@ -1006,11 +1006,7 @@ The datasets are all dense, with approximately evenly split -1 and +1 labels. Th
            \includegraphics[width=\textwidth]{Figures/MNISTBLtrueFfFinal-g.pdf}
              \caption{MNIST}
          \end{subfigure}
-       \caption{EGR vs other methods}\label{fig:myrandom}
-   \end{figure}
-   
-   \begin{figure}[H]
-       \centering
+		 
        \begin{subfigure}[b]{0.45\textwidth}
            \includegraphics[width=\textwidth]{Figures/alphaGoodBLtrueFfFinal-g.pdf}
            \caption{alphaGood}
@@ -1045,12 +1041,8 @@ The datasets are all dense, with approximately evenly split -1 and +1 labels. Th
             \begin{subfigure}[b]{0.45\textwidth}
            \includegraphics[width=\textwidth]{Figures/myrandBLtrueFfFinal-1.pdf}
                 \caption{myrand}
-            \end{subfigure}
-          \caption{summary: all EGR methods}\label{fig:MNISTsummary}
-      \end{figure}
-   
-   \begin{figure}[H]
-       \centering
+            \end{subfigure} 
+			
        \begin{subfigure}[b]{0.45\textwidth}
            \includegraphics[width=\textwidth]{Figures/alphaGoodBLtrueFfFinal-1.pdf}
            \caption{alphaGood}
@@ -1086,12 +1078,7 @@ The datasets are all dense, with approximately evenly split -1 and +1 labels. Th
           \includegraphics[width=\textwidth]{Figures/MNISTBLtrueSampleSizefFinal.pdf}
             \caption{MNIST}
         \end{subfigure}
-      \caption{growth rates}\label{fig:alphaGoodsummary}
-  \end{figure}
-  
-  
-  \begin{figure}[H]
-      \centering
+		
       \begin{subfigure}[b]{0.45\textwidth}
           \includegraphics[width=\textwidth]{Figures/myrandBLtrueSampleSizefFinal.pdf}
           \caption{myrand}
@@ -1130,11 +1117,7 @@ The datasets are all dense, with approximately evenly split -1 and +1 labels. Th
            \includegraphics[width=\textwidth]{Figures/myrandBLtrueFfFinal-dss.pdf}
              \caption{myrand}
          \end{subfigure}
-       \caption{EGR vs only-add methods}\label{fig:MNISToa}
-   \end{figure}
-   
-   \begin{figure}[H]
-       \centering
+		 
        \begin{subfigure}[b]{0.45\textwidth}
            \includegraphics[width=\textwidth]{Figures/SUSYBLtrueFfFinal-dss.pdf}
            \caption{SUSY}
