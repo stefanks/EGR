@@ -240,7 +240,7 @@ We make the following assumptions about the construction of the sets $S_k$ and $
 \end{itemize}
 
 
-\textcolor{cyan}{Note that the last assumption on the boundedness of the variance is a standard assumption used in the analysis of stochastic methods; e.g. see \cite{dss,nemirovski2009robust}.}
+\textcolor{cyan}{Note that the last assumption on the boundedness of the variance is a standard assumption used in the analysis of stochastic methods (cite: stochastic gradient papers, dss paper).}
 
 
 \subsection{Some Definitions}
@@ -684,12 +684,21 @@ Consider the first term,
 For the second term, consider following the lines of the derivation of \eqref{sigmad}.
 \begin{align*}
  \left(E^{S_k}\left[\| y_k - \nabla F_{T_{k+1}}(x_k)\|\right]\right)^2 & \leq E^{S_k}\left[\| y_k - \nabla F_{T_{k+1}}(x_k)\|^2\right] \\
- & = \mbox{tr}(\mbox{Var}^{S_k}(y_k))
+ & = \mbox{tr}(\mbox{Var}^{S_k}(y_k))  \\
+  & = 2\left(\frac{t_k}{(t_k+u_k)s_k}\right)^2 \sum_{j\in S_k}\mbox{tr}\left(\mbox{Var}^{S_k}(\nabla f^j(x_k)) + \mbox{Var}^{S_k}(\nabla f^j(\phi_{k-1}^j)) \right) \label{holdit}
 \end{align*}
-Using Assumption A.4, and additionally \underline{assuming that} $\mbox{tr}(\mbox{Cov}(\nabla f^j(x_k),\nabla f^j(\phi_{k-1}^j)))\geq 0$,
-\small
+By Assumption A.4, the first term in the sum is bounded by $ v^2$, and for the second term we have
 \begin{align*}
- \mbox{tr}(\mbox{Var}^{S_k}(y_k)) & = \left(\frac{t_k}{(t_k+u_k)s_k}\right)^2 \sum_{j\in S_k}\mbox{tr}\left(\mbox{Var}^{S_k}(\nabla f^j(x_k)) + \mbox{Var}^{S_k}(\nabla f^j(\phi_{k-1}^j)) - 2 \mbox{Cov}(\nabla f^j(x_k),\nabla f^j(\phi_{k-1}^j))\right)\\
+\mbox{tr}(\mbox{Var}^{S_k}(\nabla f^j(\phi_{k-1}^j)) ) &=\mbox{tr}(\mbox{Var}^{S_k}(\nabla f^j(\phi_{k-1}^j)-\nabla f^j(x_k) + \nabla f^j(x_k)) ) \\
+                                          &\leq 2\mbox{tr}(( \mbox{Var}^{S_k}(\nabla f^j(\phi_{k-1}^j)-\nabla f^j(x_k) )) + \mbox{tr}(\mbox{Var}^{S_k}(\nabla f^j(x_k))) ) \\
+                                                                               &\leq 2(\E^{S_k}[\| \nabla f^j(\phi_{k-1}^j)-\nabla f^j(x_k) )\|^2] + v^2 ) \\
+                                           &\leq 2( L_j^2 \E^{S_k}[ \|\phi_{k-1}^j- x_k \|^2] +  v^ 2) 
+\end{align*}
+Now if we assume all the iterates are bounded than there is a constant $R>0$ such that $\|\phi_{k-1}^j)-\nabla f^j(x_k) \| \leq R$
+for all $k$ and $j$.
+Putting this together, (\ref{hold it}) becomes
+\begin{align*}
+ \mbox{tr}\mbox{Var}^{S_k}(y_k)) & = 2\left(\frac{t_k}{(t_k+u_k)s_k}\right)^2 \sum_{j\in S_k} 3v^2+L_j^2 R^2 ) \right)\\
  & \leq \left(\frac{t_k}{t_k+u_k}\right)^2\frac{2v^2}{s_k}.
 \end{align*}
 \normalsize
@@ -724,20 +733,11 @@ Additionally \underline{assume that} $s_{k+1}\geq (1+\eta)s_k$.  Using $\sigma_{
   \end{pmatrix}
  \]
  
-Let $\alpha = \displaystyle\frac{\theta}{L}$ for $\theta\in(0,1)$ so that the spectral radius of the above matrix is
- \begin{equation}
- \label{eq:ratesaga}
+ Let $\alpha = \displaystyle\frac{\theta}{L}$ for $\theta\in(0,1)$ so that 
+ \[
   \lambda_{max} = \max\{ 1-\frac{\theta}{\kappa}, \rho\}.
- \end{equation}
-Thus, $E\|x_k-x_\ast\|$ converges R-linearly to 0 at rate $\lambda_{max}$.
+ \]
 
-\paragraph{Discussion on the results.}  \textcolor{cyan}{Note that in the case where the steplenght can be chosen as $\frac{1}{L}$, 
-EGR-SAG obtains an order $\kappa^{-1}$ rate (see \eqref{eq:rate1}) as the dynamic sample size algorithm\cite{dss}.  A same order rate 
-is obtained for the EGR-SAGA variant (see \eqref{eq:ratesaga}).  This rate matches the order $\kappa^{-1}$ convergence rates of the 
-finite population counterparts SAG and SAGA.  The result provided in Corollary 4 for the finite population is worse than the rate in 
-\cite{schmidt2013minimizing} when $\eta$ is not large enough.  However, the same line of analysis provides the exact rate in 
-\cite{schmidt2013minimizing} for quadratic functions (see Appendix?).}  %An order $\kappa^{-2}$ rate as in \eqref{eq:rate2} was obtained 
-%for the cyclic incremental gradient algorithm in \cite{iag}, which can be seen as a deterministic counterpart of SAG.}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -812,10 +812,6 @@ As stated, Algorithm \ref{alg1} computes a sum over all $\{1, \ldots ,t_k \} $ a
   		\State 
   		\begin{equation}
   			y =  \frac{\frac{s_k}{T} A - B +\sum_{j \in S\cup U}g^j}{s_k+u_k} \mbox{ EGR-SAGA } \; \mbox{ or } \; y =  \frac{A - B +\sum_{j \in S\cup U}g^j}{T+u_k} \mbox{ EGR-SAG } 
-  		\end{equation}
-  		\State 
-  		\begin{equation}
-  			y =  \frac{A + \frac{T}{s_k} (\sum_{j \in S}g^j-B) + \sum_{j \in U}g^j}{T_k+u_k} \mbox{ EGR-SAGA-NEW } 
   		\end{equation}
   		\State $x  =  x - \alpha y$ 
   		\State $T =  T +u_k$ 

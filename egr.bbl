@@ -72,6 +72,11 @@ Julien Mairal.
   to large-scale machine learning.
 \newblock {\em SIAM Journal on Optimization}, 25(2):829--855, 2015.
 
+\bibitem{nemirovski2009robust}
+Arkadi Nemirovski, Anatoli Juditsky, Guanghui Lan, and Alexander Shapiro.
+\newblock Robust stochastic approximation approach to stochastic programming.
+\newblock {\em SIAM Journal on Optimization}, 19(4):1574--1609, 2009.
+
 \bibitem{Nesterov:09}
 Yurii Nesterov.
 \newblock Primal-dual subgradient methods for convex problems.
@@ -105,6 +110,11 @@ David Ruppert.
 \newblock Efficient estimations from a slowly convergent robbins-monro process.
 \newblock Technical report, Cornell University Operations Research and
   Industrial Engineering, 1988.
+
+\bibitem{schmidt2013minimizing}
+Mark Schmidt, Nicolas~Le Roux, and Francis Bach.
+\newblock Minimizing finite sums with the stochastic average gradient.
+\newblock {\em arXiv preprint arXiv:1309.2388}, 2013.
 
 \bibitem{shalev2013stochastic}
 Shai Shalev-Shwartz and Tong Zhang.
