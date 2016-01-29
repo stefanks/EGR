@@ -685,8 +685,10 @@ For the second term, consider following the lines of the derivation of \eqref{si
 \begin{align*}
  \left(E^{S_k}\left[\| y_k - \nabla F_{T_{k+1}}(x_k)\|\right]\right)^2 & \leq E^{S_k}\left[\| y_k - \nabla F_{T_{k+1}}(x_k)\|^2\right] \\
  & = \mbox{tr}(\mbox{Var}^{S_k}(y_k))  \\
-  & = 2\left(\frac{t_k}{(t_k+u_k)s_k}\right)^2 \sum_{j\in S_k}\mbox{tr}\left(\mbox{Var}^{S_k}(\nabla f^j(x_k)) + \mbox{Var}^{S_k}(\nabla f^j(\phi_{k-1}^j)) \right) \label{holdit}
+  & \leq 2\left(\frac{t_k}{(t_k+u_k)s_k}\right)^2 \sum_{j\in S_k}\mbox{tr}\left(\mbox{Var}^{S_k}(\nabla f^j(x_k)) + \mbox{Var}^{S_k}(\nabla f^j(\phi_{k-1}^j)) \right) \label{holdit}
 \end{align*}
+[using the fact that the variance of a sum of two random variables is less than or equal to twice the sum of their 
+variances [since Var(X+Y)=2(Var(X)+Var(Y))-(Var(X-Y))<=2(Var(X)+Var(Y))]].
 By Assumption A.4, the first term in the sum is bounded by $ v^2$, and for the second term we have
 \begin{align*}
 \mbox{tr}(\mbox{Var}^{S_k}(\nabla f^j(\phi_{k-1}^j)) ) &=\mbox{tr}(\mbox{Var}^{S_k}(\nabla f^j(\phi_{k-1}^j)-\nabla f^j(x_k) + \nabla f^j(x_k)) ) \\
@@ -698,13 +700,13 @@ Now if we assume all the iterates are bounded than there is a constant $R>0$ suc
 for all $k$ and $j$.
 Putting this together, (\ref{hold it}) becomes
 \begin{align*}
- \mbox{tr}\mbox{Var}^{S_k}(y_k)) & = 2\left(\frac{t_k}{(t_k+u_k)s_k}\right)^2 \sum_{j\in S_k} 3v^2+L_j^2 R^2 ) \right)\\
- & \leq \left(\frac{t_k}{t_k+u_k}\right)^2\frac{2v^2}{s_k}.
+ \mbox{tr}(\mbox{Var}^{S_k}(y_k)) & = 2\left(\frac{t_k}{(t_k+u_k)s_k}\right)^2   \sum_{j\in S_k} (3v^2+L_j^2 R^2 ) \right)\\
+ & \leq 2\left(\frac{t_k}{t_k+u_k}\right)^2\frac{3v^2+L^2 R^2}{s_k}.
 \end{align*}
 \normalsize
-Then, defining $\gamma_k := \displaystyle\sqrt{\frac{2v^2}{s_k}}$,
+Then, defining $\gamma_k := \displaystyle\sqrt{\frac{6v^2+2L^2 R^2}{s_k}}$,
 \[
- E^{S_k}\left[\| y_k - \nabla F_{T_{k+1}}(x_k)\|\right] \leq \left(\frac{t_k}{t_k+u_k}\right)\sqrt{\frac{2v^2}{s_k}} \leq \frac{1}{1+\eta}\gamma_k
+ E^{S_k}\left[\| y_k - \nabla F_{T_{k+1}}(x_k)\|\right] \leq \left(\frac{t_k}{t_k+u_k}\right)\sqrt{\frac{6v^2+2L^2 R^2}{s_k}} \leq \frac{1}{1+\eta}\gamma_k
 \]
 since $t_k+u_k = t_{k+1}\geq t_k$. Gathering all in \eqref{eq:sumup},
 \begin{align*}
